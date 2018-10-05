@@ -1,0 +1,86 @@
+#progress
+  position relative
+  min-height 60px
+  display flex
+  flex-direction column
+  align-items center
+  justify-content center
+  &.mini
+    min-height 40px
+  .progress
+    position absolute
+    top 0
+    right 0
+    bottom 0
+    left 0
+    margin auto
+    &.loading
+      animation progress-color 6.4s linear infinite
+    &.success
+    &.error
+      color #1bc1a4
+      width 40px
+      height 40px
+      filter drop-shadow(1px 0px 4px rgba(50,180,90,0.3))
+    &.error
+      color #db4437
+      filter none
+    &.idle
+      width 180px
+      height 50px
+      padding 10px 24px
+      font-size 1rem
+      line-height 1.875em
+      letter-spacing .12em
+      border-radius 4px
+      span:last-child
+        box-shadow 0 0 14px rgba(0,0,0,.04)
+        transition all .3s ease
+      &:hover
+        background-color transparent
+        span:last-child
+          box-shadow 0 2px 16px rgba(0,0,0,.15)
+
+.fade-enter
+  opacity 0.01
+  &.loading
+  &.success
+  &.error
+    transform scale(.68)
+  &.idle
+    transform translateY(10px)
+  &.fade-enter-active
+    z-index 3
+    opacity 1
+    transition opacity 800ms ease,
+               transform 1s cubic-bezier(0.19, 1, 0.22, 1)
+    transition-delay .1s
+    transform none
+.fade-exit
+  opacity 1
+  transform none
+  &.fade-exit-active
+    z-index 1
+    opacity 0.01
+    transition opacity 600ms ease,
+               transform 1s cubic-bezier(0.19, 1, 0.22, 1)
+    transition-delay .1s
+    &.loading
+    &.success
+    &.error
+    &.idle
+      transform scale(.68)
+
+@keyframes progress-color
+  0%
+    color #2196f3
+  20%
+    color #bb13b5
+  40%
+    color #21c2c3
+  60%
+    color #f7710f
+  80%
+    color #8e64de
+  100%
+    color #ff0912

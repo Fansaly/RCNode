@@ -1,0 +1,37 @@
+{
+  "presets": [
+    "react-app"
+  ],
+  "plugins": [
+    ["prismjs", {
+      "languages": [
+        "css",
+        "clike",
+        "markup",
+        "markdown",
+        "javascript",
+        "typescript",
+        "python",
+        "json",
+        "yaml",
+        "c",
+        "cpp",
+        "git",
+        "diff",
+        "bash",
+        "java",
+        "php",
+        "sql",
+        "swift",
+        "objectivec",
+        "makefile",
+        "go",
+        "lua",
+        "erlang",
+        "docker"
+      ],
+      "theme": "default",
+      "css": true
+    }]
+  ]
+}
