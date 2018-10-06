@@ -7,8 +7,8 @@ import image from '../static/images/houses_beautiful_beach_photo_wallpaper.jpg';
  */
 const getBingImage = url => {
   url = url || process.env.NODE_ENV === 'production'
-                ? 'http://163.44.118.86:8080'
-                : 'http://127.0.0.1:3001';
+                ? 'https://bing.fansaly.com'
+                : 'http://localhost:3001';
 
   const defaultData = {
     base: '',
