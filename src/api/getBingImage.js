@@ -5,7 +5,11 @@ import image from '../static/images/houses_beautiful_beach_photo_wallpaper.jpg';
  * fetch Bing Image
  * @param {string} url proxy address
  */
-const getBingImage = (url = 'http://localhost:3001') => {
+const getBingImage = url => {
+  url = url || process.env.NODE_ENV === 'production'
+                ? 'http://163.44.118.86:8080'
+                : 'http://127.0.0.1:3001';
+
   const defaultData = {
     base: '',
     images: [{
