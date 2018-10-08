@@ -4,7 +4,7 @@ import {
   matchTab,
   getNewDataCreate,
 } from '../../common';
-import { get as getData } from '../../api';
+import { get as getData } from '../../fetch';
 
 import Layout from '../../Layout';
 import TopicList from '../../Components/TopicList';

@@ -8,7 +8,7 @@ import {
   openEditor,
   openNotification,
 } from '../../store/actions';
-import { post as POST } from '../../api';
+import { post as POST } from '../../fetch';
 
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';

@@ -9,7 +9,7 @@ import {
   openEditor,
   openNotification,
 } from '../../store/actions';
-import { post } from '../../api';
+import { post } from '../../fetch';
 
 import { withStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';

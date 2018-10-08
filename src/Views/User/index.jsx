@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
-import { getBingImage, get as getData } from '../../api';
+import { getBingImage, get as getData } from '../../fetch';
 
 import { withStyles } from '@material-ui/core';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';

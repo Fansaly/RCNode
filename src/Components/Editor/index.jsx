@@ -9,7 +9,7 @@ import {
   openNotification,
 } from '../../store/actions';
 import { topicTypes, matchTab } from '../../common';
-import { post } from '../../api';
+import { post } from '../../fetch';
 
 import { withStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';

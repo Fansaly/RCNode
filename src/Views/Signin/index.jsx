@@ -7,7 +7,7 @@ import {
   openNotification,
 } from '../../store/actions';
 import { validateUUID } from '../../common';
-import { post as validateUser } from '../../api';
+import { post as validateUser } from '../../fetch';
 
 import Avatar from '@material-ui/core/Avatar';
 import Collapse from '@material-ui/core/Collapse';

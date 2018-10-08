@@ -6,7 +6,7 @@ import {
   getNewDataUpdate,
   getNewDataReply,
 } from '../../common';
-import { get as getData } from '../../api';
+import { get as getData } from '../../fetch';
 
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
