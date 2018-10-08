@@ -14,14 +14,14 @@ Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | 11 ✓ |
   - [x] MD emoji
   - [x] MD link target attr
   - [x] MD link `URL` replacement. e.g. `https://cnodejs.org` to `http://localhost:3000`
-  - [x] MD syntax highlighting (Partially supported, view in `prismjs` field of [.babelrc](.babelrc) file.)
+  - [x] MD syntax highlighting (Partially supported, view in [.babelrc](.babelrc) file `prismjs` field.)
   - [ ] MD image zoom
+  - [x] Topic preview
   - [x] Topic `create` `update` `reply` function
   - [x] Topic collect
   - [x] Topic reply +1
+  - [x] Message remind
   - [ ] View - Message
-  - [ ] View - Settings
-  - [ ] Component - Me -> message
   - [ ] meta title
   - [ ] management collected topics
   - [ ] page rerender when had invalid data of user or topic
@@ -39,9 +39,10 @@ Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | 11 ✓ |
 - Known issues
   - [ ] block router or page refresh when open editor
   - [ ] [SpeeDialAction propTypes warnings](https://github.com/mui-org/material-ui/issues/12159)
+  - [ ] Edge load topic-list faild
 
 - Other
-  - [ ] `ComponentWillReceiveProps` method replacement
+  - [ ] `componentWillReceiveProps` method replacement
 
 ### License
 [MIT](https://opensource.org/licenses/MIT)
