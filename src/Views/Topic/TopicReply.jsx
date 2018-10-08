@@ -75,6 +75,10 @@ class TopicReply extends React.Component {
   };
 
   handleUp = async () => {
+    if (!this.props.isAuthed) {
+      return;
+    }
+
     const {
       accesstoken,
       uname: signedUname,
@@ -202,20 +206,20 @@ class TopicReply extends React.Component {
                   >
                     <ReplyIcon />
                   </IconButton>
-                  <IconButton
-                    className="action up"
-                    onClick={this.handleUp}
-                  >
-                  {isUped ? (
-                    <ThumbUpIcon />
-                  ) : (
-                    <ThumbUpCancelIcon />
-                  )}
-                  </IconButton>
-                  {ups !== 0 &&
-                    <span className="num">{ups}</span>
-                  }
                 </React.Fragment>
+              }
+              <IconButton
+                className="action up"
+                onClick={this.handleUp}
+              >
+                {isUped ? (
+                  <ThumbUpIcon />
+                ) : (
+                  <ThumbUpCancelIcon />
+                )}
+              </IconButton>
+              {Boolean(ups) &&
+                <span className="num">{ups}</span>
               }
               <IconButton
                 className="action post"
