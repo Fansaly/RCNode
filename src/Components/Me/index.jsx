@@ -136,6 +136,9 @@ class Me extends React.Component {
 
     this.timerSignout = setTimeout(() => {
       this.props.deleteAuth();
+      this.setState({
+        count: 0,
+      });
     }, 330);
   };
 
