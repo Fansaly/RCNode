@@ -1,9 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { deleteAuth } from '../../store/actions';
+import { get as getData } from '../../api';
 
+import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
@@ -27,16 +31,29 @@ import { SignOutIcon } from '../../Components/Icons';
 import AvatarSvg from '../../static/avatar.svg';
 import './me.styl';
 
+const styles = theme => ({
+  hidden: {
+    '& span': {
+      visibility: 'hidden',
+    },
+  },
+});
+
 class Me extends React.Component {
   constructor(props) {
     super(props);
 
+    const { time } = this.props;
+
     this.state = {
       open: false,
+      count: 0,
+      time,
     };
   }
 
-  tmier = null;
+  timerMessage = null;
+  timerSignout = null;
 
   handleToggle = () => {
     this.setState(state => ({
@@ -50,6 +67,28 @@ class Me extends React.Component {
     }
 
     this.setState({ open: false });
+  };
+
+  fetchUnreadCount = async () => {
+    const { isAuthed, accesstoken } = this.props;
+    const { time } = this.state;
+
+    if (!isAuthed) { return; }
+
+    const params = {
+      url: '/message/count',
+      params: { accesstoken },
+    };
+
+    const { status, data } = await getData(params);
+
+    status && this.setState({ count: data });
+
+    if (time > 0) {
+      this.timerMessage = setTimeout(() => {
+        this.fetchUnreadCount();
+      }, time * 1e3);
+    }
   };
 
   handleInfo = event => {
@@ -93,20 +132,37 @@ class Me extends React.Component {
   handleSignout = event => {
     this.handleClose(event);
 
-    clearTimeout(this.timer);
+    clearTimeout(this.timerSignout);
 
-    this.timer = setTimeout(() => {
+    this.timerSignout = setTimeout(() => {
       this.props.deleteAuth();
     }, 330);
   };
 
+  componentDidMount() {
+    this.fetchUnreadCount();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { time } = nextProps;
+    clearTimeout(this.timerMessage);
+    if (time > 0) {
+      this.setState({
+        time,
+      }, () => {
+        this.fetchUnreadCount();
+      });
+    }
+  }
+
   componentWillUnmount() {
-    clearTimeout(this.timer);
+    clearTimeout(this.timerMessage);
+    clearTimeout(this.timerSignout);
   }
 
   render() {
-    const { open } = this.state;
-    const { isAuthed, avatar } = this.props;
+    const { classes, isAuthed, avatar } = this.props;
+    const { open, count } = this.state;
 
     return (
       <Grid item className="flex">
@@ -125,7 +181,9 @@ class Me extends React.Component {
             aria-owns={open ? 'menu-list-grow' : null}
             aria-haspopup="true"
             onClick={this.handleToggle}
-            className="me"
+            className={classNames('me', {
+              'has-message': Boolean(count),
+            })}
           >
             <Avatar className="flex avatar">
               {isAuthed ? (
@@ -156,7 +214,13 @@ class Me extends React.Component {
                       {isAuthed &&
                         <MenuItem onClick={this.handleMessage}>
                           <ListItemIcon>
-                            <Badge badgeContent={3} color={'default'} className="badge">
+                            <Badge
+                              badgeContent={count}
+                              color={'default'}
+                              className={classNames('badge', {
+                                [classes.hidden]: count <= 0,
+                              })}
+                            >
                               <NotificationsIcon />
                             </Badge>
                           </ListItemIcon>
@@ -196,8 +260,13 @@ class Me extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => ({
+Me.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = ({ auth, settings }) => ({
   ...auth,
+  time: settings.time,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -207,6 +276,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
+  withStyles(styles),
   withRouter,
   connect(
     mapStateToProps,

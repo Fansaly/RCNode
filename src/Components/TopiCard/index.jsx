@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { removeHtmlTags } from '../../common';
 
 import { withStyles } from '@material-ui/core/styles';
+import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
+
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -37,7 +41,15 @@ const styles = theme => ({
 });
 
 class TopiCard extends React.Component {
-  state = { expanded: false };
+  constructor(props) {
+    super(props);
+
+    const { cardPreview } = props;
+
+    this.state = {
+      expanded: cardPreview,
+    };
+  }
 
   handleExpandClick = () => {
     this.setState(state => ({
@@ -46,18 +58,20 @@ class TopiCard extends React.Component {
   };
 
   render() {
-    const { expanded } = this.state;
     const {
-      classes,
       className,
+      classes,
       simple,
       item,
+      width,
     } = this.props;
+
+    const { expanded } = this.state;
 
     return (
       <Card className={classNames('topicard', {
         [className]: className,
-        'expanded': expanded,
+        'expanded': !simple && expanded,
       })}>
         <Grid container
           alignItems={'center'}
@@ -127,8 +141,8 @@ class TopiCard extends React.Component {
             <Grid item className="reply">
               <IconButton><ReplyIcon /></IconButton>
               {!simple ? (
-                  <span>{item.reply_count}</span>
-                ) : (
+                <span>{item.reply_count}</span>
+              ) : (
                 <Moment fromNow>{item.last_reply_at}</Moment>
               )}
             </Grid>
@@ -141,7 +155,12 @@ class TopiCard extends React.Component {
           </Grid>
         </Grid>
         {!simple &&
-          <Collapse in={expanded} timeout="auto" unmountOnExit className="collapse">
+          <Collapse
+            className="collapse"
+            in={expanded}
+            timeout="auto"
+            unmountOnExit={isWidthUp('sm', width)}
+          >
             <CardContent className="context">
               <Typography variant="body2" component="p">
                 {removeHtmlTags(item.content)}
@@ -156,6 +175,17 @@ class TopiCard extends React.Component {
 
 TopiCard.propTypes = {
   classes: PropTypes.object.isRequired,
+  width: PropTypes.string.isRequired,
 };
 
-export default withStyles(styles)(TopiCard);
+const mapStateToProps = ({ settings }) => ({
+  cardPreview: settings.cardPreview,
+});
+
+export default compose(
+  withStyles(styles),
+  withWidth(),
+  connect(
+    mapStateToProps,
+  ),
+)(TopiCard);

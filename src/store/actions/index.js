@@ -34,3 +34,13 @@ export const openNotification = data => ({
 export const closeNotification = () => ({
   type: 'CLOSE_NOTIFICATION',
 });
+
+export const updateSettings = data => ({
+  type: 'UPDATE_SETTINGS',
+  data,
+});
+
+export const restoreSettings = data => ({
+  type: 'RESTORE_SETTINGS',
+  data,
+});

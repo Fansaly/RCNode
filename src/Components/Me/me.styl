@@ -4,6 +4,7 @@
   width auto
   .me
     padding 4px
+    background-color rgba(0, 0, 0, 0.03)
     .avatar
       background-color rgba(189,189,189,.46)
       img
@@ -12,6 +13,21 @@
         height 100%
     &+div
       z-index 3
+    &:after
+      opacity 0
+      transition opacity .3s linear
+    &.has-message:after
+      content ''
+      position absolute
+      right 0
+      top 0
+      width 6px
+      height 6px
+      border-radius 50%
+      opacity 1
+      background-color rgba(128, 189, 1, .85)
+      box-shadow 0 0 4px rgba(0, 0, 0, .15)
+      transform translate(-6px, 6px)
   .notification
     color inherit
     .badge span

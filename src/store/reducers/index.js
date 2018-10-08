@@ -3,6 +3,7 @@ import auth from './auth';
 import share from './share';
 import editor from './editor';
 import notification from './notification';
+import settings from './settings';
 import colors from './colors';
 
 const rootReducer = combineReducers({
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   share,
   editor,
   notification,
+  settings,
   colors,
 });
 
