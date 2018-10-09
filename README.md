@@ -9,37 +9,32 @@ Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | 11 ✓ |
 
 - Foundation function
   - [x] CommonMark
-  - [x] MD checkbox
-  - [x] MD tabel
-  - [x] MD emoji
-  - [x] MD link target attr
-  - [x] MD link `URL` replacement. e.g. `https://cnodejs.org` to `http://localhost:3000`
-  - [x] MD syntax highlighting (Partially supported, view in [.babelrc](.babelrc) file `prismjs` field.)
-  - [ ] MD image zoom
+  - [x] Markdown `checkbox` `tabel` `emoji`
+  - [x] Markdown link target attr and `URL` replacement. e.g. `https://cnodejs.org` to `http://localhost:3000`
+  - [x] Markdown syntax highlighting (Partially supported, view in [.babelrc](.babelrc) `prismjs` field.)
   - [x] Topic preview
-  - [x] Topic `create` `update` `reply` function
-  - [x] Topic collect
-  - [x] Topic reply +1
+  - [x] Topic `create` `update` `reply`
+  - [x] Topic collect and reply +1
   - [x] Message remind
-  - [ ] View - Message
+  - [x] adapt mobile device (great performance)
+
+- Todos
+  - [ ] Markdown image zoom
   - [ ] meta title
+  - [ ] View - Message
   - [ ] management collected topics
   - [ ] page rerender when had invalid data of user or topic
 
 - Optimization
-  - [ ] adapt mobile device
-    - [ ] Component - TopiCard
-    - [ ] View - Message
-  - [ ] Layout - Header - DrawerNav -> a link use react-router Link `maybe`
-  - [ ] Component - Header -> animation `maybe`
-  - [ ] Component - Me -> signout animation `maybe`
+  - [ ] Header animation `maybe`
+  - [ ] Signout animation `maybe`
+  - [ ] DrawerNav a link use react-router Link `maybe`
   - [ ] Material-UI Snackbar => notistack `maybe`
-  - [ ] manifest icons and favicon.ico
 
 - Known issues
+  - [ ] Edge browser scrolling failed to load topic
   - [ ] block router or page refresh when open editor
-  - [ ] [SpeeDialAction propTypes warnings](https://github.com/mui-org/material-ui/issues/12159)
-  - [ ] Edge load topic-list faild
+  - [ ] [SpeeDialAction propTypes warnings](https://github.com/mui-org/material-ui/issues/12159) (development)
 
 - Other
   - [ ] `componentWillReceiveProps` method replacement
