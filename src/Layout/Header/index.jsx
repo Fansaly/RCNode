@@ -30,11 +30,7 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    padding: '0 3px',
     ...theme.mixins.toolbar,
-    [theme.breakpoints.up('sm')]: {
-      padding: '0 12px',
-    },
   },
   navPlaceholder: {
     height: 48,
@@ -48,8 +44,11 @@ const styles = theme => ({
   drawerPaper: {
     width: 200,
     backgroundColor: 'rgba(255, 255, 255, 0.96)',
-    [theme.breakpoints.up('md')]: {
-      position: 'relative',
+  },
+  button: {
+    paddingLeft: 3,
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: 12,
     },
   },
 });
@@ -133,8 +132,8 @@ class Header extends React.Component {
 
         <Hidden mdUp>
           <Drawer
-            variant="temporary"
             open={drawerOpen}
+            variant="temporary"
             onClose={this.handleNavToggle}
             classes={{
               paper: classes.drawerPaper,
@@ -143,7 +142,10 @@ class Header extends React.Component {
               keepMounted: true,
             }}
           >
-            <div className={classes.toolbar}>
+            <div className={classNames({
+              [classes.button]: classes.button,
+              [classes.toolbar]: classes.toolbar,
+            })}>
               <IconButton onClick={this.handleNavToggle}>
                 <ChevronLeftIcon />
               </IconButton>

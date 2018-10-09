@@ -14,7 +14,8 @@ import copy from 'clipboard-copy';
 const styles = theme => ({
   dialog: {
     '& > div[role="document"]': {
-      width: '80%',
+      margin: 10,
+      width: 'calc(100% - 20px)',
       maxWidth: process.env.NODE_ENV === 'production' ? 615 : 540,
     },
   },

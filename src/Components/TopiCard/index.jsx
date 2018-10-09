@@ -73,85 +73,100 @@ class TopiCard extends React.Component {
         [className]: className,
         'expanded': !simple && expanded,
       })}>
-        <Grid container
-          alignItems={'center'}
+        <Grid
+          container
           spacing={0}
+          alignItems={'center'}
+          className="topicard-header-wrapper"
         >
-          <CardContent className="cardHeaderWrap">
-            <Grid container
-              className="cardHeader"
+          <Grid
+            container
+            className="topicard-header"
+            alignItems={'center'}
+            justify={'flex-start'}
+            spacing={0}
+          >
+            <Avatar
+              className="avatar"
+              name={item.author.loginname}
+              image={item.author.avatar_url}
+              url={`/user/${item.author.loginname}`}
+            />
+            <Grid
+              container
+              className="topicard-title"
               alignItems={'center'}
               justify={'flex-start'}
               spacing={0}
             >
-              <Avatar
-                name={item.author.loginname}
-                image={item.author.avatar_url}
-                url={`/user/${item.author.loginname}`}
-                className="avatar"
-              />
-              {!simple &&
-                <Grid item className="type">
-                  <IconButton>
-                    <TopicTypeIcon
-                      tab={item.tab}
-                      good={item.good}
-                      top={item.top}
-                    />
-                  </IconButton>
-                </Grid>
-              }
               <Grid item className="title">
+                {!simple &&
+                  <Grid item className="type">
+                    <IconButton>
+                      <TopicTypeIcon
+                        tab={item.tab}
+                        good={item.good}
+                        top={item.top}
+                      />
+                    </IconButton>
+                  </Grid>
+                }
                 <Typography variant="headline" component="h4">
                   <Link to={`/topic/${item.id}`}>{item.title}</Link>
                 </Typography>
+                {!simple &&
+                  <CardActions className="action">
+                    <IconButton
+                      className={classNames(classes.expand, {
+                        [classes.expandOpen]: expanded,
+                      })}
+                      onClick={this.handleExpandClick}
+                      aria-expanded={expanded}
+                      aria-label="Show more"
+                    >
+                      <ExpandMoreIcon />
+                    </IconButton>
+                  </CardActions>
+                }
               </Grid>
-              {!simple &&
-                <CardActions className="action">
-                  <IconButton
-                    className={classNames(classes.expand, {
-                      [classes.expandOpen]: expanded,
-                    })}
-                    onClick={this.handleExpandClick}
-                    aria-expanded={expanded}
-                    aria-label="Show more"
-                  >
-                    <ExpandMoreIcon />
-                  </IconButton>
-                </CardActions>
-              }
             </Grid>
-          </CardContent>
+          </Grid>
           <Grid container
-            className="state"
+            className="state-wrapper"
             alignItems={'center'}
             spacing={0}
           >
-            <Grid item className="author">
-              <Link to={`/user/${item.author.loginname}`}>
-                {item.author.loginname}
-              </Link>
-            </Grid>
-            {!simple &&
-              <Grid item className="create">
-                <IconButton><CreateIcon /></IconButton>
-                <Moment fromNow>{item.create_at}</Moment>
+            <Grid container
+              className="state"
+              alignItems={'center'}
+              spacing={0}
+            >
+              <Grid item className="author">
+                <Link to={`/user/${item.author.loginname}`}>
+                  {item.author.loginname}
+                </Link>
               </Grid>
-            }
-            <Grid item className="reply">
-              <IconButton><ReplyIcon /></IconButton>
-              {!simple ? (
-                <span>{item.reply_count}</span>
-              ) : (
-                <Moment fromNow>{item.last_reply_at}</Moment>
-              )}
-            </Grid>
-            {!simple &&
-              <Grid item className="visit">
-                <IconButton><ViewIcon /></IconButton>
-                <span>{item.visit_count}</span>
+              {!simple &&
+                <Grid item className="create">
+                  <IconButton><CreateIcon /></IconButton>
+                  <Moment fromNow>{item.create_at}</Moment>
+                </Grid>
+              }
+              <Grid item className="reply">
+                <IconButton><ReplyIcon /></IconButton>
+                {!simple ? (
+                  <span>{item.reply_count}</span>
+                ) : (
+                  <Moment fromNow>{item.last_reply_at}</Moment>
+                )}
               </Grid>
-            }
+              {!simple &&
+                <Grid item className="visit">
+                  <IconButton><ViewIcon /></IconButton>
+                  <span>{item.visit_count}</span>
+                </Grid>
+              }
+            </Grid>
           </Grid>
         </Grid>
         {!simple &&

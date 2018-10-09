@@ -1,5 +1,6 @@
 .topicard
   margin-top 20px
+  position relative
   &.profile
     position relative
     margin-top 0
@@ -16,115 +17,125 @@
       background-color transparent
   &:first-child
     margin-top 0
-  .cardHeaderWrap
-    padding-top 10px
-    padding-bottom 0
-    width 100%
-  .cardHeader
+  .topicard-header-wrapper
     position relative
-    padding-left 48px
-    z-index 3
-    ~/.profile ^[1..-1]
-      height 40px
-    button
-      padding 8px
-    .avatar
-      position absolute
-      top 9px
-      left 0
-      width 48px
-      height 48px
-      border 2px solid rgba(0,185,255,.62)
-      box-shadow 0 0 4px rgba(0,0,0,.3)
-      ~/.profile ^[2..-1]
-        width 46px
-        height 46px
-    .title
-      flex 1
-      min-width 0
-      justify-content space-between
-      align-items center
-      ~/.profile ^[2..-1]
-        padding-left 10px
-      h4
-        font-size 16px
-        color rgba(0,0,0,.92)
-        overflow hidden
-        white-space nowrap
-        text-overflow ellipsis
-        // display -webkit-box
-        // display -moz-box
-        // -webkit-line-clamp 1
-        // -moz-line-clamp 1
-        // -webkit-box-orient vertical
-        // -moz-box-orient horizontal
-        a
-          color inherit
-          text-decoration none
-          &:hover
-            text-decoration underline
-          &:visited
-            opacity .7
-    .action
-      padding 0
-      height auto
-      button
-        padding 9px
-    .content
-      padding-top 6px
-  .state
-    position relative
-    z-index 1
-    top -10px
-    padding-left 24px
-    padding-right 30px
-    font-size 14px
-    color rgba(0,0,0,.5)
-    &:before
-      content ''
-      position absolute
-      left 20px
-      right 20px
-      bottom -10px
-      height 1px
-      opacity 0
-      background-color rgba(0,0,0,.1)
-      transition opacity .46s ease
-      ~/.expanded ^[1..-1]
-        opacity 1
-    >div
-      display inline-flex
-      align-items center
-      justify-content center
-    .author
-      padding-left 48px
+    .topicard-header
+      padding 20px 24px 4px
       ~/.profile ^[1..-1]
-        flex 1
-        justify-content flex-start
-      a
-        margin-left 10px
-        font-weight 700
-        color inherit
-        text-decoration none
-        &:hover
-          text-decoration underline
-    .create
-      flex 1
-      justify-content flex-start
-    .reply
-      button
-        padding-top 8px
-    time
-    span
-      margin-top -1px
-    button
-      margin 0 2px
-      padding 6px
-      color inherit
-      color rgba(0,0,0,.4)
-      svg
-        width 20px
-        height 20px
+        max-height 40px
+      .avatar
+        position absolute
+        z-index 3
+        top 50%
+        left 24px
+        width 48px
+        height 48px
+        border 2px solid rgba(0,185,255,.62)
+        box-shadow 0 0 4px rgba(0,0,0,.3)
+        transform translateY(-50%)
+        ~/.profile ^[1..-1]
+          width 46px
+          height 46px
+      .topicard-title
+        padding-left 48px
+        .title
+          position relative
+          margin 0 40px
+          min-width 0
+          flex 1
+          align-items center
+          justify-content space-between
+          ~/.profile ^[1..-1]
+            margin 0 !important
+            padding-left 10px
+          button
+            padding 8px
+          .type
+            position absolute
+            top 50%
+            right 100%
+            transform translateY(-50%)
+          h4
+            font-size 16px
+            color rgba(0,0,0,.92)
+            overflow hidden
+            white-space nowrap
+            text-overflow ellipsis
+            // display -webkit-box
+            // display -moz-box
+            // -webkit-line-clamp 1
+            // -moz-line-clamp 1
+            // -webkit-box-orient vertical
+            // -moz-box-orient horizontal
+            a
+              color inherit
+              text-decoration none
+              &:hover
+                text-decoration underline
+              &:visited
+                opacity .7
+          .action
+            position absolute
+            top 50%
+            left 100%
+            margin-left 8px
+            padding 0
+            transform translateY(-50%)
+      .content
+        padding-top 6px
+    .state-wrapper
+      position relative
+      z-index 1
+      padding 0 24px 15px
+      &:before
+        content ''
+        position absolute
+        left 20px
+        right 20px
+        bottom 0
+        height 1px
+        opacity 0
+        background-color rgba(0,0,0,.1)
+        transition opacity .46s ease
+        ~/.expanded ^[1..-1]
+          opacity 1
+      .state
+        padding-left 48px
+        font-size 14px
+        color rgba(0,0,0,.5)
+        display inline-flex
+        align-items center
+        justify-content center
+        >div
+          &:first-child
+            padding-left 10px
+        time
+        span
+          margin-top -1px
+        button
+          margin 0 2px
+          padding 4px
+          color inherit
+          color rgba(0,0,0,.4)
+          svg
+            font-size 18px
+        .author
+          ~/.profile ^[1..-1]
+            flex 1
+            justify-content flex-start
+          a
+            font-weight 700
+            color inherit
+            text-decoration none
+            &:hover
+              text-decoration underline
+        .create
+          flex 1
+          justify-content flex-start
+        .visit
+          button
+            svg
+              font-size 19px
   .context
     p
       max-height 5.14287em
@@ -140,15 +151,29 @@
 
 @media (max-width 768px)
   .topicard
-    .cardHeader
-      .type
-        margin-left 10px
-      .type
-      .state
-        font-size 12px
-      .action
-        margin-left 8px
-        margin-right -4px
+    .topicard-header-wrapper
+      .topicard-header
+        padding-left 20px
+        padding-right 20px
+        .avatar
+          left 20px
+        .topicard-title
+          .title
+            button
+              padding 6px
+              svg
+                font-size 22px
+            .action
+              button
+                background-color rgba(0,0,0,.018)
+      .state-wrapper
+        padding-left 20px
+        padding-right 20px
+        &:before
+          left 16px
+          right 16px
+        .state
+          font-size 12px
 
 @media (max-width 600px)
   .topicard
@@ -158,34 +183,53 @@
 
 @media (max-width 500px)
   .topicard
-    .cardHeaderWrap
-        padding 8px 14px 2px
-      .cardHeader
+    .topicard-header-wrapper
+      .topicard-header
+        padding-left 14px
+        padding-right 14px
         .avatar
-          top 11px
-        .type
-          margin-left 4px
-      .state
-        .author
-          padding-left 42px
+          left 14px
+        .topicard-title
+          .title
+            margin 0 34px
+      .state-wrapper
+        padding-left 14px
+        padding-right 14px
+        &:before
+          left 10px
+          right 10px
 
-@media (max-width 400px)
+@media (max-width 430px)
   .topicard
-    .cardHeaderWrap
-        padding 8px 14px 6px
-    .state
-      .create
-        padding-left 48px
+    .topicard-header-wrapper
+      .topicard-header
+        .topicard-title
+          .title
+            button
+              padding 6px
+              svg
+                font-size 22px
+            .action
+              margin-left 2px
+              button
+                background-color rgba(0,0,0,.008)
+      .state-wrapper
+        .state
+          .author
+            display none
+            ~/.profile ^[1..-1]
+              display flex
+          .create
+            button
+              margin-left 0
 
-@media (max-width 340px)
+@media (max-width 420px)
   .topicard
-    .cardHeader
-      .type
-        margin-left 6px
-      .type
-      .state
-      .action
-        margin-left 6px
+    .topicard-header-wrapper
+      .topicard-header
+        .topicard-title
+          .title
+            margin 0 30px
 
 .topicard
   opacity 0
@@ -200,8 +244,8 @@
 for $i in 1..30
   .topicard:nth-of-type({$i})
     animation-delay .068s * ($i - 1)
-  .topicard.profile:nth-of-type({$i})
-    animation-delay .105s * ($i - 1)
+    &.profile:nth-of-type({$i})
+      animation-delay .105s * ($i - 1)
 
 @keyframes topicard
   0%

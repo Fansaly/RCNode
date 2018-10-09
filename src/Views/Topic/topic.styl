@@ -12,41 +12,20 @@
                0 0 2px rgba(0,0,0,.01),
                0 0 8px rgba(0,0,0,.03) inset
     border-radius 2px
-    @media (max-width 768px)
-      padding 20px 0
   .topic-main
     .markdown-container
       padding 0 44px
-      @media (max-width 768px)
-        padding 0 20px
-      @media (max-width 600px)
-        padding 0 14px
     .title
       padding 0 44px
       font-size 22px
       font-weight 500
       margin-bottom 18px
-      @media (max-width 768px)
-        padding 0 20px
-        margin-bottom 8px
-      @media (max-width 600px)
-        padding 0 14px
-        margin-bottom 6px
-      @media (max-width 420px)
-        margin-bottom 4px
     .attr
       padding 0 44px 16px
       margin-bottom 24px
       font-size 12px
       color #586069
       border-bottom 1px dashed #dfe2e5
-      @media (max-width 768px)
-        padding-left 20px
-        padding-right 20px
-        margin-bottom 20px
-      @media (max-width 600px)
-        padding 0 14px 14px
-        margin-bottom 12px
       span
         position relative
         display inline-block
@@ -54,12 +33,6 @@
         padding-left 24px
         &:last-child
           margin-right 0
-        @media (max-width 768px)
-          margin-top 8px
-        @media (max-width 600px)
-          margin-right 10px
-        @media (max-width 420px)
-          padding-left 14px
         a
           color inherit
           text-decoration none
@@ -76,14 +49,8 @@
           left 0
           font-size 20px
           transform translateY(-50%)
-          @media (max-width 600px)
-            font-size 16px
-          @media (max-width 420px)
-            font-size 12px
   .topic-replies
     margin-top 45px
-    @media (max-width 768px)
-      margin-top 40px
     .topic-reply
       position relative
       margin-top 18px
@@ -95,12 +62,6 @@
         margin-right 30px
         border 1px solid #dfe2e5
         border-radius 3px
-        @media (max-width 768px)
-          margin 0 18px
-        @media (max-width 600px)
-          margin 0 10px
-        @media (max-width 420px)
-          margin 0 8px
         &:before,
         &:after
           content ''
@@ -113,14 +74,10 @@
           border-style solid
           border-color transparent
           border-right-color #dfe2e5
-          @media (max-width 768px)
-            display none
         &:after
           top 12px
           border-width 7px
           border-right-color #f6f8fa
-          @media (max-width 768px)
-            top 9px
         .reply-header
           position relative
           display flex
@@ -130,9 +87,6 @@
           color #666
           background-color #f6f8fa
           border-bottom 1px solid #d1d5da
-          @media (max-width 768px)
-            padding 5px 12px
-            font-size 13px
           .avatar-uname
             display flex
             align-items center
@@ -141,11 +95,6 @@
               top 0
               right 100%
               margin-right 16px
-              @media (max-width 768px)
-                position static
-                margin-right 6px
-                width 30px
-                height 30px
               a
                 display flex
               img
@@ -158,8 +107,6 @@
               text-decoration none
               &:hover
                 text-decoration underline
-              @media (max-width 500px)
-                display none
           .time-etc
             flex 1
             display flex
@@ -173,15 +120,9 @@
                 color #21b8f3
                 background-color rgba(221,221,221,.18)
                 border-radius 3px
-              @media (max-width 320px)
-                display none
             span,
             time
               font-size 12px
-              @media (max-width 768px)
-                margin-left 6px
-              @media (max-width 600px)
-                margin-left 2px
           .actions
             display flex
             align-items center
@@ -194,28 +135,15 @@
               align-items center
               font-weight 500
               padding 0
-              @media (max-width 768px)
-                margin-left 8px
-              @media (max-width 600px)
-                margin-left 6px
               &:first-child
                 margin-left 0
               &:hover
                 text-decoration none
-              svg
-                @media (max-width 600px)
-                  font-size 22px
-                @media (max-width 360px)
-                  font-size 20px
         .markdown-container
           padding 14px
           color #333
-          @media (max-width 768px)
-            padding 12px
           .markdown-body
             font-size 15px
-            @media (max-width 768px)
-              font-size 14px
 
         ../.owned ^[3..-1]
           border-color rgba(33,184,243,.35)
@@ -223,3 +151,118 @@
             border-right-color rgba(33,184,243,.45)
           .reply-header
             border-bottom-color rgba(33,184,243,.18)
+
+
+  @media (max-width 768px)
+    .topic-main
+    .topic-replies
+      padding 26px 0
+    .topic-main
+      .markdown-container
+        padding 0 20px
+      .title
+        padding 0 20px
+        margin-bottom 8px
+      .attr
+        padding-left 20px
+        padding-right 20px
+        margin-bottom 20px
+        span
+          margin-top 8px
+    .topic-replies
+      margin-top 36px
+      .topic-reply
+        .reply-content
+          margin 0 18px
+          &:before
+          &:after
+            display none
+          .reply-header
+            padding 6px 12px
+            font-size 13px
+            .avatar-uname
+              .avatar
+                position static
+                margin-right 6px
+                width 30px
+                height 30px
+            .time-etc
+              span
+              time
+                margin-right 0
+                margin-left 6px
+          .markdown-container
+            padding 12px
+            .markdown-body
+              font-size 14px
+
+  @media (max-width 600px)
+    .topic-main
+    .topic-replies
+      padding 24px 0
+      .markdown-container
+        padding 0 14px
+      .title
+        padding 0 14px
+        margin-bottom 6px
+      .attr
+        padding 0 14px 14px
+        margin-bottom 12px
+        span
+          margin-right 10px
+          svg
+            font-size 16px
+    .topic-replies
+      .topic-reply
+        .reply-content
+          margin 0 10px
+          .reply-header
+            padding-top 5px
+            padding-bottom 5px
+            .time-etc
+              span
+                display none
+            .actions
+              .action
+                svg
+                  font-size 23px
+
+  @media (max-width 500px)
+    .topic-main
+    .topic-replies
+      padding 22px 0
+    .topic-replies
+      .topic-reply
+        .reply-content
+          .reply-header
+            padding-top 4px
+            padding-bottom 4px
+            .avatar-uname
+              >a
+                display none
+
+  @media (max-width 420px)
+    .topic-main
+    .topic-replies
+      padding 20px 0
+      .title
+        margin-bottom 4px
+      .attr
+        span
+          padding-left 14px
+          svg
+            font-size 12px
+    .topic-replies
+      .topic-reply
+        .reply-content
+          margin 0 8px
+
+  @media (max-width 360px)
+    .topic-replies
+      .topic-reply
+        .reply-content
+          .reply-header
+            .actions
+              .action
+                svg
+                  font-size 22px

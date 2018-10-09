@@ -86,6 +86,7 @@ class Settings extends React.Component {
             <div className="setting">
               <div className="setting-label">卡片预览</div>
               <Switch
+                className="switch"
                 checked={cardPreview}
                 onChange={this.handleCardPreview}
               />
