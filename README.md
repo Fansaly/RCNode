@@ -22,7 +22,6 @@ Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | 11 ✓ |
   - [ ] Markdown image zoom
   - [ ] meta title
   - [ ] View - Message
-  - [ ] management collected topics
   - [ ] page rerender when had invalid data of user or topic
 
 - Optimization
@@ -32,9 +31,9 @@ Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | 11 ✓ |
   - [ ] Material-UI Snackbar => notistack `maybe`
 
 - Known issues
+  - [ ] `@` `email` autolink in Markup
   - [ ] Edge browser scrolling failed to load topic
   - [ ] block router or page refresh when open editor
-  - [ ] [SpeeDialAction propTypes warnings](https://github.com/mui-org/material-ui/issues/12159) (development)
 
 - Other
   - [ ] `componentWillReceiveProps` method replacement
