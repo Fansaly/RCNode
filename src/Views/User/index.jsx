@@ -298,28 +298,20 @@ class User extends React.Component {
   }
 }
 
-class SwipeableViewsTab extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    const { data, show } = this.props;
-    this.state = { data, show };
-  }
-
+class SwipeableViewsTab extends React.Component {
   componentDidUpdate() {
     this.context.swipeableViews.slideUpdateHeight();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { data, show } = nextProps;
-    this.setState({ data, show });
-  }
-
   render() {
-    const { data, show } = this.state;
+    const {
+      data,
+      show,
+      className,
+    } = this.props;
 
     return (
-      <div className={this.props.className}>
+      <div className={className}>
         {data && show && data.map(item => (
           <TopiCard
             className="profile"
