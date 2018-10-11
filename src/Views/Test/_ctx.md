@@ -1,34 +1,4 @@
-export default `---
-
-\`http://cnodejs.org/?tab=a\` http://cnodejs.org/?tab=a
-
-\`http://cnodejs.org/topic\` http://cnodejs.org/topic
-
-\`http://cnodejs.org/topic/\` http://cnodejs.org/topic/
-
-\`http://cnodejs.org/api\` http://cnodejs.org/api
-
-\`https://cnodejs.org/api\` https://cnodejs.org/api
-
-\`[cnodejs-api](https://cnodejs.org/api)\` [cnodejs-api](https://cnodejs.org/api)
-
----
-
-\`cnodejs.org\` cnodejs.org
-
-\`http://cnodejs.org\` http://cnodejs.org
-
-\`http://cnodejs.org/\` http://cnodejs.org/
-
-\`https://cnodejs.org/?tab=good\` https://cnodejs.org/?tab=good
-
-\`http://cnodejs.org/topic/a\` http://cnodejs.org/topic/a
-
-\`https://cnodejs.org/user/a\` https://cnodejs.org/user/a
-
-
-![cnodejs_logo_light](https://static2.cnodejs.org/public/images/cnodejs.svg "CNode")
-
+https://markdown-it.github.io/
 ---
 __Advertisement :)__
 
@@ -96,7 +66,7 @@ _This is italic text_
 
 Unordered
 
-+ Create a list by starting a line with \`+\`, \`-\`, or \`*\`
++ Create a list by starting a line with `+`, `-`, or `*`
 + Sub-lists are made by indenting 2 spaces:
   - Marker character change forces new list start:
     * Ac tristique libero volutpat at
@@ -112,7 +82,7 @@ Ordered
 
 
 1. You can use sequential numbers...
-1. ...or keep all the numbers as \`1.\`
+1. ...or keep all the numbers as `1.`
 
 Start numbering with offset:
 
@@ -122,7 +92,7 @@ Start numbering with offset:
 
 ## Code
 
-Inline \`code\`
+Inline `code`
 
 Indented code
 
@@ -134,19 +104,19 @@ Indented code
 
 Block code "fences"
 
-\`\`\`
+```
 Sample text here...
-\`\`\`
+```
 
 Syntax highlighting
 
-\`\`\` js
+``` js
 var foo = function (bar) {
   return bar++;
 };
 
 console.log(foo(5));
-\`\`\`
+```
 
 ## Tables
 
@@ -190,7 +160,7 @@ With a reference later in the document defining the URL location:
 
 ## Plugins
 
-The killer feature of \`markdown-it\` is very effective support of
+The killer feature of `markdown-it` is very effective support of
 [syntax plugins](https://www.npmjs.org/browse/keyword/markdown-it-plugin).
 
 
@@ -209,12 +179,12 @@ see [how to change output](https://github.com/markdown-it/markdown-it-emoji#chan
 - H~2~O
 
 
-### [\\<ins>](https://github.com/markdown-it/markdown-it-ins)
+### [\<ins>](https://github.com/markdown-it/markdown-it-ins)
 
 ++Inserted text++
 
 
-### [\\<mark>](https://github.com/markdown-it/markdown-it-mark)
+### [\<mark>](https://github.com/markdown-it/markdown-it-mark)
 
 ==Marked text==
 
@@ -274,4 +244,3 @@ It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
 ::: warning
 *here be dragons*
 :::
-`;
