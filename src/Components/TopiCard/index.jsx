@@ -111,7 +111,7 @@ class TopiCard extends React.Component {
                     </IconButton>
                   </Grid>
                 }
-                <Typography variant="headline" component="h4">
+                <Typography variant="h5">
                   <Link to={`/topic/${item.id}`}>{item.title}</Link>
                 </Typography>
                 {!simple &&
@@ -177,7 +177,16 @@ class TopiCard extends React.Component {
             unmountOnExit={isWidthUp('sm', width)}
           >
             <CardContent className="context">
-              <Typography variant="body2" component="p">
+            {/**
+             * https://material-ui.com/style/typography/#migration-to-typography-v2
+             * ----------------------------------
+             * old             =>  new
+             * body2           => body1
+             * body1 (default) => body2 (default)
+             * ----------------------------------
+             * current use old variant body2
+             */}
+              <Typography variant="body2">
                 {removeHtmlTags(item.content)}
               </Typography>
             </CardContent>

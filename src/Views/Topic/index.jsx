@@ -141,7 +141,7 @@ class Topic extends React.Component {
           {data &&
             <div id="topic" className="wrapper">
               <div className="topic-main">
-                <Typography variant="headline" component="h4" className="title">
+                <Typography variant="h5" className="title">
                   {data.title}
                 </Typography>
                 <div className="attr">
