@@ -1,54 +1,42 @@
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get as getData } from '../../api';
+import { get as getData } from '../../fetch';
 
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
+import AtIcon from '@material-ui/icons/AlternateEmail';
+import ReplyIcon from '@material-ui/icons/Textsms';
+import MarkIcon from '@material-ui/icons/Done';
+import MarkAllIcon from '@material-ui/icons/DoneAll';
 
 import Layout from '../../Layout';
 import MessageCards from './MessageCards';
 import './message.styl';
-
-const __testData__ = {
-  has_read_messages: [],
-  hasnot_read_messages: [
-    {
-      id: 'id',
-      type: 'at',
-      has_read: false,
-      author: {
-        loginname: 'loginname',
-        avatar_url: 'avatar_url',
-      },
-      topic: {
-        id: 'topic',
-        title: 'title',
-        last_reply_at: '2018-10-05T10:00:00.000Z',
-      },
-      reply: {
-        id: 'reply',
-        content: 'content',
-        ups: [ ],
-        create_at: '2018-10-05T10:00:00.000Z',
-      },
-    },
-  ],
-};
 
 class Message extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      value: 'unRead',
+      items: [],
       count: undefined,
       unRead: [],
       hasRead: [],
     };
   }
 
-  fetchUnreadCount = async () => {
-    const { isAuthed, accesstoken } = this.props;
+  handleChange = (event, value) => {
+    this.setState(state => ({
+      value,
+      items: state[value],
+    }));
+  };
 
-    if (!isAuthed) { return; }
+  fetchUnreadCount = async () => {
+    const { accesstoken } = this.props;
 
     const params = {
       url: '/message/count',
@@ -63,9 +51,7 @@ class Message extends React.Component {
   };
 
   fetchMessages = async () => {
-    const { isAuthed, accesstoken } = this.props;
-
-    if (!isAuthed) { return; }
+    const { accesstoken } = this.props;
 
     const params = {
       url: '/messages',
@@ -77,13 +63,19 @@ class Message extends React.Component {
 
     const { status, data } = await getData(params);
 
-    console.log(data);
-
     if (status) {
-      const unRead = __testData__.hasnot_read_messages;
-      const hasRead = __testData__.has_read_messages;
+      const {
+        hasnot_read_messages: unRead,
+        has_read_messages: hasRead,
+      } = data;
 
-      this.setState({ unRead, hasRead });
+      console.log({ unRead, hasRead });
+
+      this.setState({
+        items: unRead,
+        unRead,
+        hasRead,
+      });
     }
   };
 
@@ -104,14 +96,18 @@ class Message extends React.Component {
   }
 
   render() {
-    const { count, unRead, hasRead } = this.state;
+    const {
+      value,
+      items,
+      count,
+    } = this.state;
 
     return (
       <Layout>
         <div className="wrapper">
           <div style={{ marginTop: '50px' }}>
             {Number.isInteger(count) &&
-              <Typography component="p">
+              <Typography>
                 {count === 0 ? (
                   '没有未读消息'
                 ) : (
@@ -120,11 +116,13 @@ class Message extends React.Component {
               </Typography>
             }
 
-            <div className="unread">
-              <MessageCards messages={unRead} />
-            </div>
-            <div className="hasread">
-              <MessageCards messages={hasRead} />
+            <Tabs value={value} onChange={this.handleChange}>
+              <Tab value="unRead" label="未读消息" />
+              <Tab value="hasRead" label="已读消息" />
+            </Tabs>
+
+            <div className={value.toLowerCase()}>
+              <MessageCards messages={items} />
             </div>
           </div>
         </div>

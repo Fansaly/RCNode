@@ -12,6 +12,7 @@ import { MarkdownRender } from '../../Components/Markdown';
 const styles = theme => ({
   root: {
     ...theme.mixins.gutters(),
+    marginTop: theme.spacing.unit * 2,
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2,
   },
@@ -25,7 +26,7 @@ class MessageCards extends React.Component {
       <React.Fragment>
         {messages.map(data => (
           <Paper key={data.id} className={classes.root} elevation={1}>
-            <Typography variant="headline" component="h4">
+            <Typography variant="h5">
               {data.topic.title}
             </Typography>
             <MarkdownRender markdownString={data.reply.content} />
