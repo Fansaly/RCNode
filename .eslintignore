@@ -3,3 +3,6 @@
 
 # Build products
 build/
+
+# create-react-app
+src/serviceWorker.js

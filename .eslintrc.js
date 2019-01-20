@@ -68,7 +68,6 @@ module.exports = {
     'guard-for-in': ERROR,
     'no-caller': ERROR,
     'no-else-return': ERROR,
-    'no-alert': ERROR,
 
     'comma-spacing': [ERROR, {
       'before': false,
@@ -111,8 +110,10 @@ module.exports = {
       'eventHandlerPropPrefix': 'on',
     }],
     'react/no-danger': WARN,
+    'react/jsx-no-target-blank': OFF,
 
     'jsx-a11y/no-autofocus': OFF,
+    'jsx-a11y/anchor-is-valid': OFF,
   },
   overrides: [
     {
