@@ -8,9 +8,10 @@ class TopicList extends React.Component {
     const { items, className } = this.props;
 
     return (
-      <div className={classNames('topic-list-container', {
-        [className]: className,
-      })}>
+      <div className={classNames(
+        'topic-list-container',
+        className,
+      )}>
         {items.map((item, index) => (
           <div className="topic-list" key={index}>
             {item.map(data => (

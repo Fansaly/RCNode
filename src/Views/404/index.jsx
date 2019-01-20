@@ -72,19 +72,22 @@ class NotFound extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div className={classNames('flex', {
-        [classes.main]: classes.main,
-        [classes.center]: classes.center,
-      })}>
-        <div className={classNames('flex', {
-          [classes.wrapper]: classes.wrapper,
-          [classes.center]: classes.center,
-        })}>
+      <div className={classNames(
+        'flex',
+        classes.main,
+        classes.center,
+      )}>
+        <div className={classNames(
+          'flex',
+          classes.wrapper,
+          classes.center,
+        )}>
           <h1 className={classes.h1}>404</h1>
-          <p className={classNames('flex', {
-            [classes.p]: classes.p,
-            [classes.center]: classes.center,
-          })}>
+          <p className={classNames(
+            'flex',
+            classes.p,
+            classes.center,
+          )}>
             <MdOutletIcon className={classes.icon} />
             <span>Page not Found</span>
           </p>

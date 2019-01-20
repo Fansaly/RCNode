@@ -103,8 +103,7 @@ class Header extends React.Component {
     return (
       <React.Fragment>
         <div className={classes.toolbar} />
-        <div className={classNames({
-          [classes.navPlaceholder]: classes.navPlaceholder,
+        <div className={classNames(classes.navPlaceholder, {
           [classes.navHidden]: !isWidthUp('md', width) || navHidden || drawerOpen,
         })} />
         <AppBar id="header" position="fixed">
@@ -142,10 +141,10 @@ class Header extends React.Component {
               keepMounted: true,
             }}
           >
-            <div className={classNames({
-              [classes.button]: classes.button,
-              [classes.toolbar]: classes.toolbar,
-            })}>
+            <div className={classNames(
+              classes.button,
+              classes.toolbar,
+            )}>
               <IconButton onClick={this.handleNavToggle}>
                 <ChevronLeftIcon />
               </IconButton>

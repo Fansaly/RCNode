@@ -69,8 +69,7 @@ class TopiCard extends React.Component {
     const { expanded } = this.state;
 
     return (
-      <Card className={classNames('topicard', {
-        [className]: className,
+      <Card className={classNames('topicard', className, {
         'expanded': !simple && expanded,
       })}>
         <Grid

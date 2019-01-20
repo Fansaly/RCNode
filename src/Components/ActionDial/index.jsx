@@ -213,13 +213,6 @@ class ActionDial extends React.Component {
       expanded,
     } = this.state;
 
-    const speedDialClassName = classNames(
-      classes.action,
-      !isWidthUp('md', width) && notificationOpen
-        ? classes.fabMoveUp
-        : classes.fabMoveDown,
-    );
-
     return (isAuthed &&
       <AppBar
         color="default"
@@ -242,7 +235,10 @@ class ActionDial extends React.Component {
           ) : (typeof topicData === 'object' &&
             <SpeedDial
               ariaLabel="SpeedDial"
-              className={speedDialClassName}
+              className={classNames(classes.action, {
+                [classes.fabMoveUp]: !isWidthUp('md', width) && notificationOpen,
+                [classes.fabMoveDown]: !isWidthUp('md', width) && !notificationOpen,
+              })}
               color="secondary"
               hidden={!visible}
               open={expanded}

@@ -38,7 +38,7 @@ class CustomAvatar extends React.Component {
         aria-label="Recipe"
         className={classNames(
           classes.avatar,
-          [className]: className
+          className,
         )}
       >
         {url ? (
