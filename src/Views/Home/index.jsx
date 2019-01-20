@@ -70,7 +70,7 @@ class Home extends React.Component {
     const threshold = 20;
     const windowHeight = window.innerHeight;
     const documentHeight = document.body.offsetHeight;
-    const scrollHeight = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollTop || document.body.scrollTop;
 
     if (documentHeight - (windowHeight + scrollHeight) <= threshold) {
       this.fetchData();
