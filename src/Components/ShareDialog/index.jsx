@@ -53,6 +53,10 @@ class ShareDialog extends React.Component {
     return `分享链接${post}：`;
   };
 
+  componentWillUnmount() {
+    this.handleClose();
+  }
+
   render() {
     const { classes, url, open } = this.props;
 
