@@ -1,25 +1,25 @@
 A third-party WEB APP for CNode of Chinese professional community of Node.js
 
-> This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+> This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app) `v2.1.3`
 
 ### Browser Support
-![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png) |
---- | --- | --- | --- | --- | --- |
-Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | 11 ✓ |
+| ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) |
+| --- | --- | --- | --- | --- |
+| Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ |
 
 - Foundation function
   - [x] CommonMark
   - [x] Markdown `checkbox` `tabel` `emoji`
-  - [x] Markdown link target attr and `URL` replacement. e.g. `https://cnodejs.org` to `http://localhost:3000`
   - [x] Markdown syntax highlighting (Partially supported, view in [.babelrc](.babelrc) `prismjs` field.)
+  - [x] Markdown link open in new tab and replace `http(s)://cnodejs.org` with `http(s)://current.domain`
+  - [x] Markdown image zoom
   - [x] Topic preview
-  - [x] Topic `create` `update` `reply`
+  - [x] Topic `view` `create` `update` `reply`
   - [x] Topic collect and reply +1
   - [x] Message remind
-  - [x] adapt mobile device (great performance)
+  - [x] Mobile device supported (great performance)
 
 - Todos
-  - [ ] Markdown image zoom
   - [ ] meta title
   - [ ] View - Message
   - [ ] page rerender when had invalid data of user or topic
@@ -32,7 +32,6 @@ Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | 11 ✓ |
 
 - Known issues
   - [ ] `@` `email` autolink in Markup
-  - [ ] Edge browser scrolling failed to load topic
   - [ ] block router or page refresh when open editor
 
 - Other
