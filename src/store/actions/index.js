@@ -26,6 +26,15 @@ export const closeShare = () => ({
   type: 'CLOSE_SHARE',
 });
 
+export const openZoom = data => ({
+  type: 'OPEN_ZOOM',
+  data,
+});
+
+export const closeZoom = () => ({
+  type: 'CLOSE_ZOOM',
+});
+
 export const openNotification = data => ({
   type: 'OPEN_NOTIFICATION',
   data,

@@ -18,6 +18,7 @@ import TagIcon from '@material-ui/icons/LocalOffer';
 import Layout from '../../Layout';
 import TopicReply from './TopicReply';
 import { MarkdownRender } from '../../Components/Markdown';
+import ImageZoom from '../../Components/ImageZoom';
 import Progress from '../../Components/Progress';
 
 import Editor from '../../Components/Editor';
@@ -200,6 +201,7 @@ class Topic extends React.Component {
 
         <ActionDial topicData={topicData} />
         <Editor />
+        <ImageZoom />
         <ShareDialog />
         <Notification />
       </Layout>
