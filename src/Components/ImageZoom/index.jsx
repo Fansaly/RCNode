@@ -575,8 +575,8 @@ const mapStateToProps = ({ zoom }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  closeZoom: data => {
-    dispatch(closeZoom(data));
+  closeZoom: () => {
+    dispatch(closeZoom());
   },
   openShare: url => {
     dispatch(openShare(url));
