@@ -13,9 +13,9 @@ A third-party WEB APP for CNode of Chinese professional community of Node.js
   - [x] Markdown syntax highlighting (Partially supported, view in [.babelrc](.babelrc) `prismjs` field.)
   - [x] Markdown link open in new tab and replace `http(s)://cnodejs.org` with `http(s)://current.domain`
   - [x] Markdown image zoom
-  - [x] Topic preview
   - [x] Topic `view` `create` `update` `reply`
   - [x] Topic collect and reply +1
+  - [x] Topic preview
   - [x] Message remind
   - [x] Mobile device supported (great performance)
 
@@ -31,7 +31,6 @@ A third-party WEB APP for CNode of Chinese professional community of Node.js
   - [ ] Material-UI Snackbar => notistack `maybe`
 
 - Known issues
-  - [ ] `@` `email` autolink in Markup
   - [ ] block router or page refresh when open editor
 
 - Other
