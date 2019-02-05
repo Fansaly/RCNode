@@ -58,10 +58,4 @@ md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
   return self.renderToken(tokens, idx, options);
 };
 
-md.renderer.rules.image = (tokens, idx, options, env, self) => {
-  tokens[idx].attrPush(['class', 'image-zoom']);
-
-  return self.renderToken(tokens, idx, options);
-};
-
 export default md;
