@@ -35,6 +35,23 @@ const md = new MarkdownIt({
 .use(footnote)
 .use(container);
 
+const atToHtml = ({url, text, prevSpaces = '', nextSpaces = ''}) => {
+  return `${prevSpaces}<a target="_blank" href="/user/${url}">${text}</a>${nextSpaces}`;
+};
+
+md.renderer.rules.text = (tokens, idx, options, env, self) => {
+  let content = tokens[idx].content;
+
+  if (Boolean(content)) {
+    content = content
+      .replace(/^(@([\w\-_]+))$/, atToHtml({url: '$2', text: '$1'}))
+      .replace(/(\s+)(@([\w\-_]+))/g, atToHtml({url: '$3', text: '$2', prevSpaces: '$1'}))
+      .replace(/(@([\w\-_]+))(\s+)/g, atToHtml({url: '$2', text: '$1', nextSpaces: '$3'}));
+  }
+
+  return content;
+};
+
 md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
   tokens[idx].attrPush(['target', '_blank']);
 

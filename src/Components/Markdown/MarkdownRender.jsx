@@ -3,7 +3,6 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { openZoom } from '../../store/actions';
-import { at } from '../../common';
 
 import 'github-markdown-css/github-markdown.css';
 import mdRender from './markdown-it';
@@ -21,10 +20,7 @@ class MarkdownRender extends React.Component {
   }
 
   render() {
-    let { markdownString } = this.props;
-
-    markdownString = at(markdownString);
-
+    const { markdownString } = this.props;
     const markupHTML = {
       __html: mdRender.render(markdownString),
     };
