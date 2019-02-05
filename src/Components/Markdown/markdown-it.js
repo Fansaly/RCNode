@@ -36,7 +36,8 @@ const md = new MarkdownIt({
 .use(container);
 
 const atToHtml = ({url, text, prevSpaces = '', nextSpaces = ''}) => {
-  return `${prevSpaces}<a target="_blank" href="/user/${url}">${text}</a>${nextSpaces}`;
+  const href = `${process.env.PUBLIC_URL}/user/${url}`;
+  return `${prevSpaces}<a target="_blank" href="${href}">${text}</a>${nextSpaces}`;
 };
 
 md.renderer.rules.text = (tokens, idx, options, env, self) => {
