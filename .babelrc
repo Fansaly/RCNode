@@ -11,6 +11,8 @@
         "markdown",
         "javascript",
         "typescript",
+        "jsx",
+        "tsx",
         "python",
         "json",
         "yaml",
