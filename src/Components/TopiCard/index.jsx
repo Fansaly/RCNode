@@ -4,7 +4,10 @@ import classNames from 'classnames';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { removeHtmlTags } from '../../common';
+import {
+  randomNumber,
+  removeHtmlTags,
+} from '../../common';
 
 import { withStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
@@ -50,6 +53,11 @@ class TopiCard extends React.Component {
       expanded: cardPreview,
     };
   }
+
+  substrContent = content => {
+    const len = randomNumber({ min: 200, max: 400 });
+    return removeHtmlTags(content).substr(0, len);
+  };
 
   handleExpandClick = () => {
     this.setState(state => ({
@@ -186,7 +194,7 @@ class TopiCard extends React.Component {
              * current use old variant body2
              */}
               <Typography variant="body2">
-                {removeHtmlTags(item.content)}
+                {this.substrContent(item.content)}
               </Typography>
             </CardContent>
           </Collapse>

@@ -1,4 +1,5 @@
 import validateUUID from './validateUUID';
+import { randomNumber } from './randomNumber';
 
 import { navTabsArray, navTabsObject } from './navTabs';
 import { navIsActive } from './navIsActive';
@@ -18,6 +19,7 @@ import {
 
 export {
   validateUUID,
+  randomNumber,
   navTabsArray,
   navTabsObject,
   navIsActive,
