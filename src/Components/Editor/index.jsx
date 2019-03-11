@@ -212,20 +212,20 @@ class Editor extends React.Component {
       status: 'working',
       disabled: true,
     }, async () => {
-      const { status, msg, data } = await post({ url, params });
+      const { success, err_msg, data } = await post({ url, params });
 
       this.setState({
-        status: status ? 'success' : 'error',
+        status: success ? 'success' : 'error',
         disabled: false,
       }, () => {
-        status && this.handleClose({
+        success && this.handleClose({
           action,
           request: { ...params },
           response: { ...data },
         });
       });
 
-      const message = status
+      const message = success
         ? action === 'create'
           ? '发布成功 ^_^'
           : action === 'update'
@@ -235,8 +235,8 @@ class Editor extends React.Component {
               : '无效操作'
         : {
           status: 'error',
-          message: msg
-            ? msg
+          message: err_msg
+            ? err_msg
             : action === 'create'
               ? '发布失败 :('
               : action === 'update'

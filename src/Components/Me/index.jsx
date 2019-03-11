@@ -80,9 +80,9 @@ class Me extends React.Component {
       params: { accesstoken },
     };
 
-    const { status, data } = await getData(params);
+    const { success, data } = await getData(params);
 
-    status && this.setState({ count: data });
+    success && this.setState({ count: data });
 
     if (time > 0) {
       this.timerMessage = setTimeout(() => {

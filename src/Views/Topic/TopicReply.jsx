@@ -99,16 +99,16 @@ class TopicReply extends React.Component {
     if (uname === signedUname) {
       this.props.openNotification('不能 👍 自己的哟~');
     } else {
-      const { status, msg } = await POST(params);
+      const { success, err_msg } = await POST(params);
 
-      if (status) {
+      if (success) {
         this.setState({
           isUped: !isUped,
           ups: isUped ? (--ups) : (++ups),
         });
-      } else {
+      } else if (err_msg) {
         this.props.openNotification({
-          message: msg,
+          message: err_msg,
           status: 'error',
         });
       }

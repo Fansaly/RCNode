@@ -94,9 +94,9 @@ class User extends React.Component {
       params: { mdrender },
     };
 
-    const { status, data } = await getData(params);
+    const { success, data } = await getData(params);
 
-    if (status) {
+    if (success) {
       this.setState(state => ({
         data: {
           ...state.data,
@@ -118,9 +118,9 @@ class User extends React.Component {
       params: { mdrender },
     };
 
-    const { status, data } = await getData(params);
+    const { success, data } = await getData(params);
 
-    if (status) {
+    if (success) {
       this.setState(state => ({
         data: {
           ...state.data,

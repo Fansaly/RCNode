@@ -13,13 +13,13 @@ const get = ({ url, params = {} }) => {
       .get(url, { params })
       .then(({ data }) => {
         resolve({
-          status: true,
+          success: true,
           ...data,
         });
       }, (err) => {
         resolve({
-          status: false,
-          msg: `failed. target => ${url}`,
+          success: false,
+          err_msg: `failed. target => ${url}`,
         });
       });
   });
@@ -35,18 +35,18 @@ const post = ({ url, params = {} }) => {
       .post(url, { ...params })
       .then(({ data }) => {
         resolve({
-          status: true,
+          success: true,
           data,
         });
       }, ({ config, request, response }) => {
         const { status, data } = response;
         const result = {
-          status: false,
-          msg: status === 401 || status === 403
-                ? data.error_msg
-                : process.env.NODE_ENV === 'development'
-                  ? `${status}. URL ${url}`
-                  : '',
+          success: false,
+          err_msg: status === 401 || status === 403
+                   ? data.error_msg
+                   : process.env.NODE_ENV === 'development'
+                     ? `${status}. URL ${url}`
+                     : '',
         };
         resolve(result);
       });

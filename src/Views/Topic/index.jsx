@@ -63,9 +63,9 @@ class Topic extends React.Component {
       params: { mdrender, accesstoken },
     };
 
-    const { status, data } = await getData(params);
+    const { success, data } = await getData(params);
 
-    if (status) {
+    if (success) {
       const {
         author: { loginname: uname },
         is_collect,

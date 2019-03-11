@@ -109,15 +109,15 @@ class ActionDial extends React.Component {
 
     this.handleClose();
 
-    const { status, msg } = await post(params);
-    const message = status
+    const { success, err_msg } = await post(params);
+    const message = success
                     ? favorite ? '取消收藏' : '已收藏'
                     : {
-                      message: msg || '操作失败',
+                      message: err_msg || '操作失败',
                       status: 'error',
                     };
 
-    status && this.setState({
+    success && this.setState({
       favorite: !favorite,
     });
 

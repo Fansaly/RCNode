@@ -67,9 +67,9 @@ class Signin extends React.Component {
       params: { accesstoken },
     };
 
-    const { status, data, msg } = await validateUser(params);
+    const { success, data, err_msg } = await validateUser(params);
 
-    if (status) {
+    if (success) {
       const {
         id: uid,
         loginname: uname,
@@ -93,8 +93,8 @@ class Signin extends React.Component {
       });
     } else {
       this.setState({ status: 'error' });
-      msg && this.props.openNotification({
-        message: msg,
+      err_msg && this.props.openNotification({
+        message: err_msg,
         status: 'error',
       });
     }

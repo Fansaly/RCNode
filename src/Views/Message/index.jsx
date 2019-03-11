@@ -43,9 +43,9 @@ class Message extends React.Component {
       params: { accesstoken },
     };
 
-    const { status, data } = await getData(params);
+    const { success, data } = await getData(params);
 
-    if (status) {
+    if (success) {
       this.setState({ count: data.data });
     }
   };
@@ -61,9 +61,9 @@ class Message extends React.Component {
       },
     };
 
-    const { status, data } = await getData(params);
+    const { success, data } = await getData(params);
 
-    if (status) {
+    if (success) {
       const {
         hasnot_read_messages: unRead,
         has_read_messages: hasRead,
