@@ -19,7 +19,7 @@ const md = new MarkdownIt({
     lang = extensions[lang] || lang;
 
     if (!Object.keys(Prism.languages).includes(lang)) {
-      if (process.env.NODE_ENV === 'development') {
+      if (Boolean(lang) && process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line
         console.warn(`\`${lang}' code is highlighted with \`markup'.`);
       }

@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -20,7 +21,8 @@ class MarkdownRender extends React.Component {
   }
 
   render() {
-    const { markdownString } = this.props;
+    const { className, markdownString } = this.props;
+
     const markupHTML = {
       __html: mdRender.render(markdownString),
     };
@@ -28,7 +30,7 @@ class MarkdownRender extends React.Component {
     return (
       <div
         ref={ref => this.md = ref}
-        className="markdown-body"
+        className={classNames('markdown-body', className)}
         // eslint-disable-next-line
         dangerouslySetInnerHTML={markupHTML}
       />
