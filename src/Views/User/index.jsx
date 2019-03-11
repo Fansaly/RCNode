@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { getBingImage, get as getData } from '../../fetch';
 
@@ -7,6 +8,8 @@ import { withStyles } from '@material-ui/core';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 
 import SwipeableViews from 'react-swipeable-views';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Fade from '@material-ui/core/Fade';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Hidden from '@material-ui/core/Hidden';
@@ -24,6 +27,19 @@ import { GithubIcon } from '../../Components/Icons';
 import './user.styl';
 
 const styles = theme => ({
+  progress: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 3,
+  },
+  colorPrimary: {
+    backgroundColor: 'rgba(165, 211, 247, .8)',
+  },
+  barColorPrimary: {
+    backgroundColor: '#2698f3',
+  },
   container: {
     marginTop: '30px !important',
     [theme.breakpoints.down('xs')]: {
@@ -39,15 +55,15 @@ class User extends React.Component {
     const { uname } = props.match.params;
 
     this.state = {
-      status: 'loading',
-      uname,
-      mdrender: false,
       ...this.initialData,
-      background: {},
+      uname,
+      image: undefined,
     };
   }
 
   initialData = {
+    status: 'loading',
+    mdrender: false,
     data: {},
     index: 0,
     topicsTab: [{
@@ -63,6 +79,7 @@ class User extends React.Component {
       tabname: '话题收藏',
       show: false,
     }],
+    completed: false,
   };
 
   handleChange = (event, index) => {
@@ -78,9 +95,25 @@ class User extends React.Component {
     this.handleChange(null, index);
   };
 
+  bingImageLoaded = () => {
+    this.setState({
+      completed: true,
+    });
+  };
+
+  handleBingImage = async () => {
+    await this.fetchBingImage();
+
+    if (this.bingImage.complete) {
+      this.bingImageLoaded();
+    } else {
+      this.bingImage.addEventListener('load', this.bingImageLoaded);
+    }
+  };
+
   fetchBingImage = async () => {
-    const background = await getBingImage();
-    this.setState({ background });
+    const image = await getBingImage();
+    this.setState({ image });
   };
 
   fetchUserInfoTopics = async () => {
@@ -132,7 +165,7 @@ class User extends React.Component {
   };
 
   componentDidMount() {
-    this.fetchBingImage();
+    this.handleBingImage();
     this.fetchUserInfoTopics();
     this.fetchCollectedTopics();
   }
@@ -141,13 +174,19 @@ class User extends React.Component {
     const { uname } = nextProps.match.params;
 
     this.setState({
-      uname,
       ...this.initialData,
+      uname,
     }, () => {
-      this.fetchBingImage();
+      this.handleBingImage();
       this.fetchUserInfoTopics();
       this.fetchCollectedTopics();
     });
+  }
+
+  componentWillUnmount() {
+    if (this.bingImage) {
+      this.bingImage.removeEventListener('load', this.bingImageLoaded);
+    }
   }
 
   render() {
@@ -161,12 +200,9 @@ class User extends React.Component {
       uname,
       data,
       topicsTab,
+      completed,
+      image,
     } = this.state;
-
-    const {
-      base,
-      images,
-    } = this.state.background;
 
     return (
       <Layout>
@@ -176,18 +212,28 @@ class User extends React.Component {
         />
 
         <div className="cover blur">
-          {images && (({ url, copyright }) => (
-            <div className="bing-image">
+          <div className={classNames('bing-image', {
+            'completed': completed,
+          })}>
+            {image &&
               <img
-                className="complete"
-                ref={this.imageRef}
-                src={`${base}${url}`}
-                aria-hidden
+                ref={ref => this.bingImage = ref}
+                src={image.url}
                 alt="background image"
-                title={copyright}
+                title={image.copyright}
+                aria-hidden
               />
-            </div>
-          ))(images[0])}
+            }
+          </div>
+          <Fade in={!completed}>
+            <LinearProgress
+              className={classes.progress}
+              classes={{
+                colorPrimary: classes.colorPrimary,
+                barColorPrimary: classes.barColorPrimary,
+              }}
+            />
+          </Fade>
 
           {data.loginname &&
             <div className="user wrapper">

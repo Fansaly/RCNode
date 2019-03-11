@@ -6,16 +6,14 @@ import image from '../static/images/houses_beautiful_beach_photo_wallpaper.jpg';
  * @param {string} url proxy address
  */
 const getBingImage = url => {
-  url = url || process.env.NODE_ENV === 'production'
-                ? 'https://bing.fansaly.com'
-                : 'http://localhost:3001';
+  url = url ||
+        process.env.NODE_ENV === 'production'
+          ? 'https://bing.fansaly.com'
+          : 'http://localhost:3001';
 
   const defaultData = {
-    base: '',
-    images: [{
-      copyright: '默认背景',
-      url: image,
-    }],
+    copyright: '默认背景',
+    url: image,
   };
 
   return new Promise((resolve, reject) => {
@@ -24,6 +22,7 @@ const getBingImage = url => {
       .then(({ data }) => {
         resolve(data);
       }, (err) => {
+        // eslint-disable-next-line
         console.warn('Get Bing\'s image failed.');
 
         resolve(defaultData);
