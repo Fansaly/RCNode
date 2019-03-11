@@ -37,7 +37,7 @@ const styles = theme => ({
   },
 });
 
-class Editor extends React.Component {
+class Preview extends React.Component {
   handleClose = () => {
     this.props.onClose();
   };
@@ -75,7 +75,7 @@ class Editor extends React.Component {
   }
 }
 
-Editor.propTypes = {
+Preview.propTypes = {
   classes: PropTypes.object.isRequired,
   width: PropTypes.string.isRequired,
 };
@@ -83,4 +83,4 @@ Editor.propTypes = {
 export default compose(
   withStyles(styles),
   withWidth(),
-)(Editor);
+)(Preview);
