@@ -1,15 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import {
   navTabsArray as navTabs,
   navIsActive,
 } from '../../common';
-import './nav.styl';
 
-class Nav extends React.Component {
-  navIsActive = (path) => (match, location) => {
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+
+import './normal-nav.styl';
+
+class NormalNav extends React.Component {
+  navIsActive = path => (match, location) => {
     return navIsActive(path, location);
   };
 
@@ -21,7 +23,7 @@ class Nav extends React.Component {
         alignItems="center"
         className="type-content"
       >
-        {navTabs.map(({path, name}) => (
+        {navTabs.map(({ path, name }) => (
           <NavLink
             to={path}
             key={path}
@@ -38,4 +40,4 @@ class Nav extends React.Component {
   }
 }
 
-export default Nav;
+export default NormalNav;

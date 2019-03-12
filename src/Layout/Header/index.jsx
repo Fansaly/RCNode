@@ -7,19 +7,15 @@ import { withRouter, Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 
+import Hidden from '@material-ui/core/Hidden';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
-import Divider from '@material-ui/core/Divider';
 
 import Me from '../../Components/Me';
-import Nav from '../Nav';
-import DrawerNavList from './DrawerNavList';
+import NormalNav from '../Nav/NormalNav';
+import DrawerNav from '../Nav/DrawerNav';
 
 import { animateScroll } from 'react-scroll';
 import LogoSvg from '../../static/cnodejs/cnodejs_light.svg';
@@ -40,16 +36,6 @@ const styles = theme => ({
   },
   navHidden: {
     height: 0,
-  },
-  drawerPaper: {
-    width: 200,
-    backgroundColor: 'rgba(255, 255, 255, 0.96)',
-  },
-  button: {
-    paddingLeft: 3,
-    [theme.breakpoints.up('sm')]: {
-      paddingLeft: 12,
-    },
   },
 });
 
@@ -125,34 +111,15 @@ class Header extends React.Component {
             <Me />
           </Toolbar>
           <Hidden smDown implementation="css">
-            {!navHidden && <Nav />}
+            {!navHidden && <NormalNav />}
           </Hidden>
         </AppBar>
 
         <Hidden mdUp>
-          <Drawer
+          <DrawerNav
             open={drawerOpen}
-            variant="temporary"
             onClose={this.handleNavToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true,
-            }}
-          >
-            <div className={classNames(
-              classes.button,
-              classes.toolbar,
-            )}>
-              <IconButton onClick={this.handleNavToggle}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </div>
-            <Divider />
-            <DrawerNavList />
-            <Divider />
-          </Drawer>
+          />
         </Hidden>
       </React.Fragment>
     );
