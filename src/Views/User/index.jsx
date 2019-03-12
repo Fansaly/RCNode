@@ -40,11 +40,14 @@ const styles = theme => ({
   barColorPrimary: {
     backgroundColor: '#2698f3',
   },
-  container: {
-    marginTop: '30px !important',
+  spacings: {
+    marginTop: 30,
     [theme.breakpoints.down('xs')]: {
-      marginTop: '0 !important',
+      marginTop: 0,
     },
+  },
+  tips: {
+    marginTop: 40,
   },
 });
 
@@ -127,7 +130,7 @@ class User extends React.Component {
       params: { mdrender },
     };
 
-    const { success, data } = await getData(params);
+    const { success, data, err_msg } = await getData(params);
 
     if (success) {
       this.setState(state => ({
@@ -137,6 +140,11 @@ class User extends React.Component {
         },
         status: 'success',
       }));
+    } else {
+      this.setState({
+        status: 'error',
+        err_msg,
+      });
     }
   };
 
@@ -159,7 +167,6 @@ class User extends React.Component {
           ...state.data,
           recent_collections: data,
         },
-        status: 'success',
       }));
     }
   };
@@ -201,6 +208,7 @@ class User extends React.Component {
       data,
       topicsTab,
       completed,
+      err_msg,
       image,
     } = this.state;
 
@@ -235,7 +243,7 @@ class User extends React.Component {
             />
           </Fade>
 
-          {data.loginname &&
+          {status === 'success' &&
             <div className="user wrapper">
               <Avatar id="avatar" aria-label="Recipe">
                 <img src={data.avatar_url} alt={data.loginname} />
@@ -300,22 +308,36 @@ class User extends React.Component {
           }
         </div>
 
-        <div id="container" className={classes.container}>
-          <div className="tab-list">
-            <div className="wrapper">
-              <Tabs
-                className="tabs"
-                value={this.state.index}
-                onChange={this.handleChange}
-                centered
-                fullWidth={!isWidthUp('md', width)}
-              >
-                {topicsTab.map(({ tabname }) => (
-                  <Tab className="tab" label={tabname} key={tabname} />
-                ))}
-              </Tabs>
-            </div>
+        <div className={classNames('tab-list', classes.spacings)}>
+          <div className="wrapper">
+            <Tabs
+              className="tabs"
+              value={this.state.index}
+              onChange={this.handleChange}
+              centered
+              fullWidth={!isWidthUp('md', width)}
+            >
+              {topicsTab.map(({ keyname, tabname }) => (
+                <Tab
+                  className="tab"
+                  label={tabname}
+                  key={tabname}
+                  disabled={!Boolean(data[keyname])}
+                />
+              ))}
+            </Tabs>
           </div>
+        </div>
+
+        <Fade in={status === 'error'}>
+          <div className={classNames('tips error', {
+            [classes.tips]: status === 'error',
+          })}>
+            {err_msg}
+          </div>
+        </Fade>
+
+        {status === 'success' &&
           <div className="recent wrapper">
             <SwipeableViews
               index={this.state.index}
@@ -334,7 +356,7 @@ class User extends React.Component {
               ))}
             </SwipeableViews>
           </div>
-        </div>
+        }
 
         <div className="status wrapper">
           <Progress className="mini" status={status} />

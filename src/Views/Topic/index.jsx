@@ -1,6 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import {
   navTabsObject as navTabs,
   getNewDataUpdate,
@@ -8,6 +12,9 @@ import {
 } from '../../common';
 import { get as getData } from '../../fetch';
 
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
+
+import Fade from '@material-ui/core/Fade';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import CreateIcon from '@material-ui/icons/Create';
@@ -63,7 +70,7 @@ class Topic extends React.Component {
       params: { mdrender, accesstoken },
     };
 
-    const { success, data } = await getData(params);
+    const { success, data, err_msg } = await getData(params);
 
     if (success) {
       const {
@@ -96,7 +103,10 @@ class Topic extends React.Component {
         }
       });
     } else {
-      this.setState({ status: 'error' });
+      this.setState({
+        status: 'error',
+        err_msg,
+      });
     }
   };
 
@@ -133,13 +143,32 @@ class Topic extends React.Component {
     const {
       data,
       status,
+      err_msg,
       topicData,
     } = this.state;
 
+    const { width } = this.props;
+
     return (
       <Layout>
+        <Helmet
+          title={status === 'success' ? data.title : 'RCNode'}
+          bodyAttributes={{
+            class: classNames('topic-view', {
+              'error-tips': status === 'error',
+              'zero-spacings': isWidthDown('xs', width),
+            }),
+          }}
+        />
+
         <div id="container">
-          {data &&
+          <Fade in={status === 'error'}>
+            <div className="wrapper tips error">
+              {err_msg}
+            </div>
+          </Fade>
+
+          {status === 'success' &&
             <div id="topic" className="wrapper">
               <div className="topic-main">
                 <Typography variant="h5" className="title">
@@ -179,7 +208,7 @@ class Topic extends React.Component {
                 </div>
               </div>
 
-              {!!data.replies.length &&
+              {Boolean(data.replies.length) &&
                 <div className="topic-replies">
                   {data.replies.map((item, index) => (
                     <TopicReply
@@ -209,11 +238,18 @@ class Topic extends React.Component {
   }
 }
 
+Topic.propTypes = {
+  width: PropTypes.string.isRequired,
+};
+
 const mapStateToProps = ({ auth, editor }) => ({
   ...auth,
   ...editor,
 });
 
-export default connect(
-  mapStateToProps,
+export default compose(
+  withWidth(),
+  connect(
+    mapStateToProps,
+  ),
 )(Topic);

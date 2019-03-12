@@ -16,11 +16,17 @@ const get = ({ url, params = {} }) => {
           success: true,
           ...data,
         });
-      }, (err) => {
-        resolve({
+      }, ({ config, request, response }) => {
+        const { status, data } = response;
+        const result = {
           success: false,
-          err_msg: `failed. target => ${url}`,
-        });
+          err_msg: status === 404
+                   ? data.error_msg
+                   : process.env.NODE_ENV === 'development'
+                     ? `${status}. URL ${url}`
+                     : '',
+        };
+        resolve(result);
       });
   });
 };
