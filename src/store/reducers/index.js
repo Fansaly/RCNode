@@ -1,17 +1,19 @@
 import { combineReducers } from 'redux';
 import auth from './auth';
-import zoom from './zoom';
-import share from './share';
+import message from './message';
 import editor from './editor';
+import share from './share';
+import zoom from './zoom';
 import notification from './notification';
 import settings from './settings';
 import colors from './colors';
 
 const rootReducer = combineReducers({
   auth,
-  zoom,
-  share,
+  message,
   editor,
+  share,
+  zoom,
   notification,
   settings,
   colors,

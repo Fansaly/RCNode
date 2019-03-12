@@ -4,7 +4,11 @@ import classNames from 'classnames';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { deleteAuth } from '../../store/actions';
+import {
+  deleteAuth,
+  updateMessage,
+  cleanMessage,
+} from '../../store/actions';
 import { get as getData } from '../../fetch';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -47,7 +51,6 @@ class Me extends React.Component {
 
     this.state = {
       open: false,
-      count: 0,
       time,
     };
   }
@@ -80,9 +83,9 @@ class Me extends React.Component {
       params: { accesstoken },
     };
 
-    const { success, data } = await getData(params);
+    const { success, data: count } = await getData(params);
 
-    success && this.setState({ count: data });
+    success && this.props.updateMessage(count);
 
     if (time > 0) {
       this.timerMessage = setTimeout(() => {
@@ -136,9 +139,7 @@ class Me extends React.Component {
 
     this.timerSignout = setTimeout(() => {
       this.props.deleteAuth();
-      this.setState({
-        count: 0,
-      });
+      this.props.cleanMessage();
     }, 330);
   };
 
@@ -147,14 +148,19 @@ class Me extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { time } = nextProps;
-    clearTimeout(this.timerMessage);
-    if (time > 0) {
-      this.setState({
-        time,
-      }, () => {
-        this.fetchUnreadCount();
-      });
+    const nextTime = nextProps.time;
+    const prevTime = this.state.time;
+
+    if (nextTime !== prevTime) {
+      clearTimeout(this.timerMessage);
+
+      if (nextTime > 0) {
+        this.setState({
+          time: nextTime,
+        }, () => {
+          this.fetchUnreadCount();
+        });
+      }
     }
   }
 
@@ -164,8 +170,13 @@ class Me extends React.Component {
   }
 
   render() {
-    const { classes, isAuthed, avatar } = this.props;
-    const { open, count } = this.state;
+    const {
+      classes,
+      isAuthed,
+      message,
+      avatar,
+    } = this.props;
+    const { open } = this.state;
 
     return (
       <Grid item className="flex">
@@ -184,7 +195,7 @@ class Me extends React.Component {
             aria-haspopup="true"
             onClick={this.handleToggle}
             className={classNames('me', {
-              'has-message': Boolean(count),
+              'has-message': Boolean(message.count),
             })}
           >
             <Avatar className="flex avatar">
@@ -217,9 +228,9 @@ class Me extends React.Component {
                         <MenuItem onClick={this.handleMessage}>
                           <ListItemIcon>
                             <Badge
-                              badgeContent={count}
+                              badgeContent={message.count}
                               className={classNames('badge', {
-                                [classes.hidden]: count <= 0,
+                                [classes.hidden]: message.count <= 0,
                               })}
                             >
                               <NotificationsIcon />
@@ -265,14 +276,21 @@ Me.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = ({ auth, settings }) => ({
+const mapStateToProps = ({ auth, message, settings }) => ({
   ...auth,
+  message,
   time: settings.time,
 });
 
 const mapDispatchToProps = dispatch => ({
   deleteAuth: () => {
     dispatch(deleteAuth());
+  },
+  updateMessage: count => {
+    dispatch(updateMessage(count));
+  },
+  cleanMessage: () => {
+    dispatch(cleanMessage());
   },
 });
 
