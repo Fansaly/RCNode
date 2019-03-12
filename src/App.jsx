@@ -6,7 +6,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import theme from './theme';
 
 import { Provider } from 'react-redux';
@@ -41,7 +41,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 class App extends React.Component {
   render() {
     return (
-      <MuiThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
         <Provider store={store}>
           <BrowserRouter basename={process.env.PUBLIC_URL}>
             <Switch>
@@ -56,7 +56,7 @@ class App extends React.Component {
             </Switch>
           </BrowserRouter>
         </Provider>
-      </MuiThemeProvider>
+      </ThemeProvider>
     );
   }
 }

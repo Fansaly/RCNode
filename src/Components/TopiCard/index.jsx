@@ -82,16 +82,14 @@ class TopiCard extends React.Component {
       })}>
         <Grid
           container
-          spacing={0}
-          alignItems={'center'}
+          alignItems="center"
           className="topicard-header-wrapper"
         >
           <Grid
             container
             className="topicard-header"
-            alignItems={'center'}
-            justify={'flex-start'}
-            spacing={0}
+            alignItems="center"
+            justify="flex-start"
           >
             <Avatar
               className="avatar"
@@ -102,9 +100,8 @@ class TopiCard extends React.Component {
             <Grid
               container
               className="topicard-title"
-              alignItems={'center'}
-              justify={'flex-start'}
-              spacing={0}
+              alignItems="center"
+              justify="flex-start"
             >
               <Grid item className="title">
                 {!simple &&
@@ -140,13 +137,11 @@ class TopiCard extends React.Component {
           </Grid>
           <Grid container
             className="state-wrapper"
-            alignItems={'center'}
-            spacing={0}
+            alignItems="center"
           >
             <Grid container
               className="state"
-              alignItems={'center'}
-              spacing={0}
+              alignItems="center"
             >
               <Grid item className="author">
                 <Link to={`/user/${item.author.loginname}`}>
@@ -184,16 +179,7 @@ class TopiCard extends React.Component {
             unmountOnExit={isWidthUp('sm', width)}
           >
             <CardContent className="context">
-            {/**
-             * https://material-ui.com/style/typography/#migration-to-typography-v2
-             * ----------------------------------
-             * old             =>  new
-             * body2           => body1
-             * body1 (default) => body2 (default)
-             * ----------------------------------
-             * current use old variant body2
-             */}
-              <Typography variant="body2">
+              <Typography>
                 {this.substrContent(item.content)}
               </Typography>
             </CardContent>

@@ -15,10 +15,11 @@ import { MarkdownRender } from '../../Components/Markdown';
 
 const styles = theme => ({
   title: {
-    paddingTop: 20,
-    paddingLeft: 36,
-    paddingRight: 36,
-    '& h2': {
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: 36,
+      paddingRight: 36,
+    },
+    '& h6': {
       position: 'relative',
       padding: '15px 0',
       borderBottom: '1px dashed rgba(0, 0, 0, 0.08)',
@@ -31,9 +32,11 @@ const styles = theme => ({
     transform: 'translateY(-50%)',
   },
   content: {
-    padding: 36,
-    paddingTop: 0,
-    paddingBottom: 42,
+    paddingBottom: 36,
+    [theme.breakpoints.up('sm')]: {
+      paddingLeft: 36,
+      paddingRight: 36,
+    },
   },
 });
 

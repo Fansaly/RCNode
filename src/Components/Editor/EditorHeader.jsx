@@ -47,7 +47,7 @@ const styles = theme => ({
   title: {
     paddingTop: 20,
     paddingBottom: 0,
-    '& h2': {
+    '& h6': {
       fontSize: '1.125rem',
     },
   },
@@ -168,16 +168,6 @@ class Editor extends React.Component {
             className="avatar"
           />
           <div className="flex box">
-            {/**
-             * https://material-ui.com/style/typography/#migration-to-typography-v2
-             * ----------------------------------
-             * old             =>  new
-             * body2           => body1
-             * body1 (default) => body2 (default)
-             * ----------------------------------
-             * current all `Typography' use
-             * old variant body1 by default
-             */}
             <Typography className="flex editor-uname">
               {uname}
               <ArrowRightIcon color="inherit" />
@@ -213,7 +203,7 @@ class Editor extends React.Component {
         <Popover
           open={moreOpen}
           anchorEl={this.anchorEl}
-          anchorReference={'anchorEl'}
+          anchorReference="anchorEl"
           anchorPosition={{ top: 200, left: 400 }}
           onClose={this.handleCloseMore}
           anchorOrigin={{

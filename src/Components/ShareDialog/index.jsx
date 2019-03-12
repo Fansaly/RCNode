@@ -12,14 +12,13 @@ import TextField from '@material-ui/core/TextField';
 import copy from 'clipboard-copy';
 
 const styles = theme => ({
-  dialog: {
-    '& > div[role="document"]': {
-      margin: 10,
-      width: 'calc(100% - 20px)',
-      maxWidth: process.env.NODE_ENV === 'production' ? 615 : 540,
-    },
+  paper: {
+    margin: 10,
+    width: 'calc(100% - 20px)',
+    maxWidth: process.env.NODE_ENV === 'production' ? 615 : 540,
   },
   content: {
+    padding: 24,
     display: 'flex',
     flexWrap: 'nowrap',
     alignItems: 'flex-end',
@@ -64,7 +63,9 @@ class ShareDialog extends React.Component {
       <Dialog
         open={open}
         onClose={this.handleClose}
-        className={classes.dialog}
+        classes={{
+          paper: classes.paper,
+        }}
       >
         <DialogContent className={classes.content}>
           <TextField

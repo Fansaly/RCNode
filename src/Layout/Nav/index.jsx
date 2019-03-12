@@ -17,9 +17,8 @@ class Nav extends React.Component {
     return (
       <Grid
         container
-        spacing={0}
-        justify={'center'}
-        alignItems={'center'}
+        justify="center"
+        alignItems="center"
         className="type-content"
       >
         {navTabs.map(({path, name}) => (

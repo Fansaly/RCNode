@@ -51,9 +51,11 @@ const styles = theme => ({
   },
   container: {
     display: 'flex',
+    margin: 0,
+    paddingTop: 56,
     width: '100%',
     height: '100%',
-    paddingTop: 56,
+    maxHeight: 'none',
     backgroundColor: 'transparent',
     boxShadow: 'none',
     userSelect: 'none',

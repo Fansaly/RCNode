@@ -315,7 +315,11 @@ class User extends React.Component {
               value={this.state.index}
               onChange={this.handleChange}
               centered
-              fullWidth={!isWidthUp('md', width)}
+              {
+                ...!isWidthUp('md', width)
+                ? { variant: 'fullWidth' }
+                : {}
+              }
             >
               {topicsTab.map(({ keyname, tabname }) => (
                 <Tab

@@ -36,6 +36,7 @@ const styles = theme => ({
     padding: '0 24px 18px',
   },
   content: {
+    paddingTop: 0,
     paddingBottom: 0,
   },
   actions: {
@@ -44,6 +45,7 @@ const styles = theme => ({
   },
   button: {
     margin: 0,
+    minWidth: 110,
   },
   doit: {
     marginLeft: 16,

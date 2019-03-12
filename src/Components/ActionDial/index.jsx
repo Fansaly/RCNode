@@ -14,9 +14,9 @@ import { post } from '../../fetch';
 import { withStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 
+import Fab from '@material-ui/core/Fab';
 import Zoom from '@material-ui/core/Zoom';
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import FavoriteIcon from '@material-ui/icons/Favorite';
@@ -38,8 +38,8 @@ const styles = theme => ({
   },
   action: {
     position: 'absolute',
-    right: theme.spacing.unit * 3.5,
-    bottom: theme.spacing.unit * 4,
+    right: theme.spacing(3.5),
+    bottom: theme.spacing(4),
   },
   fabMoveUp: {
     transform: 'translate3d(0, -56px, 0)',
@@ -222,15 +222,14 @@ class ActionDial extends React.Component {
         <div className={classes.wrapper}>
           {single ? (
             <Zoom in={visible} unmountOnExit>
-              <Button
-                variant="fab"
+              <Fab
                 color="secondary"
                 aria-label="Edit"
                 className={classes.action}
                 onClick={this.handleCreate}
               >
                 <EditIcon />
-              </Button>
+              </Fab>
             </Zoom>
           ) : (typeof topicData === 'object' &&
             <SpeedDial

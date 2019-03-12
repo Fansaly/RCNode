@@ -171,10 +171,9 @@ class Me extends React.Component {
       <Grid item className="flex">
         <Grid
           container
-          spacing={0}
-          alignContent={'center'}
-          alignItems={'center'}
-          justify={'center'}
+          alignContent="center"
+          alignItems="center"
+          justify="center"
           className={isAuthed ? 'info' : 'signin'}
         >
           <IconButton
@@ -219,7 +218,6 @@ class Me extends React.Component {
                           <ListItemIcon>
                             <Badge
                               badgeContent={count}
-                              color={'default'}
                               className={classNames('badge', {
                                 [classes.hidden]: count <= 0,
                               })}
