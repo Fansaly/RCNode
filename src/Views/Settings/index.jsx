@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet';
 import {
   updateSettings,
   restoreSettings,
@@ -81,6 +82,8 @@ class Settings extends React.Component {
 
     return (
       <Layout>
+        <Helmet title="设置" />
+
         <div id="settings" className="wrapper">
           <Paper>
             <div className="setting">

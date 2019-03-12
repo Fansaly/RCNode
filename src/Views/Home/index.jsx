@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet';
 import {
   matchTab,
   getNewDataCreate,
@@ -129,6 +130,8 @@ class Home extends React.Component {
 
     return (
       <Layout>
+        <Helmet title="RCNode" />
+
         <div id="container">
           <div className="wrapper">
             <TopicList items={items} />

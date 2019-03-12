@@ -122,7 +122,7 @@ class Signin extends React.Component {
     return (
       <React.Fragment>
         <Helmet
-          title="Signin"
+          title="登录"
           htmlAttributes={{ id: 'signin' }}
         />
 

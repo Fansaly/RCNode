@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet';
 import { get as getData } from '../../fetch';
 
 import Tabs from '@material-ui/core/Tabs';
@@ -104,6 +105,8 @@ class Message extends React.Component {
 
     return (
       <Layout>
+        <Helmet title="消息" />
+
         <div className="wrapper">
           <div style={{ marginTop: '50px' }}>
             {Number.isInteger(count) &&

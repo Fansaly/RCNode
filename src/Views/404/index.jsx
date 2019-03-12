@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Helmet } from 'react-helmet';
+
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+
 import MdOutletIcon from '../../static/ionicons_md_outlet.svg';
 
 const styles = theme => ({
@@ -72,34 +75,38 @@ class NotFound extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div className={classNames(
-        'flex',
-        classes.main,
-        classes.center,
-      )}>
+      <React.Fragment>
+        <Helmet title="404" />
+
         <div className={classNames(
           'flex',
-          classes.wrapper,
+          classes.main,
           classes.center,
         )}>
-          <h1 className={classes.h1}>404</h1>
-          <p className={classNames(
+          <div className={classNames(
             'flex',
-            classes.p,
+            classes.wrapper,
             classes.center,
           )}>
-            <MdOutletIcon className={classes.icon} />
-            <span>Page not Found</span>
-          </p>
+            <h1 className={classes.h1}>404</h1>
+            <p className={classNames(
+              'flex',
+              classes.p,
+              classes.center,
+            )}>
+              <MdOutletIcon className={classes.icon} />
+              <span>Page not Found</span>
+            </p>
+          </div>
+          <Button
+            className={classes.button}
+            variant="outlined"
+            onClick={this.handleBackToHome}
+          >
+            Back to Home
+          </Button>
         </div>
-        <Button
-          className={classes.button}
-          variant="outlined"
-          onClick={this.handleBackToHome}
-        >
-          Back to Home
-        </Button>
-      </div>
+      </React.Fragment>
     );
   }
 }
