@@ -87,9 +87,9 @@ class TopiCard extends React.Component {
         >
           <Grid
             container
-            className="topicard-header"
             alignItems="center"
             justify="flex-start"
+            className="topicard-header"
           >
             <Avatar
               className="avatar"
@@ -99,9 +99,9 @@ class TopiCard extends React.Component {
             />
             <Grid
               container
-              className="topicard-title"
               alignItems="center"
               justify="flex-start"
+              className="topicard-title"
             >
               <Grid item className="title">
                 {!simple &&
@@ -135,39 +135,37 @@ class TopiCard extends React.Component {
               </Grid>
             </Grid>
           </Grid>
-          <Grid container
-            className="state-wrapper"
-            alignItems="center"
-          >
-            <Grid container
-              className="state"
-              alignItems="center"
-            >
-              <Grid item className="author">
-                <Link to={`/user/${item.author.loginname}`}>
-                  {item.author.loginname}
-                </Link>
-              </Grid>
-              {!simple &&
-                <Grid item className="create">
-                  <IconButton><CreateIcon /></IconButton>
-                  <Moment fromNow>{item.create_at}</Moment>
+          <Grid container wrap="nowrap" alignItems="center" className="state-wrapper">
+            <Grid container wrap="nowrap" alignItems="center" className="state">
+              <Grid container zeroMinWidth wrap="nowrap" alignItems="center">
+                <Grid item zeroMinWidth className="author">
+                  <Link to={`/user/${item.author.loginname}`}>
+                    {item.author.loginname}
+                  </Link>
                 </Grid>
-              }
-              <Grid item className="reply">
-                <IconButton><ReplyIcon /></IconButton>
-                {!simple ? (
-                  <span>{item.reply_count}</span>
-                ) : (
-                  <Moment fromNow>{item.last_reply_at}</Moment>
-                )}
+                {!simple &&
+                  <Grid item className="create">
+                    <IconButton><CreateIcon /></IconButton>
+                    <Moment fromNow>{item.create_at}</Moment>
+                  </Grid>
+                }
               </Grid>
-              {!simple &&
-                <Grid item className="visit">
-                  <IconButton><ViewIcon /></IconButton>
-                  <span>{item.visit_count}</span>
+              <Grid item className="count">
+                <Grid item className="reply">
+                  <IconButton><ReplyIcon /></IconButton>
+                  {!simple ? (
+                    <span>{item.reply_count}</span>
+                  ) : (
+                    <Moment fromNow>{item.last_reply_at}</Moment>
+                  )}
                 </Grid>
-              }
+                {!simple &&
+                  <Grid item className="visit">
+                    <IconButton><ViewIcon /></IconButton>
+                    <span>{item.visit_count}</span>
+                  </Grid>
+                }
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

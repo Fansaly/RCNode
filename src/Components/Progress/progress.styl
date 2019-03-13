@@ -15,7 +15,8 @@
     left 0
     margin auto
     &.loading
-      animation progress-color 6.4s linear infinite
+      .loop-color
+        animation loop-color 6.4s linear infinite
     &.success
     &.error
       color #1bc1a4
@@ -71,7 +72,7 @@
     &.idle
       transform scale(.68)
 
-@keyframes progress-color
+@keyframes loop-color
   0%
     color #2196f3
   20%

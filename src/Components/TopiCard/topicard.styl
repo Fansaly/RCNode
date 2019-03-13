@@ -27,7 +27,7 @@
         position absolute
         z-index 3
         top 50%
-        left 24px
+        left 22px
         width 48px
         height 48px
         border 2px solid rgba(0,185,255,.62)
@@ -73,7 +73,7 @@
               &:hover
                 text-decoration underline
               &:visited
-                opacity .7
+                color #666
           .action
             position absolute
             top 50%
@@ -103,39 +103,44 @@
         padding-left 48px
         font-size 14px
         color rgba(0,0,0,.5)
-        display inline-flex
-        align-items center
-        justify-content center
         >div
-          &:first-child
-            padding-left 10px
-        time
-        span
-          margin-top -1px
+          padding-left 30px
+          &
+          ~/.profile ^[1..-1]
+            &:first-child
+              padding-left 10px
         button
           margin 0 2px
           padding 4px
           color inherit
           color rgba(0,0,0,.4)
+          margin-bottom -1px
           svg
             font-size 18px
         .author
-          ~/.profile ^[1..-1]
-            flex 1
-            justify-content flex-start
           a
+            display block
             font-weight 700
             color inherit
+            overflow hidden
+            text-overflow ellipsis
             text-decoration none
+            white-space nowrap
             &:hover
               text-decoration underline
         .create
-          flex 1
-          justify-content flex-start
-        .visit
-          button
-            svg
-              font-size 19px
+        .count
+          &
+          div
+            display flex
+            flex-wrap nowrap
+            align-items center
+            white-space nowrap
+        .count
+          .visit
+            button
+              svg
+                font-size 19px
   .context
     @media (min-width 600px)
       padding-left 20px
@@ -154,12 +159,13 @@
 
 @media (max-width 768px)
   .topicard
+    margin-top 16px
     .topicard-header-wrapper
       .topicard-header
         padding-left 20px
         padding-right 20px
         .avatar
-          left 20px
+          left 18px
         .topicard-title
           .title
             button
@@ -177,6 +183,9 @@
           right 16px
         .state
           font-size 12px
+          .create
+            button
+              margin-right 0
 
 @media (max-width 600px)
   .topicard
@@ -191,7 +200,7 @@
         padding-left 14px
         padding-right 14px
         .avatar
-          left 14px
+          left 12px
         .topicard-title
           .title
             margin 0 34px
@@ -201,6 +210,9 @@
         &:before
           left 10px
           right 10px
+        .state
+          >div:first-child
+            padding-left 6px
 
 @media (max-width 430px)
   .topicard
@@ -216,15 +228,6 @@
               margin-left 2px
               button
                 background-color rgba(0,0,0,.008)
-      .state-wrapper
-        .state
-          .author
-            display none
-            ~/.profile ^[1..-1]
-              display flex
-          .create
-            button
-              margin-left 0
 
 @media (max-width 420px)
   .topicard
@@ -233,6 +236,37 @@
         .topicard-title
           .title
             margin 0 30px
+      .state-wrapper
+        .state
+          >div:first-child
+            padding-left 3px
+
+@media (max-width 359px)
+  .topicard
+    .topicard-header-wrapper
+      .state-wrapper
+        .state
+          .count
+            button
+              display none
+            div
+              position relative
+              padding-left 14px
+              &:before
+                position absolute
+                top 50%
+                left 6px
+                height 12px
+                width 1px
+                content ''
+                background-color rgba(0,0,0,.4)
+                transform rotate(15deg) translateY(-50%)
+              &:first-child
+                padding-left 0
+                &:before
+                  width 0
+                  height 0
+                  transform none
 
 .topicard
   opacity 0

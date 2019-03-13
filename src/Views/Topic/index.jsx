@@ -18,7 +18,6 @@ import Fade from '@material-ui/core/Fade';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import CreateIcon from '@material-ui/icons/Create';
-import AuthorIcon from '@material-ui/icons/Person';
 import ViewIcon from '@material-ui/icons/LocalLibrary';
 import TagIcon from '@material-ui/icons/LocalOffer';
 
@@ -28,6 +27,7 @@ import { MarkdownRender } from '../../Components/Markdown';
 import ImageZoom from '../../Components/ImageZoom';
 import Progress from '../../Components/Progress';
 
+import Avatar from '../../Components/Avatar';
 import Editor from '../../Components/Editor';
 import ActionDial from '../../Components/ActionDial';
 import ShareDialog from '../../Components/ShareDialog';
@@ -174,31 +174,35 @@ class Topic extends React.Component {
                 <Typography variant="h5" className="title">
                   {data.title}
                 </Typography>
-                <div className="attr">
-                  <span>
-                    <CreateIcon />
-                    <Hidden smDown><em>发布于</em></Hidden>
-                    <Moment fromNow>{data.create_at}</Moment>
-                  </span>
-                  <span>
-                    <AuthorIcon />
-                    <Hidden smDown><em>作者</em></Hidden>
+                <div className="topic-attrs">
+                  <span className="attr-author">
+                    <Avatar
+                      className="avatar"
+                      image={data.author.avatar_url}
+                      name={data.author.loginname}
+                    />
+                    <Hidden xsDown><em>作者</em></Hidden>
                     <Link to={`/user/${data.author.loginname}`}>
                       {data.author.loginname}
                     </Link>
                   </span>
-                  <span>
+                  <span className="attr-create">
+                    <CreateIcon />
+                    <Hidden xsDown><em>发布于</em></Hidden>
+                    <Moment fromNow>{data.create_at}</Moment>
+                  </span>
+                  <span className="attr-visit">
                     <ViewIcon />
                     <em>{data.visit_count}</em>
-                    <Hidden smDown>次浏览</Hidden>
+                    <Hidden xsDown>次浏览</Hidden>
                   </span>
                   {data.tab &&
-                    <span>
+                    <span className="attr-tab">
                       <TagIcon />
-                      <Hidden smDown><em>来自</em></Hidden>
-                      <i className={data.tab}>
+                      <Hidden xsDown><em>来自</em></Hidden>
+                      <span className={data.tab}>
                         {navTabs[data.tab].name}
-                      </i>
+                      </span>
                     </span>
                   }
                 </div>

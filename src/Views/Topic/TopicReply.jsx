@@ -10,6 +10,7 @@ import {
 } from '../../store/actions';
 import { post as POST } from '../../fetch';
 
+import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import UpdateIcon from '@material-ui/icons/Edit';
@@ -76,6 +77,7 @@ class TopicReply extends React.Component {
 
   handleUp = async () => {
     if (!this.props.isAuthed) {
+      this.props.openNotification('登录后才能 👍 哟~');
       return;
     }
 
@@ -125,19 +127,20 @@ class TopicReply extends React.Component {
   };
 
   componentDidMount() {
-    if (typeof window !== 'undefined') {
-      const { origin, pathname } = window.location;
+    const { origin, pathname } = window.location;
 
-      this.setState({
-        URL: `${origin}${pathname}`,
-      });
-    }
+    this.setState({
+      URL: `${origin}${pathname}`,
+    });
   }
 
   render() {
     const {
       isAuthed,
       uname: signedUname,
+      location: {
+        hash = '',
+      },
     } = this.props;
     const {
       author,
@@ -153,35 +156,47 @@ class TopicReply extends React.Component {
 
     return (
       <div className={classNames('topic-reply', {
+        'hilite': hash === `#${id}`,
         'owned': uname === author,
       })}>
         <div className="reply-content">
-          <div className="reply-header">
-            <div className="avatar-uname">
-              <Avatar aria-label="Recipe" className="avatar">
-                <Link to={uname ? `/user/${uname}` : '/'}>
-                  {avatar &&
-                    <img
-                      src={avatar}
-                      alt={uname || '用户已注销'}
-                    />
-                  }
-                </Link>
-              </Avatar>
+          <Grid container wrap="nowrap" className="reply-header">
+            <Avatar aria-label="Recipe" className="reply-avatar">
               <Link to={uname ? `/user/${uname}` : '/'}>
-                {uname ? uname : '用户已注销'}
+                {avatar &&
+                  <img
+                    src={avatar}
+                    alt={uname || '用户已注销'}
+                  />
+                }
               </Link>
-            </div>
+            </Avatar>
 
-            <div className="time-etc">
-              {uname === author &&
-                <span className="special">[作者]</span>
-              }
-              <span>回复于</span>
-              <Moment fromNow>{create_at}</Moment>
-            </div>
+            <Grid container zeroMinWidth wrap="nowrap" className="reply-attrs">
+              <Grid container wrap="nowrap" className="group">
+                <Grid container zeroMinWidth wrap="nowrap" className="uname-text">
+                  <Grid item zeroMinWidth>
+                    <Link
+                      className="uname"
+                      to={uname ? `/user/${uname}` : '/'}
+                    >
+                      {uname ? uname : '用户已注销'}
+                    </Link>
+                  </Grid>
+                  {uname === author &&
+                    <Grid item className="text">
+                      [作者]
+                    </Grid>
+                  }
+                </Grid>
+                <Grid item className="time">
+                  <span>回复于</span>
+                  <Moment fromNow>{create_at}</Moment>
+                </Grid>
+              </Grid>
+            </Grid>
 
-            <div className="actions">
+            <Grid item className="reply-actions">
               {isAuthed &&
                 <React.Fragment>
                   {false && uname === signedUname &&
@@ -229,8 +244,8 @@ class TopicReply extends React.Component {
                 <SortIcon />
               </IconButton>
               <span className="num">{post}</span>
-            </div>
-          </div>
+            </Grid>
+          </Grid>
 
           <div className="markdown-container">
             <MarkdownRender markdownString={content} />

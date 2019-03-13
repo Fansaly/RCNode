@@ -92,6 +92,7 @@ class Settings extends React.Component {
                 className="switch"
                 checked={cardPreview}
                 onChange={this.handleCardPreview}
+                color="primary"
               />
             </div>
             <div

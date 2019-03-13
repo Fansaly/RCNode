@@ -1,29 +1,42 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
+import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
+
 import './progress.styl';
 
 class Progress extends React.Component {
+  handleExited = () => {
+    const { onExited } = this.props;
+    Boolean(onExited) && onExited();
+  };
+
   render() {
-    const { status } = this.props;
+    const { className, status } = this.props;
 
     return (
-      <TransitionGroup
-        id="progress"
-        className={this.props.className}
-      >
-        {status === 'loading' &&
-          <CSSTransition
-            classNames="fade"
-            className="progress loading"
-            timeout={{ enter: 0, exit: 550 }}
-          >
-            <CircularProgress />
-          </CSSTransition>
-        }
-      </TransitionGroup>
+      <Grid item id="progress" className={classNames(className)}>
+        <CSSTransition
+          className="progress loading"
+          classNames="fade"
+          in={status === 'loading'}
+          timeout={{ enter: 100, exit: 550 }}
+          onExited={this.handleExited}
+          unmountOnExit
+        >
+          <CircularProgress classes={{ svg: 'loop-color' }} />
+        </CSSTransition>
+      </Grid>
     );
   }
 }
+
+Progress.propTypes = {
+  status: PropTypes.oneOf(['idle', 'loading', 'success', 'error']).isRequired,
+  onExited: PropTypes.func,
+};
 
 export default Progress;
