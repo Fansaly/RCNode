@@ -18,7 +18,7 @@ A third-party WEB APP for CNode of Chinese professional community of Node.js
   - [x] Message `view` `mark`
   - [x] Mobile device supported (great performance)
 
--Setting
+- Setting
   - [x] Topic preview
   - [x] Message remind
 
