@@ -13,8 +13,6 @@ import { post as POST } from '../../fetch';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import UpdateIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
 import ReplyIcon from '@material-ui/icons/Reply';
 import ThumbUpIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbUpCancelIcon from '@material-ui/icons/ThumbUpAltOutlined';
@@ -50,14 +48,6 @@ class TopicReply extends React.Component {
       URL: '',
     };
   }
-
-  handleUpdate = () => {
-    console.log('update');
-  };
-
-  handleDelete = () => {
-    console.log('delete');
-  };
 
   handleReply = () => {
     const {
@@ -137,7 +127,6 @@ class TopicReply extends React.Component {
   render() {
     const {
       isAuthed,
-      uname: signedUname,
       location: {
         hash = '',
       },
@@ -198,30 +187,12 @@ class TopicReply extends React.Component {
 
             <Grid item className="reply-actions">
               {isAuthed &&
-                <React.Fragment>
-                  {false && uname === signedUname &&
-                    <React.Fragment>
-                      <IconButton
-                        className="action update"
-                        onClick={this.handleUpdate}
-                      >
-                        <UpdateIcon />
-                      </IconButton>
-                      <IconButton
-                        className="action delete"
-                        onClick={this.handleDelete}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </React.Fragment>
-                  }
-                  <IconButton
-                    className="action reply"
-                    onClick={this.handleReply}
-                  >
-                    <ReplyIcon />
-                  </IconButton>
-                </React.Fragment>
+                <IconButton
+                  className="action reply"
+                  onClick={this.handleReply}
+                >
+                  <ReplyIcon />
+                </IconButton>
               }
               <IconButton
                 className="action up"

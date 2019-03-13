@@ -56,7 +56,7 @@ module.exports = {
       'requireStringLiterals': true,
     }],
 
-    // 'no-console': ERROR,
+    'no-console': ERROR,
     'no-alert': ERROR,
     'eol-last': ERROR,
     'no-empty': ERROR,
