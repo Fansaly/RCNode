@@ -9,7 +9,7 @@ const getBingImage = url => {
   url = url ||
         process.env.NODE_ENV === 'production'
           ? 'https://bing.fansaly.com'
-          : 'http://localhost:3001';
+          : 'http://localhost:3003';
 
   const defaultData = {
     copyright: '默认背景',
