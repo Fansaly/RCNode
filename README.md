@@ -7,6 +7,7 @@ A third-party WEB APP for CNode of Chinese professional community of Node.js
 | --- | --- | --- | --- | --- |
 | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ |
 
+### Features
 - Foundation function
   - [x] CommonMark
   - [x] Markdown `checkbox` `tabel` `emoji`
@@ -22,6 +23,7 @@ A third-party WEB APP for CNode of Chinese professional community of Node.js
   - [x] Topic preview
   - [x] Message remind
 
+### Todo
 - Optimization
   - [ ] Header animation `maybe`
   - [ ] Signout animation `maybe`
@@ -32,6 +34,9 @@ A third-party WEB APP for CNode of Chinese professional community of Node.js
 
 - Other
   - [ ] `componentWillReceiveProps` method replacement
+
+### Bing image server
+By default value, wallpaper for a day of the week. Learn more here: [bing-image-server](https://github.com/Fansaly/bing-image-server)
 
 ### License
 [MIT](https://opensource.org/licenses/MIT)
