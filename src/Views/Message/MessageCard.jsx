@@ -50,6 +50,7 @@ const styles = theme => ({
   },
   content: {
     maxWidth: '100%',
+    minWidth: 0,
   },
   moreUnRead: {
     color: 'rgba(245,0,87,.7)',
@@ -62,6 +63,7 @@ const styles = theme => ({
     lineHeight: '1.5em',
   },
   uname: {
+    display: 'block',
     fontWeight: 700,
   },
   time: {
@@ -103,7 +105,6 @@ const styles = theme => ({
   icon: {
     marginLeft: 2,
     fontSize: 14,
-    transform: 'translateY(1px)',
   },
 });
 
