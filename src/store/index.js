@@ -1,16 +1,17 @@
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import rootReducer from './reducers';
 
-const store = createStore(rootReducer);
+let middlewares = [];
 
 if (process.env.NODE_ENV === 'development') {
-  // eslint-disable-next-line
-  console.log(store.getState());
+  const { createLogger } = require('redux-logger');
 
-  store.subscribe(() =>
-    // eslint-disable-next-line
-    console.log(store.getState())
-  );
+  middlewares = [ ...middlewares, createLogger() ];
 }
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware(...middlewares),
+);
 
 export default store;
