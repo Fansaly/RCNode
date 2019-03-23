@@ -252,6 +252,11 @@ class Editor extends React.Component {
     });
   };
 
+  handlePreClose = () => {
+    const { open } = this.props;
+    open && this.handleClose();
+  };
+
   handleClose = (result = {}) => {
     const { disabled } = this.state;
     const { response } = result;
@@ -271,7 +276,7 @@ class Editor extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.open && this.handleClose();
+    this.handlePreClose();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -295,7 +300,7 @@ class Editor extends React.Component {
         this.check();
       });
     } else {
-      this.props.open && this.handleClose();
+      this.handlePreClose();
     }
   }
 

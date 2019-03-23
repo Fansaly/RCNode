@@ -172,6 +172,11 @@ class ImageZoom extends React.Component {
     this.props.openShare(url);
   };
 
+  handlePreClose = () => {
+    const { open } = this.props;
+    open && this.handleClose();
+  };
+
   handleClose = () => {
     this.props.closeZoom();
   };
@@ -454,7 +459,7 @@ class ImageZoom extends React.Component {
   };
 
   componentWillUnmount() {
-    this.handleClose();
+    this.handlePreClose();
   }
 
   render() {

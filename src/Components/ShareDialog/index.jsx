@@ -30,6 +30,11 @@ const styles = theme => ({
 });
 
 class ShareDialog extends React.Component {
+  handlePreClose = () => {
+    const { open } = this.props;
+    open && this.handleClose();
+  };
+
   handleClose = () => {
     this.props.closeShare();
   };
@@ -53,7 +58,7 @@ class ShareDialog extends React.Component {
   };
 
   componentWillUnmount() {
-    this.handleClose();
+    this.handlePreClose();
   }
 
   render() {

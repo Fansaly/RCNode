@@ -48,9 +48,18 @@ const variantIcon = {
 };
 
 class Notification extends React.Component {
+  handlePreClose = () => {
+    const { open } = this.props;
+    open && this.handleClose();
+  };
+
   handleClose = () => {
     this.props.closeNotification();
   };
+
+  componentWillUnmount() {
+    this.handlePreClose();
+  }
 
   render() {
     const { classes, message, status, open } = this.props;
