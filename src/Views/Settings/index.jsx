@@ -9,6 +9,7 @@ import {
   restoreSettings,
 } from '../../store/actions';
 
+import { withStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
 import Switch from '@material-ui/core/Switch';
@@ -17,6 +18,15 @@ import Slider from '@material-ui/lab/Slider';
 
 import Layout from '../../Layout';
 import './settings.styl';
+
+const styles = theme => ({
+  mark: {
+    backgroundColor: 'transparent',
+  },
+  markLabel: {
+    color: 'rgba(0,0,0,.65)',
+  },
+});
 
 class Settings extends React.Component {
   handleCardPreview = () => {
@@ -27,52 +37,19 @@ class Settings extends React.Component {
     });
   };
 
-  /**
-   * second to slider step
-   * @param {number} time
-   */
-  timeToSteps = time => {
-    const steps = time / 60;
-
-    switch (steps) {
-      case 10:
-       return 4;
-      case 5:
-       return 3;
-      case 3:
-       return 2;
-      default:
-       return steps;
-    }
-  };
-
-  handleSlider = (event, value) => {
+  handleChangeTime = (event, value) => {
     const { settings } = this.props;
-
-    // step to minute
-    switch (value) {
-      case 4:
-        value = 10;
-        break;
-      case 3:
-        value = 5;
-        break;
-      case 2:
-        value = 3;
-        break;
-      default:
-        break;
-    }
 
     this.props.updateSettings({
       ...settings,
-      time: value * 60, // minute to second
+      time: value * 60,
     });
-  }
+  };
 
   render() {
     const {
       width,
+      classes,
       isAuthed,
       settings: {
         time,
@@ -100,23 +77,28 @@ class Settings extends React.Component {
                 'nano': isWidthDown('xs', width),
               })}
             >
-              <div className="setting-label">消息提醒（每分钟）</div>
+              <div className="setting-label">消息提醒</div>
               <div className="setting-wrapper">
-                <div className="step-label">
-                  <span>Off</span>
-                  <span>1</span>
-                  <span>3</span>
-                  <span>5</span>
-                  <span>10</span>
-                </div>
                 <Slider
-                  min={0}
-                  max={4}
-                  step={1}
-                  className="slider"
                   disabled={!isAuthed}
-                  value={this.timeToSteps(time)}
-                  onChange={this.handleSlider}
+                  min={0}
+                  max={10}
+                  step={null}
+                  value={time / 60}
+                  marks={[
+                    { value: 0, label: 'Off' },
+                    { value: 1, label: '1min' },
+                    { value: 3, label: '3min' },
+                    { value: 5, label: '5min' },
+                    { value: 10, label: '10min' },
+                  ]}
+                  onChange={this.handleChangeTime}
+                  classes={{
+                    mark: classes.mark,
+                    markActive: classes.mark,
+                    markLabel: classes.markLabel,
+                    markLabelActive: classes.markLabel,
+                  }}
                 />
               </div>
             </div>
@@ -128,6 +110,7 @@ class Settings extends React.Component {
 }
 
 Settings.propTypes = {
+  classes: PropTypes.object.isRequired,
   width: PropTypes.string.isRequired,
 };
 
@@ -146,6 +129,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default compose(
+  withStyles(styles),
   withWidth(),
   connect(
     mapStateToProps,

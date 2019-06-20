@@ -176,13 +176,13 @@ class MessageCard extends React.Component {
                 image={author.avatar_url}
               />
             </Grid>
-            <Grid container zeroMinWidth wrap="wrap" alignItems="center">
-              <Grid container zeroMinWidth wrap="wrap" alignItems="center">
+            <Grid container item zeroMinWidth wrap="wrap" alignItems="center">
+              <Grid container item zeroMinWidth wrap="wrap" alignItems="center">
                 <Typography noWrap component="h4" className={classes.title}>
                   {topic.title}
                 </Typography>
               </Grid>
-              <Grid container zeroMinWidth wrap="nowrap" alignItems="center">
+              <Grid container item zeroMinWidth wrap="nowrap" alignItems="center">
                 <Grid item zeroMinWidth>
                   <Typography noWrap component="span" className={classNames(classes.uname, classes.gray)}>
                     {author.loginname}

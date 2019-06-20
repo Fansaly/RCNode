@@ -137,7 +137,7 @@ class TopiCard extends React.Component {
           </Grid>
           <Grid container wrap="nowrap" alignItems="center" className="state-wrapper">
             <Grid container wrap="nowrap" alignItems="center" className="state">
-              <Grid container zeroMinWidth wrap="nowrap" alignItems="center">
+              <Grid container item zeroMinWidth wrap="nowrap" alignItems="center">
                 <Grid item zeroMinWidth className="author">
                   <Link to={`/user/${item.author.loginname}`}>
                     {item.author.loginname}

@@ -55,6 +55,7 @@ const styles = theme => ({
     paddingTop: 56,
     width: '100%',
     height: '100%',
+    maxWidth: 'none',
     maxHeight: 'none',
     backgroundColor: 'transparent',
     boxShadow: 'none',

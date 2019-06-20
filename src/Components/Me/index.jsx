@@ -221,7 +221,7 @@ class Me extends React.Component {
                           <ListItemIcon>
                             <PersonIcon />
                           </ListItemIcon>
-                          <ListItemText inset primary="资料" />
+                          <ListItemText primary="资料" />
                         </MenuItem>
                       }
                       {isAuthed &&
@@ -236,28 +236,28 @@ class Me extends React.Component {
                               <NotificationsIcon />
                             </Badge>
                           </ListItemIcon>
-                          <ListItemText inset primary="消息" />
+                          <ListItemText primary="消息" />
                         </MenuItem>
                       }
                       <MenuItem onClick={this.handleSettings}>
                         <ListItemIcon>
                           <SettingsIcon />
                         </ListItemIcon>
-                        <ListItemText inset primary="设置" />
+                        <ListItemText primary="设置" />
                       </MenuItem>
                       {isAuthed ? (
                         <MenuItem onClick={this.handleSignout}>
                           <ListItemIcon>
                             {SignOutIcon}
                           </ListItemIcon>
-                          <ListItemText inset primary="退出" />
+                          <ListItemText primary="退出" />
                         </MenuItem>
                       ) : (
                         <MenuItem onClick={this.handleSignin}>
                           <ListItemIcon>
                             <SignInIcon />
                           </ListItemIcon>
-                          <ListItemText inset primary="登录" />
+                          <ListItemText primary="登录" />
                         </MenuItem>
                       )}
                     </MenuList>

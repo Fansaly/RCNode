@@ -42,7 +42,7 @@ const styles = theme => ({
     },
   },
   spacing: {
-    marginRight: 22,
+    marginRight: 6,
   },
 });
 

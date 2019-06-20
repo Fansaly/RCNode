@@ -161,9 +161,9 @@ class TopicReply extends React.Component {
               </Link>
             </Avatar>
 
-            <Grid container zeroMinWidth wrap="nowrap" className="reply-attrs">
+            <Grid container item zeroMinWidth wrap="nowrap" className="reply-attrs">
               <Grid container wrap="nowrap" className="group">
-                <Grid container zeroMinWidth wrap="nowrap" className="uname-text">
+                <Grid container item zeroMinWidth wrap="nowrap" className="uname-text">
                   <Grid item zeroMinWidth>
                     <Link
                       className="uname"
