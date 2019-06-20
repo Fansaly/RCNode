@@ -1,0 +1,6 @@
+[
+  {
+    "id": 1,
+    "text": "创建、更新、回复功能不能使用了，因为发帖和发评论的接口已被 <a style=\"color: inherit;\" target=\"_blank\" rel=\"noopener\" href=\"https://cnodejs.org/api\">CNode</a> 社区下线。"
+  }
+]
