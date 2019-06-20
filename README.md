@@ -1,42 +1,33 @@
-A third-party WEB APP for CNode of Chinese professional community of Node.js
+CNode 社区第三方 WEB App，Material Design 风格。
 
-> This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app) `v2.1.8`
+> 此项目使用 [Create React App](https://github.com/facebookincubator/create-react-app) 生成 `v3.0.1`
 
-### Browser Support
+### 浏览器支持
 | ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) |
 | --- | --- | --- | --- | --- |
-| Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ | Latest ✓ |
+| 最新版 ✓ | 最新版 ✓ | 最新版 ✓ | 最新版 ✓ | 最新版 ✓ |
 
-### Features
-- Foundation function
-  - [x] CommonMark
-  - [x] Markdown `checkbox` `tabel` `emoji`
-  - [x] Markdown syntax highlighting (Partially supported, view in [.babelrc](.babelrc) `prismjs` field.)
-  - [x] Markdown link open in new tab and replace `http(s)://cnodejs.org` with `http(s)://current.domain`
-  - [x] Markdown image zoom
-  - [x] Topic `view` `create` `update` `reply`
-  - [x] Topic collect and reply +1
-  - [x] Message `view` `mark`
-  - [x] Mobile device supported (great performance)
+### 特性
+- 基础功能
+  - Markdown
+    - CommonMark, checkbox, tabel, emoji
+    - 语法高亮（仅启用了部分语法，可查看文件 [.babelrc](.babelrc) 的 `prismjs` 字段）
+    - 链接，新窗口打开，并替换链接 `http(s)://cnodejs.org` 为 `http(s)://current.domain`
+  - 主题
+    - 查看、创建、更新、回复
+    - 收藏、回复点赞
+    - 图片放大浏览
+  - 消息
+    - 查看
+    - 标记单条、全部为已读
+  - 支持移动设备
 
-- Setting
-  - [x] Topic preview
-  - [x] Message remind
+- 设置
+  - 主题预览
+  - 消息提醒
 
-### Todo
-- Optimization
-  - [ ] Header animation `maybe`
-  - [ ] Signout animation `maybe`
-  - [ ] Material-UI Snackbar => notistack `maybe`
+### Bing 今日美图服务
+默认返回一周中某一天的 Bing 美图。了解详细信息：[bing-image-server](https://github.com/Fansaly/bing-image-server)
 
-- Known issues
-  - [ ] block router or page refresh when open editor
-
-- Other
-  - [ ] `componentWillReceiveProps` method replacement
-
-### Bing image server
-By default value, wallpaper for a day of the week. Learn more here: [bing-image-server](https://github.com/Fansaly/bing-image-server)
-
-### License
+### 许可
 [MIT](https://opensource.org/licenses/MIT)
