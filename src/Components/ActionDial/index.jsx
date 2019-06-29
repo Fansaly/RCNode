@@ -78,21 +78,34 @@ class ActionDial extends React.Component {
     this.setState({ expanded: false });
   };
 
-  handleClick = () => {
+  handleClick = event => {
     const { expanded } = this.state;
-    expanded && this.handleUpdate();
+    const {
+      uname: signedUname,
+      topicData: uname,
+    } = this.props;
+
     this.setState({
       expanded: !expanded,
     });
+
+    if (expanded && signedUname === uname) {
+      event.preventDefault();
+      this.handleUpdate();
+    }
   };
 
-  handleShare = () => {
+  handleShare = event => {
+    event.preventDefault();
+
     const { shareURL } = this.state;
     this.handleClose();
     this.props.openShare(shareURL);
   };
 
-  handleFavorite = async () => {
+  handleFavorite = async event => {
+    event.preventDefault();
+
     const { favorite } = this.state;
 
     const {
@@ -124,12 +137,15 @@ class ActionDial extends React.Component {
     this.props.openNotification(message);
   };
 
-  handleReply = () => {
+  handleReply = event => {
+    event.preventDefault();
+
     const { topic_id } = this.props.match.params;
     const config = {
       action: 'reply',
       url: `/topic/${topic_id}/replies`,
       reply_id: topic_id,
+      content: '',
     };
 
     this.handleClose();
@@ -138,15 +154,11 @@ class ActionDial extends React.Component {
 
   handleUpdate = () => {
     const {
-      uname,
       tab,
       title,
       content,
       topic_id,
     } = this.props.topicData;
-    const { uname: signedUname } = this.props;
-
-    if (uname !== signedUname) { return; }
 
     const config = {
       action: 'update',

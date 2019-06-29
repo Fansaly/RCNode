@@ -318,7 +318,6 @@ class Editor extends React.Component {
       preview,
       fullScreen,
       isOK,
-      tab,
       title,
       content,
      } = this.state;
@@ -343,7 +342,7 @@ class Editor extends React.Component {
             fullScreen={fullScreen}
             onFullScreen={this.handleFullScreen}
           />
-          {/(create)|(update)/.test(action) &&
+          {['create', 'update'].includes(action) &&
             <TextField
               className={classes.title}
               margin="normal"
@@ -362,7 +361,7 @@ class Editor extends React.Component {
             <MarkdownEditor
               disabled={disabled}
               content={content}
-              autoFocus={tab === null}
+              autoFocus={['reply'].includes(action)}
               onUpdateContent={this.handleChange('content')}
             />
           </DialogContent>
