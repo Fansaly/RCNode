@@ -19,7 +19,13 @@ import Signin from './Views/Signin';
 import Message from './Views/Message';
 import Settings from './Views/Settings';
 import NotFound from './Views/404';
-import Test from './Views/Test';
+import Loadding from './Components/Loadding';
+
+let Test = NotFound;
+
+if (process.env.NODE_ENV === 'development') {
+  Test = React.lazy(() => import('./Views/Test'));
+}
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const { isAuthed } = store.getState().auth;
@@ -44,16 +50,18 @@ class App extends React.Component {
       <ThemeProvider theme={theme}>
         <Provider store={store}>
           <BrowserRouter basename={process.env.PUBLIC_URL}>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/topic/:topic_id" component={Topic} />
-              <Route exact path="/user/:uname" component={User} />
-              <Route exact path="/signin/" component={Signin} />
-              <PrivateRoute exact path="/message/" component={Message} />
-              <Route exact path="/settings/" component={Settings} />
-              <Route exact path="/test/" component={Test} />
-              <Route path="*" component={NotFound} />
-            </Switch>
+            <React.Suspense fallback={<Loadding />}>
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/topic/:topic_id" component={Topic} />
+                <Route exact path="/user/:uname" component={User} />
+                <Route exact path="/signin/" component={Signin} />
+                <PrivateRoute exact path="/message/" component={Message} />
+                <Route exact path="/settings/" component={Settings} />
+                <Route exact path="/test/" component={Test} />
+                <Route path="*" component={NotFound} />
+              </Switch>
+            </React.Suspense>
           </BrowserRouter>
         </Provider>
       </ThemeProvider>

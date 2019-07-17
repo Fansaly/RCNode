@@ -61,8 +61,8 @@ class Test extends React.Component {
       <Layout>
         <div className="wrapper" style={{ marginTop: 50 }}>
           {this.state.text.map((text, index) => (
-            <div className={classes.md}>
-              <MarkdownRender markdownString={text} key={index} />
+            <div className={classes.md} key={index}>
+              <MarkdownRender markdownString={text} />
             </div>
           ))}
         </div>
