@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import {
   randomNumber,
   removeHtmlTags,
@@ -18,6 +18,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 import Collapse from '@material-ui/core/Collapse';
+import Button from '@material-ui/core/Button';
 
 import IconButton from '@material-ui/core/IconButton';
 import CreateIcon from '@material-ui/icons/Create';
@@ -31,6 +32,15 @@ import Moment from '../../Components/Moment';
 import './topicard.styl';
 
 const styles = theme => ({
+  button: {
+    display: 'flex',
+    padding: 0,
+    fontWeight: 'inherit',
+    fontFamily: 'inherit',
+    lineHeight: 'inherit',
+    letterSpacing: 'inherit',
+    textTransform: 'inherit',
+  },
   expand: {
     margin: 0,
     transform: 'rotate(0deg)',
@@ -52,6 +62,8 @@ class TopiCard extends React.Component {
     this.state = {
       expanded: cardPreview,
     };
+
+    this.targets = [];
   }
 
   substrContent = content => {
@@ -63,6 +75,17 @@ class TopiCard extends React.Component {
     this.setState(state => ({
       expanded: !state.expanded,
     }));
+  };
+
+  handleClick = event => {
+    const {
+      history,
+      item: { id },
+    } = this.props;
+
+    if (this.targets.includes(event.target)) {
+      history.push(`/topic/${id}`);
+    }
   };
 
   render() {
@@ -80,95 +103,107 @@ class TopiCard extends React.Component {
       <Card className={classNames('topicard', className, {
         'expanded': !simple && expanded,
       })}>
-        <Grid
-          container
-          alignItems="center"
-          className="topicard-header-wrapper"
+        <Button
+          component="div"
+          className={classes.button}
+          onClick={this.handleClick}
+          disableFocusRipple
         >
           <Grid
             container
             alignItems="center"
-            justify="flex-start"
-            className="topicard-header"
+            className="topicard-header-wrapper"
           >
-            <Avatar
-              className="avatar"
-              name={item.author.loginname}
-              image={item.author.avatar_url}
-              url={`/user/${item.author.loginname}`}
-            />
             <Grid
               container
               alignItems="center"
               justify="flex-start"
-              className="topicard-title"
+              className="topicard-header"
+              ref={ref => this.targets = [...this.targets, ref]}
             >
-              <Grid item className="title">
-                {!simple &&
-                  <Grid item className="type">
-                    <IconButton>
-                      <TopicTypeIcon
-                        tab={item.tab}
-                        good={item.good}
-                        top={item.top}
-                      />
-                    </IconButton>
+              <Avatar
+                className="avatar"
+                name={item.author.loginname}
+                image={item.author.avatar_url}
+                url={`/user/${item.author.loginname}`}
+              />
+              <Grid
+                container
+                alignItems="center"
+                justify="flex-start"
+                className="topicard-title"
+              >
+                <Grid item className="title">
+                  {!simple &&
+                    <Grid item className="type">
+                      <IconButton>
+                        <TopicTypeIcon
+                          tab={item.tab}
+                          good={item.good}
+                          top={item.top}
+                        />
+                      </IconButton>
+                    </Grid>
+                  }
+                  <Typography variant="h5" ref={ref => this.targets = [...this.targets, ref]}>
+                    <Link to={`/topic/${item.id}`}>{item.title}</Link>
+                  </Typography>
+                  {!simple &&
+                    <CardActions className="action">
+                      <IconButton
+                        className={classNames(classes.expand, {
+                          [classes.expandOpen]: expanded,
+                        })}
+                        onClick={this.handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="Show more"
+                      >
+                        <ExpandMoreIcon />
+                      </IconButton>
+                    </CardActions>
+                  }
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid container wrap="nowrap" alignItems="center" className="state-wrapper"
+              ref={ref => this.targets = [...this.targets, ref]}
+            >
+              <Grid container wrap="nowrap" alignItems="center" className="state">
+                <Grid container item zeroMinWidth wrap="nowrap" alignItems="center"
+                  ref={ref => this.targets = [...this.targets, ref]}
+                >
+                  <Grid item zeroMinWidth className="author">
+                    <Link to={`/user/${item.author.loginname}`}>
+                      {item.author.loginname}
+                    </Link>
                   </Grid>
-                }
-                <Typography variant="h5">
-                  <Link to={`/topic/${item.id}`}>{item.title}</Link>
-                </Typography>
-                {!simple &&
-                  <CardActions className="action">
-                    <IconButton
-                      className={classNames(classes.expand, {
-                        [classes.expandOpen]: expanded,
-                      })}
-                      onClick={this.handleExpandClick}
-                      aria-expanded={expanded}
-                      aria-label="Show more"
-                    >
-                      <ExpandMoreIcon />
-                    </IconButton>
-                  </CardActions>
-                }
+                  {!simple &&
+                    <Grid item className="create">
+                      <IconButton><CreateIcon /></IconButton>
+                      <Moment fromNow>{item.create_at}</Moment>
+                    </Grid>
+                  }
+                </Grid>
+                <Grid item className="count">
+                  <Grid item className="reply">
+                    <IconButton><ReplyIcon /></IconButton>
+                    {!simple ? (
+                      <span>{item.reply_count}</span>
+                    ) : (
+                      <Moment fromNow>{item.last_reply_at}</Moment>
+                    )}
+                  </Grid>
+                  {!simple &&
+                    <Grid item className="visit">
+                      <IconButton><ViewIcon /></IconButton>
+                      <span>{item.visit_count}</span>
+                    </Grid>
+                  }
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Grid container wrap="nowrap" alignItems="center" className="state-wrapper">
-            <Grid container wrap="nowrap" alignItems="center" className="state">
-              <Grid container item zeroMinWidth wrap="nowrap" alignItems="center">
-                <Grid item zeroMinWidth className="author">
-                  <Link to={`/user/${item.author.loginname}`}>
-                    {item.author.loginname}
-                  </Link>
-                </Grid>
-                {!simple &&
-                  <Grid item className="create">
-                    <IconButton><CreateIcon /></IconButton>
-                    <Moment fromNow>{item.create_at}</Moment>
-                  </Grid>
-                }
-              </Grid>
-              <Grid item className="count">
-                <Grid item className="reply">
-                  <IconButton><ReplyIcon /></IconButton>
-                  {!simple ? (
-                    <span>{item.reply_count}</span>
-                  ) : (
-                    <Moment fromNow>{item.last_reply_at}</Moment>
-                  )}
-                </Grid>
-                {!simple &&
-                  <Grid item className="visit">
-                    <IconButton><ViewIcon /></IconButton>
-                    <span>{item.visit_count}</span>
-                  </Grid>
-                }
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+        </Button>
         {!simple &&
           <Collapse
             className="collapse"
@@ -200,6 +235,7 @@ const mapStateToProps = ({ settings }) => ({
 export default compose(
   withStyles(styles),
   withWidth(),
+  withRouter,
   connect(
     mapStateToProps,
   ),

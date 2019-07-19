@@ -278,11 +278,18 @@
     animation-name topicard-simple
     animation-duration .9s
 
-for $i in 1..30
+$items = 30
+$duration-a = .068s
+$duration-b = .105s
+.topicard
+  animation-delay $items * $duration-a
+  &.profile
+    animation-delay $items * $duration-b
+for $i in $items..1
   .topicard:nth-of-type({$i})
-    animation-delay .068s * ($i - 1)
+    animation-delay ($i - 1) * $duration-a
     &.profile:nth-of-type({$i})
-      animation-delay .105s * ($i - 1)
+      animation-delay ($i - 1) * $duration-b
 
 @keyframes topicard
   0%
