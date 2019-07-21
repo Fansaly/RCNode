@@ -26,8 +26,8 @@ CNode 社区第三方 WEB App，Material Design 风格。
   - 主题预览
   - 消息提醒
 
-### Bing 今日美图服务
-默认返回一周中某一天的 Bing 美图。了解详细信息：[bing-image-server](https://github.com/Fansaly/bing-image-server)
+- 其他
+  - Bing 美图。了解更多：[bing-image-server](https://github.com/Fansaly/bing-image-server)
 
 ### 许可
 [MIT](https://opensource.org/licenses/MIT)
