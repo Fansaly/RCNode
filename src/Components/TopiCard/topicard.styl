@@ -5,6 +5,7 @@
     position relative
     margin-top 0
     box-shadow none
+    background-color transparent
     &:before
       position absolute
       content ''
@@ -57,7 +58,6 @@
             transform translateY(-50%)
           h5
             font-size 16px
-            color rgba(0,0,0,.92)
             overflow hidden
             white-space nowrap
             text-overflow ellipsis
@@ -102,7 +102,6 @@
       .state
         padding-left 48px
         font-size 14px
-        color rgba(0,0,0,.5)
         >div
           padding-left 30px
           &
@@ -112,8 +111,6 @@
         button
           margin 0 2px
           padding 4px
-          color inherit
-          color rgba(0,0,0,.4)
           margin-bottom -1px
           svg
             font-size 18px
@@ -142,7 +139,7 @@
               svg
                 font-size 19px
   .context
-    @media (min-width 600px)
+    @media (min-width: 600px)
       padding-left 20px
       padding-right 20px
     p
@@ -157,7 +154,7 @@
       -webkit-box-orient vertical
       -moz-box-orient horizontal
 
-@media (max-width 768px)
+@media (max-width: 768px)
   .topicard
     margin-top 16px
     .topicard-header-wrapper
@@ -187,13 +184,13 @@
             button
               margin-right 0
 
-@media (max-width 600px)
+@media (max-width: 600px)
   .topicard
     &.profile
       &:before
         background-color rgba(0,0,0,.03)
 
-@media (max-width 500px)
+@media (max-width: 500px)
   .topicard
     .topicard-header-wrapper
       .topicard-header
@@ -214,7 +211,7 @@
           >div:first-child
             padding-left 6px
 
-@media (max-width 430px)
+@media (max-width: 430px)
   .topicard
     .topicard-header-wrapper
       .topicard-header
@@ -229,7 +226,7 @@
               button
                 background-color rgba(0,0,0,.008)
 
-@media (max-width 420px)
+@media (max-width: 420px)
   .topicard
     .topicard-header-wrapper
       .topicard-header
@@ -241,7 +238,7 @@
           >div:first-child
             padding-left 3px
 
-@media (max-width 359px)
+@media (max-width: 359px)
   .topicard
     .topicard-header-wrapper
       .state-wrapper
@@ -286,8 +283,9 @@ $duration-b = .105s
   &.profile
     animation-delay $items * $duration-b
 for $i in $items..1
-  .topicard:nth-of-type({$i})
-    animation-delay ($i - 1) * $duration-a
+  .topicard
+    &:nth-of-type({$i})
+      animation-delay ($i - 1) * $duration-a
     &.profile:nth-of-type({$i})
       animation-delay ($i - 1) * $duration-b
 

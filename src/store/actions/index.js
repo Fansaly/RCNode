@@ -1,4 +1,4 @@
-/*
+/**
  * auth
  * ------------
  * UPDATE_AUTH
@@ -14,7 +14,7 @@ export const deleteAuth = () => ({
 });
 
 
-/*
+/**
  * message
  * ------------
  * READ_MESSAGE
@@ -40,7 +40,7 @@ export const cleanMessage = () => ({
 });
 
 
-/*
+/**
  * message
  * ------------
  * OPEN_EDITOR
@@ -57,7 +57,7 @@ export const closeEditor = data => ({
 });
 
 
-/*
+/**
  * share
  * -----------
  * OPEN_SHARE
@@ -73,7 +73,7 @@ export const closeShare = () => ({
 });
 
 
-/*
+/**
  * zoom
  * ----------
  * OPEN_ZOOM
@@ -89,7 +89,7 @@ export const closeZoom = () => ({
 });
 
 
-/*
+/**
  * notification
  * ------------------
  * OPEN_NOTIFICATION
@@ -105,7 +105,7 @@ export const closeNotification = () => ({
 });
 
 
-/*
+/**
  * settings
  * ----------------
  * UPDATE_SETTINGS

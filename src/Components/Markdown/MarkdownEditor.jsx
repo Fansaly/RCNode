@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   flex: {
     margin: 0,
     '& *': {
@@ -21,43 +20,43 @@ const styles = theme => ({
       lineHeight: 1.3125,
     },
   },
-});
+}));
 
-class MarkdownEditor extends React.Component {
-  handleUpdateContent = event => {
-    this.props.onUpdateContent(event);
+const MarkdownEditor = ({ inputRef, ...props }) => {
+  const classes = useStyles();
+  const {
+    content,
+    disabled,
+    onUpdateContent: updateContent,
+  } = props;
+
+  const handleUpdateContent = event => {
+    updateContent(event);
   };
 
-  render() {
-    const {
-      classes,
-      disabled,
-      autoFocus,
-      content,
-    } = this.props;
-
-    return (
-      <React.Fragment>
-        <TextField
-          className={classNames(classes.flex)}
-          margin="normal"
-          multiline
-          rows="3"
-          autoFocus={autoFocus}
-          fullWidth
-          id="textarea"
-          placeholder="写些什么呢？"
-          value={content}
-          disabled={disabled}
-          onChange={this.handleUpdateContent}
-        />
-      </React.Fragment>
-    );
-  }
-}
-
-MarkdownEditor.propTypes = {
-  classes: PropTypes.object.isRequired,
+  return (
+    <React.Fragment>
+      <TextField
+        className={classes.flex}
+        margin="normal"
+        multiline
+        rows="3"
+        fullWidth
+        id="textarea"
+        placeholder="写些什么呢？"
+        inputRef={inputRef}
+        value={content}
+        disabled={disabled}
+        onChange={handleUpdateContent}
+      />
+    </React.Fragment>
+  );
 };
 
-export default withStyles(styles)(MarkdownEditor);
+MarkdownEditor.propTypes = {
+  content: PropTypes.string.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  onUpdateContent: PropTypes.func.isRequired,
+};
+
+export default MarkdownEditor;

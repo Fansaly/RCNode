@@ -1,3 +1,11 @@
+const devRouters = process.env.NODE_ENV === 'development' ? {
+  // markdown render test
+  devMD: {
+    path: '/test',
+    name: 'MD-TEST',
+  },
+} : {};
+
 const routers = {
   tab: {
     all: {
@@ -30,6 +38,7 @@ const routers = {
       name: '测试',
       isTopicType: true,
     },
+    ...devRouters,
   },
   topic: {
     path: '/topic',

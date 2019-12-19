@@ -5,39 +5,51 @@ import {
   navIsActive,
 } from '../../common';
 
+import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 
 import './normal-nav.styl';
 
-class NormalNav extends React.Component {
-  navIsActive = path => (match, location) => {
+const useStyles = makeStyles(theme => ({
+  root: {
+    '& .type': {
+      color: `${theme.palette.type === 'light' ? '#fff' : '#ccc'} !important`,
+    },
+  },
+}));
+
+const NormalNav = () => {
+  const classes = useStyles();
+
+  const isActive = path => (match, location) => {
     return navIsActive(path, location);
   };
 
-  render() {
-    return (
-      <Grid
-        container
-        justify="center"
-        alignItems="center"
-        className="type-content"
-      >
-        {navTabs.map(({ path, name }) => (
-          <NavLink
-            to={path}
-            key={path}
-            activeClassName="current"
-            isActive={this.navIsActive(path)}
+  return (
+    <Grid
+      container
+      justify="center"
+      alignItems="center"
+      className="type-content"
+    >
+      {navTabs.map(({ path, name }) => (
+        <NavLink
+          to={path}
+          key={path}
+          activeClassName={`${classes.root} current`}
+          isActive={isActive(path)}
+        >
+          <Button
+            className="type"
+            disableFocusRipple
           >
-            <Button disableFocusRipple className="type">
-              {name}
-            </Button>
-          </NavLink>
-        ))}
-      </Grid>
-    );
-  }
-}
+            {name}
+          </Button>
+        </NavLink>
+      ))}
+    </Grid>
+  );
+};
 
 export default NormalNav;

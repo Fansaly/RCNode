@@ -5,8 +5,8 @@ import sub from 'markdown-it-sub';
 import sup from 'markdown-it-sup';
 import footnote from 'markdown-it-footnote';
 import container from 'markdown-it-container';
-import Prism from 'prismjs';
-import extensions from './extensions';
+
+import Prism, { alias } from '../Prism';
 import { transformOrgURL } from '../../common';
 
 const md = new MarkdownIt({
@@ -16,11 +16,10 @@ const md = new MarkdownIt({
   quotes: '“”‘’',
   highlight: (code, lang) => {
     lang = typeof lang === 'string' && lang.toLocaleLowerCase();
-    lang = extensions[lang] || lang;
+    lang = alias[lang] || lang;
 
     if (!Object.keys(Prism.languages).includes(lang)) {
       if (Boolean(lang) && process.env.NODE_ENV === 'development') {
-        // eslint-disable-next-line
         console.warn(`\`${lang}' code is highlighted with \`markup'.`);
       }
 

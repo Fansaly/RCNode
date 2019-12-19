@@ -40,7 +40,7 @@ class Progress extends React.Component {
       <TransitionGroup id="progress">
         {status === 'loading' &&
           <CSSTransition
-            classNames="fade"
+            classNames="progress"
             className="progress loading"
             timeout={{enter: 800, exit: 600}}
           >
@@ -49,7 +49,7 @@ class Progress extends React.Component {
         }
         {status === 'success' &&
           <CSSTransition
-            classNames="fade"
+            classNames="progress"
             className="progress success"
             timeout={{enter: 800, exit: 600}}
           >
@@ -58,7 +58,7 @@ class Progress extends React.Component {
         }
         {status === 'error' &&
           <CSSTransition
-            classNames="fade"
+            classNames="progress"
             className="progress error"
             timeout={{enter: 800, exit: 600}}
           >
@@ -67,7 +67,7 @@ class Progress extends React.Component {
         }
         {status === 'idle' &&
           <CSSTransition
-            classNames="fade"
+            classNames="progress"
             className="progress idle"
             timeout={{enter: 800, exit: 600}}
           >

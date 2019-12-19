@@ -1,17 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { closeShare } from '../../store/actions';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField';
+
 import copy from 'clipboard-copy';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   paper: {
     margin: 10,
     width: 'calc(100% - 20px)',
@@ -27,29 +25,22 @@ const styles = theme => ({
     marginLeft: 16,
     padding: '4px 10px',
   },
-});
+}));
 
-class ShareDialog extends React.Component {
-  handlePreClose = () => {
-    const { open } = this.props;
-    open && this.handleClose();
-  };
+const ShareDialog = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  let { url, open, post } = useSelector(state => state.share);
 
-  handleClose = () => {
-    this.props.closeShare();
-  };
-
-  handleCopy = async () => {
+  const handleCopy = async () => {
     try {
-      await copy(this.props.url);
+      await copy(url);
     } finally {
-      this.handleClose();
+      handleClose();
     }
   };
 
-  getLabel = () => {
-    let { post } = this.props;
-
+  const getLabel = () => {
     post = Boolean(post)
             ? ` - #${post}`
             : '';
@@ -57,61 +48,45 @@ class ShareDialog extends React.Component {
     return `分享链接${post}：`;
   };
 
-  componentWillUnmount() {
-    this.handlePreClose();
-  }
+  const handleClose = React.useCallback(() => {
+    dispatch({ type: 'CLOSE_SHARE' });
+  }, [dispatch]);
 
-  render() {
-    const { classes, url, open } = this.props;
+  const handleExit = React.useCallback(() => {
+    open && handleClose();
+  }, [open, handleClose]);
 
-    return (
-      <Dialog
-        open={open}
-        onClose={this.handleClose}
-        classes={{
-          paper: classes.paper,
-        }}
-      >
-        <DialogContent className={classes.content}>
-          <TextField
-            inputProps={{ readOnly: true }}
-            label={`${this.getLabel()}`}
-            value={url}
-            fullWidth
-          />
-          <Button
-            className={classes.button}
-            onClick={this.handleCopy}
-            variant="outlined"
-            size="small"
-            autoFocus
-          >
-            复制
-          </Button>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-}
+  React.useEffect(() => {
+    return () => handleExit();
+  }, [handleExit]);
 
-ShareDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      classes={{
+        paper: classes.paper,
+      }}
+    >
+      <DialogContent className={classes.content}>
+        <TextField
+          inputProps={{ readOnly: true }}
+          label={`${getLabel()}`}
+          value={url}
+          fullWidth
+        />
+        <Button
+          className={classes.button}
+          onClick={handleCopy}
+          variant="outlined"
+          size="small"
+          autoFocus
+        >
+          复制
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
-const mapStateTopProps = ({ share }) => ({
-  ...share,
-});
-
-const mapDispatchTopProps = dispatch => ({
-  closeShare: () => {
-    dispatch(closeShare());
-  },
-});
-
-export default compose(
-  withStyles(styles),
-  connect(
-    mapStateTopProps,
-    mapDispatchTopProps,
-  ),
-)(ShareDialog);
+export default ShareDialog;

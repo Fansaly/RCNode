@@ -42,7 +42,7 @@
         span:last-child
           box-shadow 0 2px 16px rgba(0,0,0,.15)
 
-.fade-enter
+.progress-enter
   opacity 0.01
   &.loading
   &.success
@@ -50,17 +50,17 @@
     transform scale(.68)
   &.idle
     transform translateY(10px)
-  &.fade-enter-active
+  &.progress-enter-active
     z-index 3
     opacity 1
     transition opacity 800ms ease,
                transform 1s cubic-bezier(0.19, 1, 0.22, 1)
     transition-delay .1s
     transform none
-.fade-exit
+.progress-exit
   opacity 1
   transform none
-  &.fade-exit-active
+  &.progress-exit-active
     z-index 1
     opacity 0.01
     transition opacity 600ms ease,

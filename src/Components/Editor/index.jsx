@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -83,6 +83,19 @@ class Editor extends React.Component {
       content: '',
     };
   }
+
+  titleRef = React.createRef();
+  contentRef = React.createRef();
+
+  handleFocus = () => {
+    const { action } = this.props;
+
+    if (['create', 'update'].includes(action)) {
+      this.titleRef.current.focus();
+    } else {
+      this.contentRef.current.focus();
+    }
+  };
 
   handlePublishTab = publishTab => {
     this.setState({ publishTab });
@@ -265,7 +278,7 @@ class Editor extends React.Component {
     !disabled && this.props.closeEditor(response ? result : {});
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const tab = matchTab(this.props.location);
 
     this.setState({
@@ -279,7 +292,7 @@ class Editor extends React.Component {
     this.handlePreClose();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const {
       pathname: nextPathname,
       search: nextSearch,
@@ -319,7 +332,7 @@ class Editor extends React.Component {
       fullScreen,
       isOK,
       title,
-      content,
+      content = '',
      } = this.state;
 
     return (isAuthed &&
@@ -334,6 +347,7 @@ class Editor extends React.Component {
           fullWidth
           fullScreen={!isWidthUp('sm', width) || fullScreen}
           keepMounted={!isWidthUp('sm', width)}
+          onEntered={this.handleFocus}
         >
           <EditorHeader
             disabled={disabled}
@@ -349,25 +363,25 @@ class Editor extends React.Component {
               multiline
               rows="1"
               rowsMax="3"
-              autoFocus
               fullWidth
               placeholder="标题..."
+              inputRef={this.titleRef}
               value={title}
               disabled={disabled}
               onChange={this.handleChange('title')}
             />
           }
-          <DialogContent className={classNames('flex', classes.content)}>
+          <DialogContent className={clsx('flex', classes.content)}>
             <MarkdownEditor
               disabled={disabled}
               content={content}
-              autoFocus={['reply'].includes(action)}
+              inputRef={this.contentRef}
               onUpdateContent={this.handleChange('content')}
             />
           </DialogContent>
           <DialogActions className={classes.actions}>
             <Button
-              className={classNames(classes.button, classes.cancel)}
+              className={clsx(classes.button, classes.cancel)}
               onClick={this.handleClose}
               disabled={disabled}
               color="default"
@@ -376,7 +390,7 @@ class Editor extends React.Component {
               取消
             </Button>
             <Button
-              className={classNames(classes.button, classes.doit)}
+              className={clsx(classes.button, classes.doit)}
               variant="contained"
               onClick={this.handleSubmit}
               disabled={!isOK || disabled}

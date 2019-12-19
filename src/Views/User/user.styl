@@ -5,7 +5,6 @@
   display flex
   align-items flex-end
   background-size 520px 520px
-  background-color rgba(83, 156, 98, .8)
   background-image linear-gradient(
                     45deg,
                     rgba(255, 255, 255, .2) 25%,
@@ -23,7 +22,7 @@
     opacity 0
     transform scale(1.05)
     transform translateY(6px) scale(1.004)
-    &.completed
+    &.complete
       opacity 1
       transform none
       transition opacity .3s cubic-bezier(.44, .22, .38, .96), transform .35s cubic-bezier(.44, .22, .38, .96)
@@ -64,7 +63,6 @@
     align-items center
     justify-content center
     padding 20px 30px
-    font-weight 300
     color rgba(255,255,255,.94)
     text-shadow 1px 1px 2px rgba(0,0,0,.15)
     // -------------------------------------
@@ -114,6 +112,9 @@
       display flex
       flex-direction column
       margin-left 50px
+      font-weight 500
+      font-size 16px
+      letter-spacing 0
       >div
         display flex
         flex-wrap nowrap
@@ -144,18 +145,10 @@
   text-align justify
   box-shadow 0 4px 4px -2px rgba(0,0,0,.11),
              0 5px 5px -2px rgba(0,0,0,.11)
-  .tabs
-    [role="tablist"] > span
-      background-color #2ac2f9
-    .tab
-      &[aria-selected="true"]
-        color #2ac2f9
-      span
-        font-size 16px
 .recent
   margin-top 10px
 
-@media (max-width 600px)
+@media (max-width: 600px)
   .cover
     height 240px
     align-items center
@@ -179,7 +172,7 @@
           margin 4px 0
           font-size 14px
 
-@media (max-width 420px)
+@media (max-width: 420px)
   .cover
     height 198px
     .user

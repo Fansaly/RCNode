@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -29,7 +29,7 @@ const styles = theme => ({
     flex: 1,
   },
   backdrop: {
-    backgroundColor: 'rgba(255,255,255,.85)',
+    backgroundColor: theme.palette.type === 'light' ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.92)',
   },
   actions: {
     position: 'fixed',
@@ -42,7 +42,7 @@ const styles = theme => ({
     right: 0,
     height: 56,
     padding: '0 18px',
-    backgroundColor: '#fff',
+    backgroundColor: theme.palette.type === 'light' ? '#fff' : '#212121',
     boxShadow: '0 0 1px rgba(0,0,0,.03), 0 0 2px rgba(0,0,0,.08)',
     [theme.breakpoints.up('sm')]: {
       height: 64,
@@ -121,7 +121,7 @@ const styles = theme => ({
     bottom: 32,
     borderRadius: 22,
     overflow: 'hidden',
-    backgroundColor: '#fff',
+    backgroundColor: theme.palette.type === 'light' ? '#fff' : '#212121',
     boxShadow: '0 0 2px rgba(0,0,0,.1), 0 2px 5px rgba(0,0,0,.16)',
     zIndex: 1,
   },
@@ -527,13 +527,13 @@ class ImageZoom extends React.Component {
             </Fade>
             <div
               ref={ref => this.box = ref}
-              className={classNames(classes.box, {
+              className={clsx(classes.box, {
                 'ready': ready,
               })}
             >
               <img
                 ref={ref => this.zoomTarget = ref}
-                className={classNames(classes.target, {
+                className={clsx(classes.target, {
                   'drag-enabled': dragEnabled,
                   'drag-active': dragActive,
                 })}
@@ -575,6 +575,7 @@ class ImageZoom extends React.Component {
 ImageZoom.propTypes = {
   classes: PropTypes.object.isRequired,
   width: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
   src: PropTypes.string,
 };
 

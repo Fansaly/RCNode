@@ -1,6 +1,5 @@
 import marked from 'marked';
-import Prism from 'prismjs';
-import extensions from './extensions';
+import Prism, { alias } from '../Prism';
 import { transformOrgURL } from '../../common';
 
 const renderer = new marked.Renderer();
@@ -23,7 +22,7 @@ renderer.image = (src, title, text) => {
 marked.setOptions({
   renderer,
   highlight: (code, lang) => {
-    lang = extensions[lang] || lang || 'markup';
+    lang = alias[lang] || lang || 'markup';
 
     if (!Object.keys(Prism.languages).includes(lang)) {
       console.warn(`\`${lang}' code is not highlighted.`);

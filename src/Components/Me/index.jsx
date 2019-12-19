@@ -1,17 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import {
-  deleteAuth,
-  updateMessage,
-  cleanMessage,
-} from '../../store/actions';
-import { get as getData } from '../../fetch';
+import clsx from 'clsx';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { get } from '../../fetch';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
@@ -35,79 +28,85 @@ import { SignOutIcon } from '../../Components/Icons';
 import AvatarSvg from '../../static/avatar.svg';
 import './me.styl';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
+  badge: {
+    '&:before, &:after': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      marginTop: 6,
+      marginRight: 6,
+      width: 6,
+      height: 6,
+      borderRadius: '50%',
+      opacity: 0,
+      transition: 'opacity .3s linear',
+    },
+    '&.has-message:before': {
+      opacity: 1,
+      backgroundColor: 'rgba(128, 189, 1, .85)',
+      boxShadow: '0 0 4px rgba(0, 0, 0, .15)',
+    },
+    '&.has-message:after': {
+      animation: '$ripple 1.2s infinite ease-in-out',
+      border: '1px solid #44b700',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
   hidden: {
     '& span': {
       visibility: 'hidden',
     },
   },
-});
+}));
 
-class Me extends React.Component {
-  constructor(props) {
-    super(props);
+const Me = () => {
+  const { isAuthed, accesstoken, uname, avatar } = useSelector(({ auth }) => auth);
+  const { time } = useSelector(({ settings }) => settings);
+  const message = useSelector(s => s.message);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const classes = useStyles();
 
-    const { time } = this.props;
+  const timerMessage = React.useRef(null);
+  const timerSignout = React.useRef(null);
+  const isCancel = React.useRef();
+  const anchorEl = React.useRef(null);
 
-    this.state = {
-      open: false,
-      time,
-    };
-  }
+  const [open, setOpen] = React.useState(false);
 
-  timerMessage = null;
-  timerSignout = null;
-
-  handleToggle = () => {
-    this.setState(state => ({
-      open: !state.open,
-    }));
+  const handleToggle = () => {
+    setOpen(prevState => !prevState);
   };
 
-  handleClose = event => {
-    if (this.anchorEl.contains(event.target)) {
+  const handleClose = event => {
+    if (anchorEl.current.contains(event.target)) {
       return;
     }
 
-    this.setState({ open: false });
+    setOpen(false);
   };
 
-  fetchUnreadCount = async () => {
-    const { isAuthed, accesstoken } = this.props;
-    const { time } = this.state;
-
-    if (!isAuthed) { return; }
-
-    const params = {
-      url: '/message/count',
-      params: { accesstoken },
-    };
-
-    const { success, data: count } = await getData(params);
-
-    success && this.props.updateMessage(count);
-
-    if (time > 0) {
-      this.timerMessage = setTimeout(() => {
-        this.fetchUnreadCount();
-      }, time * 1e3);
-    }
-  };
-
-  handleInfo = event => {
-    const { history, uname } = this.props;
-
-    this.handleClose(event);
-
+  const handleInfo = event => {
+    handleClose(event);
     history.push(`/user/${uname}`);
   };
 
-  handleMessage = event => {
+  const handleMessage = event => {
     const messagePath = '/message';
-    const { history } = this.props;
     const { pathname } = history.location;
 
-    this.handleClose(event);
+    handleClose(event);
 
     if (pathname === messagePath) {
       history.replace(messagePath);
@@ -116,189 +115,160 @@ class Me extends React.Component {
     }
   };
 
-  handleSettings = event => {
-    const { history } = this.props;
-
-    this.handleClose(event);
-
+  const handleSettings = event => {
+    handleClose(event);
     history.push('/settings');
   };
 
-  handleSignin = event => {
-    const { history } = this.props;
-
-    this.handleClose(event);
-
+  const handleSignin = event => {
+    handleClose(event);
     history.push('/signin');
   };
 
-  handleSignout = event => {
-    this.handleClose(event);
+  const handleSignout = event => {
+    handleClose(event);
 
-    clearTimeout(this.timerSignout);
+    clearTimeout(timerSignout.current);
 
-    this.timerSignout = setTimeout(() => {
-      this.props.deleteAuth();
-      this.props.cleanMessage();
+    timerSignout.current = setTimeout(() => {
+      dispatch({ type: 'DELETE_AUTH' });
+      dispatch({ type: 'CLEAN_MESSAGE' });
     }, 330);
   };
 
-  componentDidMount() {
-    this.fetchUnreadCount();
-  }
+  React.useEffect(() => {
+    return () => clearTimeout(timerSignout.current);
+  }, []);
 
-  componentWillReceiveProps(nextProps) {
-    const nextTime = nextProps.time;
-    const prevTime = this.state.time;
+  React.useEffect(() => {
+    isCancel.current = false;
 
-    if (nextTime !== prevTime) {
-      clearTimeout(this.timerMessage);
+    clearTimeout(timerMessage.current);
 
-      if (nextTime > 0) {
-        this.setState({
-          time: nextTime,
-        }, () => {
-          this.fetchUnreadCount();
-        });
+    const fetchUnreadCount = async () => {
+      if (!isAuthed) { return; }
+
+      const params = {
+        url: '/message/count',
+        params: { accesstoken },
+      };
+
+      const { success, data: count } = await get(params);
+
+      if (isCancel.current) {
+        return;
       }
-    }
-  }
 
-  componentWillUnmount() {
-    clearTimeout(this.timerMessage);
-    clearTimeout(this.timerSignout);
-  }
+      if (success) {
+        dispatch({ type: 'UPDATE_MESSAGE', data: count });
+      }
 
-  render() {
-    const {
-      classes,
-      isAuthed,
-      message,
-      avatar,
-    } = this.props;
-    const { open } = this.state;
+      if (time > 0) {
+        timerMessage.current = setTimeout(() => {
+          fetchUnreadCount();
+        }, time * 1e3);
+      }
+    };
 
-    return (
-      <Grid item className="flex">
-        <Grid
-          container
-          alignContent="center"
-          alignItems="center"
-          justify="center"
-          className={isAuthed ? 'info' : 'signin'}
+    fetchUnreadCount();
+
+    return () => {
+      isCancel.current = true;
+      clearTimeout(timerMessage.current);
+    };
+  }, [isAuthed, accesstoken, dispatch, time]);
+
+  return (
+    <Grid item className="flex">
+      <Grid
+        container
+        alignContent="center"
+        alignItems="center"
+        justify="center"
+        className={isAuthed ? 'info' : 'signin'}
+      >
+        <IconButton
+          buttonRef={node => {
+            anchorEl.current = node;
+          }}
+          aria-owns={open ? 'menu-list-grow' : null}
+          aria-haspopup="true"
+          onClick={handleToggle}
+          className={clsx('me', classes.badge, {
+            'has-message': Boolean(message.count),
+          })}
         >
-          <IconButton
-            buttonRef={node => {
-              this.anchorEl = node;
-            }}
-            aria-owns={open ? 'menu-list-grow' : null}
-            aria-haspopup="true"
-            onClick={this.handleToggle}
-            className={classNames('me', {
-              'has-message': Boolean(message.count),
-            })}
-          >
-            <Avatar className="flex avatar">
-              {isAuthed ? (
-                <img src={avatar} alt="U" />
-              ) : (
-                <AvatarSvg />
-              )}
-            </Avatar>
-          </IconButton>
-          <Popper open={open} anchorEl={this.anchorEl} transition disablePortal>
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                id="menu-list-grow"
-                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-              >
-                <Paper>
-                  <ClickAwayListener onClickAway={this.handleClose}>
-                    <MenuList>
-                      {isAuthed &&
-                        <MenuItem onClick={this.handleInfo}>
-                          <ListItemIcon>
-                            <PersonIcon />
-                          </ListItemIcon>
-                          <ListItemText primary="资料" />
-                        </MenuItem>
-                      }
-                      {isAuthed &&
-                        <MenuItem onClick={this.handleMessage}>
-                          <ListItemIcon>
-                            <Badge
-                              badgeContent={message.count}
-                              className={classNames('badge', {
-                                [classes.hidden]: message.count <= 0,
-                              })}
-                            >
-                              <NotificationsIcon />
-                            </Badge>
-                          </ListItemIcon>
-                          <ListItemText primary="消息" />
-                        </MenuItem>
-                      }
-                      <MenuItem onClick={this.handleSettings}>
-                        <ListItemIcon>
-                          <SettingsIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="设置" />
-                      </MenuItem>
-                      {isAuthed ? (
-                        <MenuItem onClick={this.handleSignout}>
-                          <ListItemIcon>
-                            {SignOutIcon}
-                          </ListItemIcon>
-                          <ListItemText primary="退出" />
-                        </MenuItem>
-                      ) : (
-                        <MenuItem onClick={this.handleSignin}>
-                          <ListItemIcon>
-                            <SignInIcon />
-                          </ListItemIcon>
-                          <ListItemText primary="登录" />
-                        </MenuItem>
-                      )}
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
+          <Avatar className="flex avatar">
+            {isAuthed ? (
+              <img src={avatar} alt="U" />
+            ) : (
+              <AvatarSvg />
             )}
-          </Popper>
-        </Grid>
+          </Avatar>
+        </IconButton>
+        <Popper open={open} anchorEl={anchorEl.current} transition disablePortal>
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              id="menu-list-grow"
+              style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={handleClose}>
+                  <MenuList>
+                    {isAuthed &&
+                      <MenuItem onClick={handleInfo}>
+                        <ListItemIcon>
+                          <PersonIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="资料" />
+                      </MenuItem>
+                    }
+                    {isAuthed &&
+                      <MenuItem onClick={handleMessage}>
+                        <ListItemIcon>
+                          <Badge
+                            badgeContent={message.count}
+                            className={clsx('badge', {
+                              [classes.hidden]: message.count <= 0,
+                            })}
+                          >
+                            <NotificationsIcon />
+                          </Badge>
+                        </ListItemIcon>
+                        <ListItemText primary="消息" />
+                      </MenuItem>
+                    }
+                    <MenuItem onClick={handleSettings}>
+                      <ListItemIcon>
+                        <SettingsIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="设置" />
+                    </MenuItem>
+                    {isAuthed ? (
+                      <MenuItem onClick={handleSignout}>
+                        <ListItemIcon>
+                          {SignOutIcon}
+                        </ListItemIcon>
+                        <ListItemText primary="退出" />
+                      </MenuItem>
+                    ) : (
+                      <MenuItem onClick={handleSignin}>
+                        <ListItemIcon>
+                          <SignInIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="登录" />
+                      </MenuItem>
+                    )}
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
       </Grid>
-    );
-  }
-}
-
-Me.propTypes = {
-  classes: PropTypes.object.isRequired,
+    </Grid>
+  );
 };
 
-const mapStateToProps = ({ auth, message, settings }) => ({
-  ...auth,
-  message,
-  time: settings.time,
-});
-
-const mapDispatchToProps = dispatch => ({
-  deleteAuth: () => {
-    dispatch(deleteAuth());
-  },
-  updateMessage: count => {
-    dispatch(updateMessage(count));
-  },
-  cleanMessage: () => {
-    dispatch(cleanMessage());
-  },
-});
-
-export default compose(
-  withStyles(styles),
-  withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Me);
+export default Me;

@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import NotesIcon from '@material-ui/icons/Notes';
 import TopIcon from '@material-ui/icons/Publish';
 import GoodIcon from '@material-ui/icons/ThumbUp';
@@ -8,45 +10,50 @@ import JobIcon from '@material-ui/icons/Work';
 import DevIcon from '@material-ui/icons/Build';
 import UnknownIcon from '@material-ui/icons/HelpOutline';
 
-class TopicTypeIcon extends React.Component {
-  render() {
-    const {
-      all,
-      good,
-      top,
-      tab,
-      ...other
-    } = this.props;
+const TopicTypeIcon = (props) => {
+  const {
+    all,
+    good,
+    top,
+    tab,
+    ...rest
+  } = props;
 
-    let typeIcon = <UnknownIcon {...other} />;
+  let typeIcon = <UnknownIcon {...rest} />;
 
-    if (all) {
-      typeIcon = <NotesIcon {...other} />;
-    } else if (top) {
-      typeIcon = <TopIcon {...other} />;
-    } else if (good) {
-      typeIcon = <GoodIcon {...other} />;
-    } else {
-      switch (tab) {
-        case 'ask':
-          typeIcon = <QAIcon {...other} />;
-          break;
-        case 'share':
-          typeIcon = <ShareIcon {...other} />;
-          break;
-        case 'job':
-          typeIcon = <JobIcon {...other} />;
-          break;
-        case 'dev':
-          typeIcon = <DevIcon {...other} />;
-          break;
-        default:
-          break;
-      }
+  if (all) {
+    typeIcon = <NotesIcon {...rest} />;
+  } else if (top) {
+    typeIcon = <TopIcon {...rest} />;
+  } else if (good) {
+    typeIcon = <GoodIcon {...rest} />;
+  } else {
+    switch (tab) {
+      case 'ask':
+        typeIcon = <QAIcon {...rest} />;
+        break;
+      case 'share':
+        typeIcon = <ShareIcon {...rest} />;
+        break;
+      case 'job':
+        typeIcon = <JobIcon {...rest} />;
+        break;
+      case 'dev':
+        typeIcon = <DevIcon {...rest} />;
+        break;
+      default:
+        break;
     }
-
-    return typeIcon;
   }
-}
+
+  return typeIcon;
+};
+
+TopicTypeIcon.propTypes = {
+  tab: PropTypes.string,
+  all: PropTypes.bool,
+  top: PropTypes.bool,
+  good: PropTypes.bool,
+};
 
 export default TopicTypeIcon;

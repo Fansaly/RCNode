@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import clsx from 'clsx';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import {
   navTabsObject as navTabs,
   topicTypes,
   matchTab,
 } from '../../common';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
@@ -39,7 +38,13 @@ import Avatar from '../../Components/Avatar';
 import TopicTypeIcon from '../../Components/TopicTypeIcon';
 import './editor-header.styl';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
+  color: {
+    color: theme.palette.type === 'light' ? '#0366d6' : '#1858a0',
+    '& svg': {
+      color: theme.palette.type === 'light' ? 'rgba(0,0,0,.58)' : 'rgba(230,230,230,.58)',
+    },
+  },
   text: {
     padding: 0,
     paddingRight: 2,
@@ -57,246 +62,208 @@ const styles = theme => ({
   content: {
     paddingBottom: 20,
   },
-});
+}));
 
-class Editor extends React.Component {
-  constructor(props) {
-    super(props);
+const EditorHeader = (props) => {
+  const {
+    disabled,
+    onPublishTab,
+    onPreview,
+    fullScreen,
+    onFullScreen,
+  } = props;
 
-    this.state = {
-      moreOpen: false,
-      selectOpen: false,
-      publishTab: null,
+  const { isAuthed, uname, avatar } = useSelector(({ auth }) => auth);
+  const { tab, action } = useSelector(({ editor }) => editor);
+  const location = useLocation();
+  const classes = useStyles();
+
+  const [moreOpen, setMoreOpen] = React.useState(false);
+  const [selectOpen, setSelectOpen] = React.useState(false);
+  const [publishTab, setPublishTab] = React.useState(null);
+  const anchorEl = React.useRef(null);
+
+  const handlePublishTab = React.useCallback(() => {
+    onPublishTab(publishTab);
+  }, [onPublishTab, publishTab]);
+
+  const handleCloseSelect = React.useCallback(() => {
+    handlePublishTab();
+    setSelectOpen(false);
+  }, [handlePublishTab]);
+
+  const handleOpenSelect = () => {
+    setSelectOpen(!disabled);
+  };
+
+  const handleChange = (event, value) => {
+    setPublishTab(value);
+  };
+
+  const handleCloseMore = () => {
+    setMoreOpen(false);
+  };
+
+  const handleOpenMore = () => {
+    setMoreOpen(true);
+  };
+
+  const handlePreview = () => {
+    handleCloseMore();
+    onPreview();
+  };
+
+  const handleFullScreen = () => {
+    handleCloseMore();
+    onFullScreen();
+  };
+
+  React.useEffect(() => {
+    const getPublishTab = () => {
+      const _tab = matchTab(location);
+
+      return (
+        _tab === null
+          ? null
+          : topicTypes.includes(_tab)
+            ? _tab
+            : ''
+      );
     };
-  }
 
-  getPublishTab = () => {
-    const tab = matchTab(this.props.location);
+    setPublishTab(tab || getPublishTab());
+  }, [location, tab]);
 
-    return (
-      tab === null
-        ? null
-        : topicTypes.includes(tab)
-          ? tab
-          : ''
-    );
-  };
+  React.useEffect(() => {
+    handleCloseSelect();
+  }, [handleCloseSelect]);
 
-  handleChange = (event, value) => {
-    this.setState({
-      publishTab: value,
-    }, () => {
-      this.handleCloseSelect(value);
-    });
-  };
-
-  handleOpenSelect = () => {
-    const { disabled } = this.props;
-    this.setState({
-      selectOpen: !disabled,
-    });
-  };
-
-  handleCloseSelect = () => {
-    this.handlePublishTab();
-    this.setState({
-      selectOpen: false,
-    });
-  };
-
-  handlePublishTab = () => {
-    const { publishTab } = this.state;
-    this.props.onPublishTab(publishTab);
-  };
-
-  handleCloseMore = () => {
-    this.setState({
-      moreOpen: false,
-    });
-  };
-
-  handleOpenMore = () => {
-    this.setState({
-      moreOpen: true,
-    });
-  };
-
-  handlePreview = () => {
-    this.handleCloseMore();
-    this.props.onPreview();
-  };
-
-  handleFullScreen = () => {
-    this.handleCloseMore();
-    this.props.onFullScreen();
-  };
-
-  componentWillMount() {
-    const { tab } = this.props;
-    const publishTab = tab || this.getPublishTab();
-
-    this.setState({
-      publishTab,
-    }, () => {
-      this.handlePublishTab();
-    });
-  }
-
-  render() {
-    const {
-      classes,
-      disabled,
-      uname,
-      avatar,
-      action,
-      isAuthed,
-      fullScreen,
-    } = this.props;
-
-    const {
-      moreOpen,
-      selectOpen,
-      publishTab,
-    } = this.state;
-
-    return (isAuthed &&
-      <React.Fragment>
-        <div className="flex editor-header">
-          <Avatar
-            name={uname}
-            image={avatar}
-            className="avatar"
-          />
-          <div className="flex box">
-            <Typography className="flex editor-uname">
-              {uname}
-              <ArrowRightIcon color="inherit" />
-            </Typography>
-            {/(create)|(update)/.test(action) &&
-              <Typography className="flex editor-tpoic-type">
-                <Typography
-                  className={classNames('flex', {
-                    'disabled': disabled,
-                  })}
-                  onClick={this.handleOpenSelect}
-                  component="span"
-                >
-                  {publishTab ? navTabs[publishTab].name : '请选择分类'}
-                  <TopicTypeIcon tab={publishTab} color="inherit" />
-                </Typography>
+  return (isAuthed &&
+    <React.Fragment>
+      <div className="flex editor-header">
+        <Avatar
+          name={uname}
+          image={avatar}
+          className="avatar"
+        />
+        <div className="flex box">
+          <Typography className="flex editor-uname">
+            {uname}
+            <ArrowRightIcon color="inherit" />
+          </Typography>
+          {/(create)|(update)/.test(action) &&
+            <Typography className="flex editor-tpoic-type">
+              <Typography
+                className={clsx('flex', classes.color, {
+                  'disabled': disabled,
+                })}
+                onClick={handleOpenSelect}
+                component="span"
+              >
+                {publishTab ? navTabs[publishTab].name : '请选择分类'}
+                <TopicTypeIcon tab={publishTab} />
               </Typography>
-            }
-          </div>
-          <div className="editor-header-actions">
-            <IconButton
-              buttonRef={node => {
-                this.anchorEl = node;
-              }}
-              variant="contained"
-              onClick={this.handleOpenMore}
-            >
-              <MoreVertIcon />
-            </IconButton>
-          </div>
+            </Typography>
+          }
         </div>
+        <div className="editor-header-actions">
+          <IconButton
+            buttonRef={node => {
+              anchorEl.current = node;
+            }}
+            variant="contained"
+            onClick={handleOpenMore}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        </div>
+      </div>
 
-        <Popover
-          open={moreOpen}
-          anchorEl={this.anchorEl}
-          anchorReference="anchorEl"
-          anchorPosition={{ top: 200, left: 400 }}
-          onClose={this.handleCloseMore}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        >
-          <List component="nav">
-            <ListItem button onClick={this.handlePreview}>
+      <Popover
+        open={moreOpen}
+        anchorEl={anchorEl.current}
+        anchorReference="anchorEl"
+        anchorPosition={{ top: 30, left: 30 }}
+        onClose={handleCloseMore}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <List>
+          <ListItem button onClick={handlePreview}>
+            <ListItemIcon>
+              <PreviewIcon color="inherit" />
+            </ListItemIcon>
+            <ListItemText
+              className={classes.text}
+              primary="预览"
+            />
+          </ListItem>
+          <Hidden xsDown>
+            <ListItem button onClick={handleFullScreen}>
               <ListItemIcon>
-                <PreviewIcon color="inherit" />
+                {fullScreen ? (
+                  <FullscreenExitIcon color="inherit" />
+                ) : (
+                  <FullscreenIcon color="inherit" />
+                )}
               </ListItemIcon>
               <ListItemText
                 className={classes.text}
-                primary="预览"
+                primary="全屏"
               />
             </ListItem>
-            <Hidden xsDown>
-              <ListItem button onClick={this.handleFullScreen}>
-                <ListItemIcon>
-                  {fullScreen ? (
-                    <FullscreenExitIcon color="inherit" />
-                  ) : (
-                    <FullscreenIcon color="inherit" />
-                  )}
-                </ListItemIcon>
-                <ListItemText
-                  className={classes.text}
-                  primary="全屏"
-                />
-              </ListItem>
-            </Hidden>
-          </List>
-        </Popover>
+          </Hidden>
+        </List>
+      </Popover>
 
-        <Dialog
-          open={selectOpen}
-          maxWidth="xs"
-          onEntering={this.handleEntering}
-          onClose={this.handleCloseSelect}
-        >
-          <DialogTitle className={classes.title}>
-            <IconButton
-              className={classes.back}
-              onClick={this.handleCloseSelect}
-            >
-              <ArrowBackIcon />
-            </IconButton>
-            请选择一个分类
-          </DialogTitle>
-          <DialogContent className={classes.content}>
-            <RadioGroup
-              ref={ref => {
-                this.radioGroupRef = ref;
-              }}
-              aria-label="topicType"
-              name="topicType"
-              value={publishTab}
-              onChange={this.handleChange}
-            >
-              {topicTypes.map(tab => (
-                <FormControlLabel
-                  key={tab}
-                  value={tab}
-                  label={navTabs[tab].name}
-                  control={<Radio />}
-                />
-              ))}
-            </RadioGroup>
-          </DialogContent>
-        </Dialog>
-      </React.Fragment>
-    );
-  }
-}
-
-Editor.propTypes = {
-  classes: PropTypes.object.isRequired,
+      <Dialog
+        open={selectOpen}
+        maxWidth="xs"
+        onClose={handleCloseSelect}
+      >
+        <DialogTitle className={classes.title}>
+          <IconButton
+            className={classes.back}
+            onClick={handleCloseSelect}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          请选择一个分类
+        </DialogTitle>
+        <DialogContent className={classes.content}>
+          <RadioGroup
+            aria-label="topicType"
+            name="topicType"
+            value={publishTab}
+            onChange={handleChange}
+          >
+            {topicTypes.map(_tab => (
+              <FormControlLabel
+                key={_tab}
+                value={_tab}
+                label={navTabs[_tab].name}
+                control={<Radio />}
+              />
+            ))}
+          </RadioGroup>
+        </DialogContent>
+      </Dialog>
+    </React.Fragment>
+  );
 };
 
-const mapStateToProps = ({ auth, editor }) => ({
-  ...auth,
-  ...editor,
-});
+EditorHeader.propTypes = {
+  disabled: PropTypes.bool.isRequired,
+  onPublishTab: PropTypes.func.isRequired,
+  onPreview: PropTypes.func.isRequired,
+  fullScreen: PropTypes.bool.isRequired,
+  onFullScreen: PropTypes.func.isRequired,
+};
 
-export default compose(
-  withStyles(styles),
-  withRouter,
-  connect(
-    mapStateToProps,
-  ),
-)(Editor);
+export default EditorHeader;

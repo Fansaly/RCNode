@@ -1,6 +1,9 @@
 CNode 社区第三方 WEB App，Material Design 风格。
 
-> 此项目使用 [Create React App](https://github.com/facebookincubator/create-react-app) 生成 `v3.2.0`
+> 此项目基于：[Create React App](https://github.com/facebook/create-react-app) `v3.3.0` [Material-UI](https://github.com/mui-org/material-ui) `v4.8.0`
+
+### 分支
+`master` 分支已由 func 组件几乎完全重构，class 组件可查看 [class](https://github.com/Fansaly/RCNode/tree/class) 分支。
 
 ### 浏览器支持
 | ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) |
@@ -8,26 +11,24 @@ CNode 社区第三方 WEB App，Material Design 风格。
 | 最新版 ✓ | 最新版 ✓ | 最新版 ✓ | 最新版 ✓ | 最新版 ✓ |
 
 ### 特性
-- 基础功能
+- 基础
   - Markdown
-    - CommonMark, checkbox, tabel, emoji
-    - 语法高亮（仅启用了部分语法，可查看文件 [.babelrc](.babelrc) 的 `prismjs` 字段）
-    - 链接，新窗口打开，并替换链接 `http(s)://cnodejs.org` 为 `http(s)://current.domain`
+    - CommonMark, checkbox, tabel, emoji, 等等
+    - 链接新窗口打开，替换链接 `cnodejs.org` => `current.domain`
+    - 语法高亮（仅启用了大部分常用语法）
   - 主题
-    - 查看、创建、更新、回复
+    - 查看、回复、创建、更新
     - 收藏、回复点赞
-    - 图片放大浏览
+    - 图片缩放
   - 消息
     - 查看
-    - 标记单条、全部为已读
+    - 标记已读（单条、全部）
   - 支持移动设备
 
-- 设置
+- 特殊
+  - 两种外观
   - 主题预览
   - 消息提醒
 
-- 其他
-  - Bing 美图。了解更多：[bing-image-server](https://github.com/Fansaly/bing-image-server)
-
 ### 许可
-[MIT](https://opensource.org/licenses/MIT)
+[MIT License](https://opensource.org/licenses/MIT)

@@ -1,17 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import {
-  openShare,
-  openEditor,
-  openNotification,
-} from '../../store/actions';
+import clsx from 'clsx';
+import { useSelector, useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { post } from '../../fetch';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 
 import Fab from '@material-ui/core/Fab';
@@ -27,7 +21,7 @@ import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   appbar: {
     top: 'auto',
     bottom: 0,
@@ -55,74 +49,91 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
     }),
   },
-});
+}));
 
-class ActionDial extends React.Component {
-  constructor(props) {
-    super(props);
+const ActionDial = (props) => {
+  const {
+    width,
+    single = false,
+    topic = null,
+  } = props;
 
-    this.state = {
-      favorite: undefined,
+  const {
+    isAuthed,
+    accesstoken,
+    uname: signedUname,
+  } = useSelector(({ auth }) => auth);
+
+  const visible = useSelector(({ editor }) => !editor.open);
+  const notificationIsOpen = useSelector(({ notification }) => notification.open);
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const { topic_id } = useParams();
+  const isCancel = React.useRef(false);
+
+  const [state, setState] = React.useState({
+    favorite: undefined,
+    expanded: false,
+    shareURL: null,
+  });
+
+  const handleOpen = () => {
+    if (!visible) {
+      return;
+    }
+
+    setState(prevState => ({
+      ...prevState,
+      expanded: true,
+    }));
+  };
+
+  const handleClose = () => {
+    setState(prevState => ({
+      ...prevState,
       expanded: false,
-      shareURL: null,
-    };
-  }
-
-  handleOpen = () => {
-    if (this.props.visible) {
-      this.setState({ expanded: true });
-    }
+    }));
   };
 
-  handleClose = () => {
-    this.setState({ expanded: false });
-  };
+  const handleClick = event => {
+    const { expanded } = state;
 
-  handleClick = event => {
-    const { expanded } = this.state;
-    const {
-      uname: signedUname,
-      topicData: uname,
-    } = this.props;
-
-    this.setState({
+    setState(prevState => ({
+      ...prevState,
       expanded: !expanded,
-    });
+    }));
 
-    if (expanded && signedUname === uname) {
-      event.preventDefault();
-      this.handleUpdate();
+    if (expanded && signedUname === topic.uname) {
+      handleUpdate();
     }
   };
 
-  handleShare = event => {
-    event.preventDefault();
-
-    const { shareURL } = this.state;
-    this.handleClose();
-    this.props.openShare(shareURL);
+  const handleShare = event => {
+    handleClose();
+    dispatch({ type: 'OPEN_SHARE', data: state.shareURL });
   };
 
-  handleFavorite = async event => {
-    event.preventDefault();
-
-    const { favorite } = this.state;
-
-    const {
-      accesstoken,
-      topicData: { topic_id },
-    } = this.props;
+  const handleFavorite = async event => {
+    const { favorite } = state;
 
     const params = {
       url: favorite
             ? '/topic_collect/de_collect'
             : '/topic_collect/collect',
-      params: { accesstoken, topic_id },
+      params: {
+        accesstoken,
+        topic_id: topic.topic_id,
+      },
     };
 
-    this.handleClose();
+    handleClose();
 
     const { success, err_msg } = await post(params);
+
+    if (isCancel.current) {
+      return;
+    }
+
     const message = success
                     ? favorite ? '取消收藏' : '已收藏'
                     : {
@@ -130,17 +141,17 @@ class ActionDial extends React.Component {
                       status: 'error',
                     };
 
-    success && this.setState({
+    success && setState(prevState => ({
+      ...prevState,
+      expanded: true,
       favorite: !favorite,
-    });
+    }));
 
-    this.props.openNotification(message);
+    dispatch({ type: 'OPEN_NOTIFICATION', data: message });
   };
 
-  handleReply = event => {
-    event.preventDefault();
+  const handleReply = event => {
 
-    const { topic_id } = this.props.match.params;
     const config = {
       action: 'reply',
       url: `/topic/${topic_id}/replies`,
@@ -148,173 +159,126 @@ class ActionDial extends React.Component {
       content: '',
     };
 
-    this.handleClose();
-    this.handleOpenEditor(config);
+    handleClose();
+    handleOpenEditor(config);
   };
 
-  handleUpdate = () => {
-    const {
-      tab,
-      title,
-      content,
-      topic_id,
-    } = this.props.topicData;
-
+  const handleUpdate = () => {
     const config = {
       action: 'update',
       url: '/topics/update',
-      tab,
-      title,
-      content,
-      topic_id,
+      tab: topic.tab,
+      title: topic.title,
+      content: topic.content,
+      topic_id: topic.topic_id,
     };
 
-    this.handleOpenEditor(config);
+    handleOpenEditor(config);
   };
 
-  handleCreate = () => {
+  const handleCreate = () => {
     const config = {
       action: 'create',
       url: '/topics',
     };
 
-    this.handleOpenEditor(config);
+    handleOpenEditor(config);
   };
 
-  handleOpenEditor = config => {
-    this.props.openEditor(config);
+  const handleOpenEditor = config => {
+    dispatch({ type: 'OPEN_EDITOR', data: config });
   };
 
-  componentDidMount() {
-    if (typeof window !== 'undefined') {
-      const { origin, pathname } = window.location;
+  React.useEffect(() => {
+    const { origin, pathname } = window.location;
 
-      this.setState({
-        shareURL: `${origin}${pathname}`,
-      });
+    setState(prevState => ({
+      ...prevState,
+      shareURL: `${origin}${pathname}`,
+    }));
+
+    return () => isCancel.current = true;
+  }, []);
+
+  React.useEffect(() => {
+    if (topic === null) {
+      return;
     }
-  }
 
-  componentWillReceiveProps(nextProps) {
-    const { topicData } = nextProps;
-    const { favorite } = this.state;
-
-    this.setState(state => ({
-      favorite: typeof favorite === 'boolean'
-                ? state.favorite
-                : topicData
-                  ? topicData.is_collect
+    setState(prevState => ({
+      ...prevState,
+      favorite: typeof prevState.favorite === 'boolean'
+                ? prevState.favorite
+                : Boolean(topic)
+                  ? topic.is_collect
                   : undefined,
     }));
-  }
+  }, [topic]);
 
-  render() {
-    const {
-      classes,
-      width,
-      isAuthed,
-      single,
-      visible,
-      topicData,
-      notificationOpen,
-      uname: signedUname,
-    } = this.props;
-
-    const {
-      favorite,
-      expanded,
-    } = this.state;
-
-    return (isAuthed &&
-      <AppBar
-        color="default"
-        component="div"
-        className={classes.appbar}
-      >
-        <div className={classes.wrapper}>
-          {single ? (
-            <Zoom in={visible} unmountOnExit>
-              <Fab
-                color="secondary"
-                aria-label="Edit"
-                className={classes.action}
-                onClick={this.handleCreate}
-              >
-                <EditIcon />
-              </Fab>
-            </Zoom>
-          ) : (typeof topicData === 'object' &&
-            <SpeedDial
-              ariaLabel="SpeedDial"
-              className={classNames(classes.action, {
-                [classes.fabMoveUp]: !isWidthUp('md', width) && notificationOpen,
-                [classes.fabMoveDown]: !isWidthUp('md', width) && !notificationOpen,
-              })}
+  return (isAuthed &&
+    <AppBar
+      color="default"
+      component="div"
+      className={classes.appbar}
+    >
+      <div className={classes.wrapper}>
+        {single ? (
+          <Zoom in={visible} unmountOnExit>
+            <Fab
               color="secondary"
-              hidden={!visible}
-              open={expanded}
-              onClick={this.handleClick}
-              onClose={this.handleClose}
-              onMouseEnter={this.handleOpen}
-              onMouseLeave={this.handleClose}
-              icon={signedUname === topicData.uname ? (
-                <SpeedDialIcon openIcon={<EditIcon />} />
-              ) : (
-                <SpeedDialIcon />
-              )}
+              aria-label="Edit"
+              className={classes.action}
+              onClick={handleCreate}
             >
-              <SpeedDialAction
-                icon={<ReplyIcon />}
-                tooltipTitle=""
-                onClick={this.handleReply}
-              />
-              <SpeedDialAction
-                icon={favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                tooltipTitle=""
-                onClick={this.handleFavorite}
-              />
-              <SpeedDialAction
-                icon={<ShareIcon />}
-                tooltipTitle=""
-                onClick={this.handleShare}
-              />
-            </SpeedDial>
-          )}
-        </div>
-      </AppBar>
-    );
-  }
-}
-
-ActionDial.propTypes = {
-  classes: PropTypes.object.isRequired,
-  width: PropTypes.string.isRequired,
+              <EditIcon />
+            </Fab>
+          </Zoom>
+        ) : (Boolean(topic) &&
+          <SpeedDial
+            ariaLabel="SpeedDial"
+            className={clsx(classes.action, {
+              [classes.fabMoveUp]: !isWidthUp('md', width) && notificationIsOpen,
+              [classes.fabMoveDown]: !isWidthUp('md', width) && !notificationIsOpen,
+            })}
+            color="secondary"
+            hidden={!visible}
+            open={state.expanded}
+            onClick={handleClick}
+            onClose={handleClose}
+            onMouseEnter={handleOpen}
+            onMouseLeave={handleClose}
+            icon={signedUname === topic.uname ? (
+              <SpeedDialIcon openIcon={<EditIcon />} />
+            ) : (
+              <SpeedDialIcon />
+            )}
+          >
+            <SpeedDialAction
+              icon={<ReplyIcon />}
+              tooltipTitle=""
+              onClick={handleReply}
+            />
+            <SpeedDialAction
+              icon={state.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+              tooltipTitle=""
+              onClick={handleFavorite}
+            />
+            <SpeedDialAction
+              icon={<ShareIcon />}
+              tooltipTitle=""
+              onClick={handleShare}
+            />
+          </SpeedDial>
+        )}
+      </div>
+    </AppBar>
+  );
 };
 
-const mapStateToProps = ({ auth, editor, notification }) => ({
-  ...auth,
-  visible: !editor.open,
-  notificationOpen: notification.open,
-});
+ActionDial.propTypes = {
+  width: PropTypes.string.isRequired,
+  single: PropTypes.bool,
+  topic: PropTypes.any,
+};
 
-const mapDispatchToProps = dispatch => ({
-  openShare: url => {
-    dispatch(openShare(url));
-  },
-  openEditor: config => {
-    dispatch(openEditor(config));
-  },
-  openNotification: message => {
-    dispatch(openNotification(message));
-  },
-});
-
-export default compose(
-  withStyles(styles),
-  withWidth(),
-  withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(ActionDial);
+export default withWidth()(ActionDial);

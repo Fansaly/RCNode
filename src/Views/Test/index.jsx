@@ -1,78 +1,83 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-import Layout from '../../Layout';
+import { AppWrapper } from '../../Layout';
 import { MarkdownRender } from '../../Components/Markdown';
+import ImageZoom from '../../Components/ImageZoom';
+import ShareDialog from '../../Components/ShareDialog';
 
 import f1_0 from './_@_single.md';
 import f1_1 from './_@_single_prev_space.md';
 import f1_2 from './_@_single_next_space.md';
 import f2_0 from './_@_mail.md';
 import f3_0 from './_url.md';
-// import f4 from './_ctx.md';
+import f4 from './_ctx.md';
 
-const mdFile = [
-  f1_0,
-  f1_1,
-  f1_2,
-  f2_0,
-  f3_0,
+const mdContent = [
+  {
+    file: '_@_single.md',
+    text: f1_0,
+  },
+  {
+    file: '_@_single_prev_space.md',
+    text: f1_1,
+  },
+  {
+    file: '_@_single_next_space.md',
+    text: f1_2,
+  },
+  {
+    file: '_@_mail.md',
+    text: f2_0,
+  },
+  {
+    file: '_url.md',
+    text: f3_0,
+  },
+  {
+    file: '_ctx.md',
+    text: f4,
+  },
 ];
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
+  root: {
+    marginTop: 50,
+  },
+  label: {
+    marginBottom: 18,
+  },
   md: {
     marginBottom: 40,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: theme.palette.type === 'light' ? '#fff' : 'rgba(0,0,0,.032)',
     borderRadius: 2,
     boxShadow: '1px 2px 4px rgba(0, 0, 0, 0.15)',
   },
-});
+}));
 
-class Test extends React.Component {
-  state = { text: [] };
+const Test = () => {
+  const classes = useStyles();
 
-  fetchMD = () => {
-    mdFile.forEach(async file => {
-      fetch(file)
-        .then(res => {
-          return res.text();
-        })
-        .then(text => {
-          this.setState(state => ({
-            text: [
-              ...state.text,
-              text,
-            ],
-          }));
-        });
-    });
-  };
-
-  componentDidMount() {
-    this.fetchMD();
-  }
-
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <Layout>
-        <div className="wrapper" style={{ marginTop: 50 }}>
-          {this.state.text.map((text, index) => (
-            <div className={classes.md} key={index}>
+  return (
+    <AppWrapper title="TEST">
+      <div className={`wrapper ${classes.root}`}>
+        {mdContent.map(({file, text}) => (
+          <React.Fragment key={file}>
+            <div className={classes.label}>
+              FILE: {file}
+            </div>
+            <div className={classes.md}>
               <MarkdownRender markdownString={text} />
             </div>
-          ))}
-        </div>
-      </Layout>
-    );
-  }
-}
+          </React.Fragment>
+        ))}
+      </div>
 
-Test.propTypes = {
-  classes: PropTypes.object.isRequired,
+      <ImageZoom />
+      <ShareDialog />
+    </AppWrapper>
+  );
 };
 
-export default withStyles(styles)(Test);
+export default Test;

@@ -1,14 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { Helmet } from 'react-helmet';
+import clsx from 'clsx';
+import { useHistory } from 'react-router-dom';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
+import { AppWrapper } from '../../Layout';
 import MdOutletIcon from '../../static/ionicons_md_outlet.svg';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   main: {
     paddingTop: 120,
     flexDirection: 'column',
@@ -56,6 +56,7 @@ const styles = theme => ({
     width: '1em',
     height: '1em',
     fontSize: 60,
+    fill: theme.palette.text.primary,
   },
   button: {
     paddingTop: 10,
@@ -64,55 +65,48 @@ const styles = theme => ({
       marginBottom: 32,
     },
   },
-});
+}));
 
-class NotFound extends React.Component {
-  handleBackToHome = () => {
-    this.props.history.push('/');
+const NotFound = () => {
+  const classes = useStyles();
+  const history = useHistory();
+
+  const handleBackToHome = () => {
+    history.push('/');
   };
 
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <React.Fragment>
-        <Helmet title="404" />
-
-        <div className={classNames(
+  return (
+    <AppWrapper title="404" withHeader={false}>
+      <div className={clsx(
+        'flex',
+        classes.main,
+        classes.center,
+      )}>
+        <div className={clsx(
           'flex',
-          classes.main,
+          classes.wrapper,
           classes.center,
         )}>
-          <div className={classNames(
+          <h1 className={classes.h1}>404</h1>
+          <p className={clsx(
             'flex',
-            classes.wrapper,
+            classes.p,
             classes.center,
           )}>
-            <h1 className={classes.h1}>404</h1>
-            <p className={classNames(
-              'flex',
-              classes.p,
-              classes.center,
-            )}>
-              <MdOutletIcon className={classes.icon} />
-              <span>Page not Found</span>
-            </p>
-          </div>
-          <Button
-            className={classes.button}
-            variant="outlined"
-            onClick={this.handleBackToHome}
-          >
-            Back to Home
-          </Button>
+            <MdOutletIcon className={classes.icon} />
+            <span>Page not Found</span>
+          </p>
         </div>
-      </React.Fragment>
-    );
-  }
-}
-
-NotFound.propTypes = {
-  classes: PropTypes.object.isRequired,
+        <Button
+          className={classes.button}
+          variant="outlined"
+          onClick={handleBackToHome}
+        >
+          Back to Home
+        </Button>
+      </div>
+    </AppWrapper>
+  );
 };
 
-export default withStyles(styles)(NotFound);
+export default NotFound;

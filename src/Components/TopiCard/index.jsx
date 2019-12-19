@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import clsx from 'clsx';
+import { useSelector } from 'react-redux';
+import { useHistory, Link } from 'react-router-dom';
 import {
   randomNumber,
   removeHtmlTags,
 } from '../../common';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 
 import Grid from '@material-ui/core/Grid';
@@ -31,7 +30,7 @@ import Avatar from '../../Components/Avatar';
 import Moment from '../../Components/Moment';
 import './topicard.styl';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   button: {
     display: 'flex',
     padding: 0,
@@ -51,192 +50,178 @@ const styles = theme => ({
   expandOpen: {
     transform: 'rotate(180deg)',
   },
-});
+  title: {
+    '& h5': {
+      color: theme.palette.type === 'light' ? 'rgba(0,0,0,.92)' : 'rgba(200,200,200,.95)',
+    },
+  },
+  state: {
+    color: theme.palette.type === 'light' ? 'rgba(0,0,0,.5)' : 'rgba(125,125,125,.5)',
+    '& button': {
+      color: theme.palette.type === 'light' ? 'rgba(0,0,0,.4)' : 'rgba(125,125,125,.4)',
+    },
+  },
+}));
 
-class TopiCard extends React.Component {
-  constructor(props) {
-    super(props);
+const TopiCard = (props) => {
+  const {
+    item,
+    simple = false,
+    className,
+    width,
+  } = props;
 
-    const { cardPreview } = props;
+  let targetRefs = [];
 
-    this.state = {
-      expanded: cardPreview,
-    };
+  const classes = useStyles();
+  const history = useHistory();
+  const { cardPreview } = useSelector(state => state.settings);
 
-    this.targets = [];
-  }
+  const [expanded, setExpanded] = React.useState(cardPreview);
 
-  substrContent = content => {
+  const substrContent = content => {
     const len = randomNumber({ min: 200, max: 400 });
     return removeHtmlTags(content).substr(0, len);
   };
 
-  handleExpandClick = () => {
-    this.setState(state => ({
-      expanded: !state.expanded,
-    }));
+  const handleExpandClick = () => {
+    setExpanded(prevState => !prevState);
   };
 
-  handleClick = event => {
-    const {
-      history,
-      item: { id },
-    } = this.props;
-
-    if (this.targets.includes(event.target)) {
-      history.push(`/topic/${id}`);
+  const handleClick = event => {
+    if (targetRefs.includes(event.target)) {
+      history.push(`/topic/${item.id}`);
     }
   };
 
-  render() {
-    const {
-      className,
-      classes,
-      simple,
-      item,
-      width,
-    } = this.props;
-
-    const { expanded } = this.state;
-
-    return (
-      <Card className={classNames('topicard', className, {
-        'expanded': !simple && expanded,
-      })}>
-        <Button
-          component="div"
-          className={classes.button}
-          onClick={this.handleClick}
-          disableFocusRipple
+  return (
+    <Card className={clsx('topicard', className, {
+      'expanded': !simple && expanded,
+    })}>
+      <Button
+        component="div"
+        className={classes.button}
+        onClick={handleClick}
+        disableFocusRipple
+      >
+        <Grid
+          container
+          alignItems="center"
+          className="topicard-header-wrapper"
         >
           <Grid
             container
             alignItems="center"
-            className="topicard-header-wrapper"
+            justify="flex-start"
+            className="topicard-header"
+            ref={ref => targetRefs = [...targetRefs, ref]}
           >
+            <Avatar
+              className="avatar"
+              name={item.author.loginname}
+              image={item.author.avatar_url}
+              url={`/user/${item.author.loginname}`}
+            />
             <Grid
               container
               alignItems="center"
               justify="flex-start"
-              className="topicard-header"
-              ref={ref => this.targets = [...this.targets, ref]}
+              className="topicard-title"
             >
-              <Avatar
-                className="avatar"
-                name={item.author.loginname}
-                image={item.author.avatar_url}
-                url={`/user/${item.author.loginname}`}
-              />
-              <Grid
-                container
-                alignItems="center"
-                justify="flex-start"
-                className="topicard-title"
-              >
-                <Grid item className="title">
-                  {!simple &&
-                    <Grid item className="type">
-                      <IconButton>
-                        <TopicTypeIcon
-                          tab={item.tab}
-                          good={item.good}
-                          top={item.top}
-                        />
-                      </IconButton>
-                    </Grid>
-                  }
-                  <Typography variant="h5" ref={ref => this.targets = [...this.targets, ref]}>
-                    <Link to={`/topic/${item.id}`}>{item.title}</Link>
-                  </Typography>
-                  {!simple &&
-                    <CardActions className="action">
-                      <IconButton
-                        className={classNames(classes.expand, {
-                          [classes.expandOpen]: expanded,
-                        })}
-                        onClick={this.handleExpandClick}
-                        aria-expanded={expanded}
-                        aria-label="Show more"
-                      >
-                        <ExpandMoreIcon />
-                      </IconButton>
-                    </CardActions>
-                  }
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid container wrap="nowrap" alignItems="center" className="state-wrapper"
-              ref={ref => this.targets = [...this.targets, ref]}
-            >
-              <Grid container wrap="nowrap" alignItems="center" className="state">
-                <Grid container item zeroMinWidth wrap="nowrap" alignItems="center"
-                  ref={ref => this.targets = [...this.targets, ref]}
-                >
-                  <Grid item zeroMinWidth className="author">
-                    <Link to={`/user/${item.author.loginname}`}>
-                      {item.author.loginname}
-                    </Link>
+              <Grid item className={clsx('title', classes.title)}>
+                {!simple &&
+                  <Grid item className="type">
+                    <IconButton>
+                      <TopicTypeIcon
+                        tab={item.tab}
+                        good={item.good}
+                        top={item.top}
+                      />
+                    </IconButton>
                   </Grid>
-                  {!simple &&
-                    <Grid item className="create">
-                      <IconButton><CreateIcon /></IconButton>
-                      <Moment fromNow>{item.create_at}</Moment>
-                    </Grid>
-                  }
-                </Grid>
-                <Grid item className="count">
-                  <Grid item className="reply">
-                    <IconButton><ReplyIcon /></IconButton>
-                    {!simple ? (
-                      <span>{item.reply_count}</span>
-                    ) : (
-                      <Moment fromNow>{item.last_reply_at}</Moment>
-                    )}
-                  </Grid>
-                  {!simple &&
-                    <Grid item className="visit">
-                      <IconButton><ViewIcon /></IconButton>
-                      <span>{item.visit_count}</span>
-                    </Grid>
-                  }
-                </Grid>
+                }
+                <Typography variant="h5" ref={ref => targetRefs = [...targetRefs, ref]}>
+                  <Link to={`/topic/${item.id}`}>{item.title}</Link>
+                </Typography>
+                {!simple &&
+                  <CardActions className="action">
+                    <IconButton
+                      className={clsx(classes.expand, {
+                        [classes.expandOpen]: expanded,
+                      })}
+                      onClick={handleExpandClick}
+                      aria-expanded={expanded}
+                      aria-label="Show more"
+                    >
+                      <ExpandMoreIcon />
+                    </IconButton>
+                  </CardActions>
+                }
               </Grid>
             </Grid>
           </Grid>
-        </Button>
-        {!simple &&
-          <Collapse
-            className="collapse"
-            in={expanded}
-            timeout="auto"
-            unmountOnExit={isWidthUp('sm', width)}
+          <Grid container wrap="nowrap" alignItems="center" className="state-wrapper"
+            ref={ref => targetRefs = [...targetRefs, ref]}
           >
-            <CardContent className="context">
-              <Typography>
-                {this.substrContent(item.content)}
-              </Typography>
-            </CardContent>
-          </Collapse>
-        }
-      </Card>
-    );
-  }
-}
+            <Grid container wrap="nowrap" alignItems="center" className={clsx('state', classes.state)}>
+              <Grid container item zeroMinWidth wrap="nowrap" alignItems="center"
+                ref={ref => targetRefs = [...targetRefs, ref]}
+              >
+                <Grid item zeroMinWidth className="author">
+                  <Link to={`/user/${item.author.loginname}`}>
+                    {item.author.loginname}
+                  </Link>
+                </Grid>
+                {!simple &&
+                  <Grid item className="create">
+                    <IconButton><CreateIcon /></IconButton>
+                    <Moment fromNow>{item.create_at}</Moment>
+                  </Grid>
+                }
+              </Grid>
+              <Grid item className="count">
+                <Grid item className="reply">
+                  <IconButton><ReplyIcon /></IconButton>
+                  {!simple ? (
+                    <span>{item.reply_count}</span>
+                  ) : (
+                    <Moment fromNow>{item.last_reply_at}</Moment>
+                  )}
+                </Grid>
+                {!simple &&
+                  <Grid item className="visit">
+                    <IconButton><ViewIcon /></IconButton>
+                    <span>{item.visit_count}</span>
+                  </Grid>
+                }
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Button>
+      {!simple &&
+        <Collapse
+          className="collapse"
+          in={expanded}
+          timeout="auto"
+          unmountOnExit={isWidthUp('sm', width)}
+        >
+          <CardContent className="context">
+            <Typography>
+              {substrContent(item.content)}
+            </Typography>
+          </CardContent>
+        </Collapse>
+      }
+    </Card>
+  );
+};
 
 TopiCard.propTypes = {
-  classes: PropTypes.object.isRequired,
+  item: PropTypes.object.isRequired,
+  simple: PropTypes.bool,
+  className: PropTypes.string,
   width: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = ({ settings }) => ({
-  cardPreview: settings.cardPreview,
-});
-
-export default compose(
-  withStyles(styles),
-  withWidth(),
-  withRouter,
-  connect(
-    mapStateToProps,
-  ),
-)(TopiCard);
+export default withWidth()(TopiCard);

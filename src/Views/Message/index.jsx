@@ -1,19 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { Helmet } from 'react-helmet';
-import {
-  readAllMessage,
-  updateMessage,
-} from '../../store/actions';
+import clsx from 'clsx';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import {
   get as getData,
   post,
 } from '../../fetch';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
@@ -21,11 +15,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import MarkAllIcon from '@material-ui/icons/DoneAll';
 
-import Layout from '../../Layout';
+import { AppWrapper } from '../../Layout';
 import MessageCard from './MessageCard';
 import Progress from '../../Components/Progress';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   spacings: {
     marginTop: 40,
     marginBottom: 10,
@@ -44,7 +38,7 @@ const styles = theme => ({
     flex: 1,
     marginRight: 8,
     fontSize: 14,
-    color: 'rgba(0,0,0,.6)',
+    color: theme.palette.type === 'light' ? 'rgba(0,0,0,.6)' : 'rgba(190,190,190,.6)',
     pointerEvents: 'none',
     transition: 'opacity .15s cubic-bezier(.4,0,.2,1)',
     '@media (max-width: 600px)': {
@@ -63,17 +57,31 @@ const styles = theme => ({
   error: {
     color: theme.palette.secondary.main,
   },
-});
+}));
 
-class Message extends React.Component {
-  state = {
+const Message = () => {
+  const [items, setItems] = React.useState([]);
+  const [state, setState] = React.useState({
     status: 'loading',
-    items: [],
     err_msg: '发生错误',
+  });
+  const { isAuthed, accesstoken, message } = useSelector(s => ({
+    ...s.auth,
+    message: { ...s.message },
+  }));
+  const isCancel = React.useRef(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const classes = useStyles();
+
+  const markAllMessage = () => {
+    items.map(item => item.has_read = true);
+    setItems(items);
   };
 
-  handleMarkAllMessage = async () => {
-    const { accesstoken } = this.props;
+  const handleMarkAllMessage = async () => {
+    isCancel.current = false;
+
     const params = {
       url: '/message/mark_all',
       params: { accesstoken },
@@ -81,150 +89,113 @@ class Message extends React.Component {
 
     const { success } = await post(params);
 
-    if (success) {
-      this.updateState();
-      this.props.readAllMessage();
+    if (!isCancel.current && success) {
+      markAllMessage();
+      dispatch({ type: 'READ_ALL_MESSAGE' });
     }
   };
 
-  updateState = () => {
-    let { items } = this.state;
-
-    items.map(item => item.has_read = true);
-
-    this.setState({ items });
-  };
-
-  fetchMessages = async () => {
-    const { accesstoken } = this.props;
-
-    const params = {
-      url: '/messages',
-      params: {
-        accesstoken,
-        mdrender: false,
-      },
-    };
-
-    const {
-      success,
-      data: {
-        hasnot_read_messages: unRead = [],
-        has_read_messages: hasRead = [],
-      },
-      err_msg,
-    } = await getData(params);
-
-    if (success) {
-      this.props.updateMessage(unRead.length);
-
-      this.setState({
-        status: 'success',
-        items: [ ...unRead, ...hasRead ],
-      });
-    } else {
-      this.setState(state => ({
-        status: 'error',
-        err_msg: err_msg ? err_msg : state.err_msg,
-      }));
+  React.useEffect(() => {
+    if (!Boolean(accesstoken)) {
+      return;
     }
-  };
 
-  componentDidMount() {
-    this.fetchMessages();
-  }
+    (async () => {
+      const params = {
+        url: '/messages',
+        params: {
+          accesstoken,
+          mdrender: false,
+        },
+      };
 
-  componentWillReceiveProps(nextProps) {
-    const { isAuthed, history } = nextProps;
+      const {
+        success,
+        data: {
+          hasnot_read_messages: unRead = [],
+          has_read_messages: hasRead = [],
+        },
+        err_msg,
+      } = await getData(params);
 
+      if (isCancel.current) {
+        return;
+      }
+
+      if (success) {
+        dispatch({ type: 'UPDATE_MESSAGE', data: unRead.length });
+
+        setState({ status: 'success' });
+        setItems([ ...unRead, ...hasRead ]);
+      } else {
+        setState(prevState => ({
+          status: 'error',
+          err_msg: err_msg ? err_msg : prevState.err_msg,
+        }));
+      }
+    })();
+
+    return () => isCancel.current = true;
+  }, [accesstoken, dispatch]);
+
+  React.useEffect(() => {
     if (!isAuthed) {
       history.push('/');
     }
-  }
+  }, [isAuthed, history]);
 
-  render() {
-    const { classes, message } = this.props;
-    const { status, items, err_msg } = this.state;
-
-    return (
-      <Layout>
-        <Helmet title="消息" />
-
-        <div className="wrapper">
-          <Grid container alignItems="center" justify="flex-end" className={classes.spacings}>
-            <Grid item className={classNames(classes.text, {
-              [classes.opacity]: status !== 'success' || message.count === 0,
-              [classes.error]: status === 'error',
-            })}>
-              <Fade unmountOnExit in={status === 'loading'}>
-                <span>获取消息中……</span>
-              </Fade>
-              <Fade unmountOnExit in={status === 'error'}>
-                <span>{err_msg}</span>
-              </Fade>
-              <Fade unmountOnExit in={status === 'success' && !Boolean(items.length)}>
-                <span>没有消息哦</span>
-              </Fade>
-              <Fade unmountOnExit in={status === 'success' && Boolean(items.length) && !Boolean(message.count)}>
-                <span>已读全部消息</span>
-              </Fade>
-              <Fade unmountOnExit in={status === 'success' && Boolean(message.count)}>
-                <span>{message.count} 条未读消息</span>
-              </Fade>
-            </Grid>
-            <Tooltip
-              title="全部标为已读"
-              enterDelay={500}
-              placement="left-start"
-              disableTouchListener
-            >
-              <span>
-              <IconButton
-                onClick={this.handleMarkAllMessage}
-                disabled={status !== 'success' || message.count === 0}
-                disableRipple
-              >
-                <MarkAllIcon />
-              </IconButton>
-              </span>
-            </Tooltip>
+  return (
+    <AppWrapper title="消息">
+      <div className="wrapper">
+        <Grid container alignItems="center" justify="flex-end" className={classes.spacings}>
+          <Grid item className={clsx(classes.text, {
+            [classes.opacity]: state.status !== 'success' || message.count === 0,
+            [classes.error]: state.status === 'error',
+          })}>
+            <Fade unmountOnExit in={state.status === 'loading'}>
+              <span>获取消息中……</span>
+            </Fade>
+            <Fade unmountOnExit in={state.status === 'error'}>
+              <span>{state.err_msg}</span>
+            </Fade>
+            <Fade unmountOnExit in={state.status === 'success' && !Boolean(items.length)}>
+              <span>没有消息哦</span>
+            </Fade>
+            <Fade unmountOnExit in={state.status === 'success' && Boolean(items.length) && !Boolean(message.count)}>
+              <span>已读全部消息</span>
+            </Fade>
+            <Fade unmountOnExit in={state.status === 'success' && Boolean(message.count)}>
+              <span>{message.count} 条未读消息</span>
+            </Fade>
           </Grid>
+          <Tooltip
+            title="全部标为已读"
+            enterDelay={500}
+            placement="left-start"
+            disableTouchListener
+          >
+            <span>
+            <IconButton
+              onClick={handleMarkAllMessage}
+              disabled={state.status !== 'success' || message.count === 0}
+              disableRipple
+            >
+              <MarkAllIcon />
+            </IconButton>
+            </span>
+          </Tooltip>
+        </Grid>
 
-          {items.map(item => (
-            <MessageCard key={item.id} item={item} hasRead={item.has_read} />
-          ))}
-        </div>
+        {items.map(item => (
+          <MessageCard key={item.id} item={item} hasRead={item.has_read} />
+        ))}
+      </div>
 
-        <div className="status wrapper">
-          <Progress status={status} />
-        </div>
-      </Layout>
-    );
-  }
-}
-
-Message.propTypes = {
-  classes: PropTypes.object.isRequired,
+      <div className="status wrapper">
+        <Progress status={state.status} />
+      </div>
+    </AppWrapper>
+  );
 };
 
-const mapStateToProps = ({ auth, message }) => ({
-  ...auth,
-  message,
-});
-
-const mapDispatchToProps = dispatch => ({
-  readAllMessage: () => {
-    dispatch(readAllMessage());
-  },
-  updateMessage: count => {
-    dispatch(updateMessage(count));
-  },
-});
-
-export default compose(
-  withStyles(styles),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Message);
+export default Message;

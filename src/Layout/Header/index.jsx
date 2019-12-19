@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { compose } from 'redux';
-import { withRouter, Link } from 'react-router-dom';
+import clsx from 'clsx';
+import { useLocation, Link } from 'react-router-dom';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 
 import Hidden from '@material-ui/core/Hidden';
@@ -21,7 +20,22 @@ import { animateScroll } from 'react-scroll';
 import LogoSvg from '../../static/cnodejs/cnodejs_light.svg';
 import './header.styl';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
+  header: theme.palette.type === 'light' ? {
+    backgroundColor: '#2196f3',
+    backgroundImage: 'linear-gradient(150deg, #21d6f3, #2196f3 28%, #ff7ed7 110%)',
+    '@media (max-width: 960px)': {
+      backgroundImage: 'linear-gradient(150deg, #21d6f3, #2196f3 32%, #ff7ed7 106%)',
+    },
+    '@media (max-width: 768px)': {
+      backgroundImage: 'linear-gradient(150deg, #21d6f3, #2196f3 34%, #ff7ed7 104%)',
+    },
+    '@media (max-width: 500px)': {
+      backgroundImage: 'linear-gradient(150deg, #21d6f3, #2196f3 36%, #ff7ed7 102%)',
+    },
+  } : {
+    backgroundColor: '#363636',
+  },
   toolbar: {
     display: 'flex',
     alignItems: 'center',
@@ -37,16 +51,20 @@ const styles = theme => ({
   navHidden: {
     height: 0,
   },
-});
+}));
 
-class Header extends React.Component {
-  state = {
+const Header = (props) => {
+  const { width } = props;
+  const classes = useStyles();
+  const location = useLocation();
+
+  const [state, setState] = React.useState({
     isMobile: false,
     navHidden: false,
     drawerOpen: false,
-  };
+  });
 
-  handleScrollToTop = event => {
+  const handleScrollToTop = event => {
     if (event.target === event.currentTarget) {
       animateScroll.scrollTo(0, {
         duration: 500,
@@ -55,84 +73,67 @@ class Header extends React.Component {
     }
   };
 
-  toggleNav = () => {
-    const { pathname } = this.props.location;
-    const navHidden = pathname !== '/';
+  const handleToggleNav = () => {
+    let { navHidden, drawerOpen } = state;
 
-    this.setState({ navHidden });
-  };
-
-  handleNavToggle = () => {
-    let { navHidden, drawerOpen } = this.state;
-
-    if (isWidthUp('md', this.props.width)) {
+    if (isWidthUp('md', width)) {
       navHidden = !navHidden;
       drawerOpen = false;
     } else {
       drawerOpen = !drawerOpen;
     }
 
-    this.setState({
-      navHidden,
-      drawerOpen,
-    });
+    setState(prevState => ({ ...prevState, navHidden, drawerOpen }));
   };
 
-  componentWillMount() {
-    this.toggleNav();
-  }
+  React.useEffect(() => {
+    const { pathname } = location;
+    const navHidden = pathname !== '/';
 
-  render() {
-    const { navHidden, drawerOpen } = this.state;
-    const { classes, width } = this.props;
+    setState(prevState => ({ ...prevState, navHidden }));
+  }, [location]);
 
-    return (
-      <React.Fragment>
-        <div className={classes.toolbar} />
-        <div className={classNames(classes.navPlaceholder, {
-          [classes.navHidden]: !isWidthUp('md', width) || navHidden || drawerOpen,
-        })} />
-        <AppBar id="header" position="fixed">
-          <Toolbar onClick={this.handleScrollToTop}>
-            <IconButton
-              color="inherit"
-              onClick={this.handleNavToggle}
-            >
-              <MenuIcon />
-            </IconButton>
-            <div id="logo">
-              <Hidden xsDown>
-                <Link to="/">
-                  <LogoSvg className="logo" />
-                </Link>
-              </Hidden>
-            </div>
+  return (
+    <React.Fragment>
+      <div className={classes.toolbar} />
+      <div className={clsx(classes.navPlaceholder, {
+        [classes.navHidden]: !isWidthUp('md', width) || state.navHidden || state.drawerOpen,
+      })} />
+      <AppBar id="header" className={classes.header} position="fixed">
+        <Toolbar onClick={handleScrollToTop}>
+          <IconButton
+            color="inherit"
+            onClick={handleToggleNav}
+          >
+            <MenuIcon />
+          </IconButton>
+          <div id="logo">
+            <Hidden xsDown>
+              <Link to="/">
+                <LogoSvg className="logo" />
+              </Link>
+            </Hidden>
+          </div>
 
-            <Me />
-          </Toolbar>
-          <Hidden smDown implementation="css">
-            {!navHidden && <NormalNav />}
-          </Hidden>
-        </AppBar>
-
-        <Hidden mdUp>
-          <DrawerNav
-            open={drawerOpen}
-            onClose={this.handleNavToggle}
-          />
+          <Me />
+        </Toolbar>
+        <Hidden smDown implementation="css">
+          {!state.navHidden && <NormalNav />}
         </Hidden>
-      </React.Fragment>
-    );
-  }
-}
+      </AppBar>
+
+      <Hidden mdUp>
+        <DrawerNav
+          open={state.drawerOpen}
+          onClose={handleToggleNav}
+        />
+      </Hidden>
+    </React.Fragment>
+  );
+};
 
 Header.propTypes = {
-  classes: PropTypes.object.isRequired,
   width: PropTypes.string.isRequired,
 };
 
-export default compose(
-  withStyles(styles),
-  withWidth(),
-  withRouter,
-)(Header);
+export default withWidth()(Header);

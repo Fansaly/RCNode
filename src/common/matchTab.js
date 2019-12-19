@@ -1,7 +1,6 @@
-export default (location = { search: '' }) => {
-  const rex = /\?tab=(\w+)/;
-  const tab = location.search.match(rex);
-  const { pathname } = location;
+export default (location = {}) => {
+  const { pathname, search = '' } = location;
+  const tab = search.match(/\?tab=(\w+)/);
 
   return (
     tab

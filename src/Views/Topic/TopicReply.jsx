@@ -1,60 +1,133 @@
 import React from 'react';
-import classNames from 'classnames';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import {
-  openShare,
-  openEditor,
-  openNotification,
-} from '../../store/actions';
-import { post as POST } from '../../fetch';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
+import { useSelector, useDispatch } from 'react-redux';
+import { useLocation, useParams, Link } from 'react-router-dom';
+
+import { post } from '../../fetch';
+
+import { makeStyles } from '@material-ui/core/styles';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import ReplyIcon from '@material-ui/icons/Reply';
+
+import Popover from '@material-ui/core/Popover';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+
 import ThumbUpIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbUpCancelIcon from '@material-ui/icons/ThumbUpAltOutlined';
-import SortIcon from '@material-ui/icons/Sort';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ReplyIcon from '@material-ui/icons/Reply';
+import ShareIcon from '@material-ui/icons/Share';
 
 import { MarkdownRender } from '../../Components/Markdown';
 import Moment from '../../Components/Moment';
+import { scroller } from 'react-scroll';
 
-class TopicReply extends React.Component {
-  constructor(props) {
-    super(props);
+const useStyles = makeStyles(theme => ({
+  icon: {
+    minWidth: 'auto',
+  },
+}));
 
-    const { topic_id } = props.match.params;
-    const { author, index } = props;
-    const {
-      author: {
-        loginname: uname,
-        avatar_url: avatar,
-      },
-      is_uped: isUped,
-      ...other
-    } = props.item;
+const TopicReply = (props) => {
+  const { topicAuthor, width } = props;
+  const { topic_id } = useParams();
+  const { hash } = useLocation();
+  const classes = useStyles();
+  const isCancel = React.useRef();
+  const anchorEl = React.useRef(null);
+  const [moreOpen, setMoreOpen] = React.useState(false);
+  const [sharePrefixURL, setSharePrefixURL] = React.useState('');
 
-    this.state = {
-      author,
-      topic_id,
-      post: index + 1,
-      uname,
-      avatar,
-      isUped,
-      ...other,
-      ups: other.ups.length,
-      URL: '',
+  const {
+    isAuthed,
+    accesstoken,
+    uname: signedUname,
+  } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
+  const [upData, setUpData] = React.useState({
+    ups: props.item.ups.length,
+    isUped: props.item.is_uped,
+  });
+
+  const {
+    author: {
+      loginname: uname,
+      avatar_url: avatar,
+    },
+    id,
+    create_at: createAt,
+    content,
+  } = props.item;
+
+  const handleUp = async () => {
+    if (!isAuthed) {
+      dispatch({ type: 'OPEN_NOTIFICATION', data: '登录后才能 👍 哟~' });
+      return;
+    }
+
+    if (uname === signedUname) {
+      dispatch({ type: 'OPEN_NOTIFICATION', data: '不能 👍 自己的哟~' });
+      return;
+    }
+
+    isCancel.current = false;
+
+    const params = {
+      url: `/reply/${id}/ups`,
+      params: { accesstoken },
     };
-  }
 
-  handleReply = () => {
-    const {
-      topic_id,
-      uname,
-      id,
-    } = this.state;
+    const { success, err_msg } = await post(params);
+
+    if (isCancel.current) {
+      return;
+    }
+
+    if (success) {
+      setUpData(prevState => {
+        const { ups, isUped } = prevState;
+        return {
+          ups: isUped ? ups - 1 : ups + 1,
+          isUped: !isUped,
+        };
+      });
+    } else if (err_msg) {
+      dispatch({
+        type: 'OPEN_NOTIFICATION',
+        data: {
+          status: 'error',
+          message: err_msg,
+        },
+      });
+    }
+  };
+
+  const handleShare = () => {
+    handleCloseMore();
+    dispatch({
+      type: 'OPEN_SHARE',
+      data: `${sharePrefixURL}#${id}`,
+    });
+  };
+
+  const handleCloseMore = () => {
+    setMoreOpen(false);
+  };
+
+  const handleOpenMore = () => {
+    setMoreOpen(true);
+  };
+
+  const handleReply = () => {
+    handleCloseMore();
+
     const config = {
       action: 'reply',
       url: `/topic/${topic_id}/replies`,
@@ -62,191 +135,167 @@ class TopicReply extends React.Component {
       content: `@${uname} `,
     };
 
-    this.props.openEditor(config);
+    dispatch({ type: 'OPEN_EDITOR', data: config });
   };
 
-  handleUp = async () => {
-    if (!this.props.isAuthed) {
-      this.props.openNotification('登录后才能 👍 哟~');
+  const timer = React.useRef();
+
+  React.useEffect(() => {
+    if (hash !== `#${id}`) {
       return;
     }
 
-    const {
-      accesstoken,
-      uname: signedUname,
-    } = this.props;
+    clearTimeout(timer.current);
 
-    let {
-      id,
-      uname,
-      isUped,
-      ups,
-    } = this.state;
+    const appHeaderHight = isWidthDown('xs', width) ? 56 : 64;
+    const replieSpacings = 32;
+    let threshold = 10;
 
-    const params = {
-      url: `/reply/${id}/ups`,
-      params: { accesstoken },
-    };
-
-    if (uname === signedUname) {
-      this.props.openNotification('不能 👍 自己的哟~');
-    } else {
-      const { success, err_msg } = await POST(params);
-
-      if (success) {
-        this.setState({
-          isUped: !isUped,
-          ups: isUped ? (--ups) : (++ups),
-        });
-      } else if (err_msg) {
-        this.props.openNotification({
-          message: err_msg,
-          status: 'error',
-        });
-      }
+    if (isWidthDown('xs', width)) {
+      threshold += replieSpacings / 2;
     }
-  };
 
-  handleShare = () => {
-    const { id, post, URL } = this.state;
+    timer.current = setTimeout(() => {
+      scroller.scrollTo(hash, {
+        duration: 500,
+        smooth: 'easeInOutQuart',
+        /**
+         * appHeaderHight => app header height
+         * replieSpacings => spacings between replies
+         * threshold => the highlight reply top offset
+         */
+        offset: -(appHeaderHight + replieSpacings / 2 + threshold),
+      });
+    }, 0);
 
-    this.props.openShare({
-      url: `${URL}#${id}`,
-      post,
-    });
-  };
+    return () => clearTimeout(timer.current);
+  }, [hash, id, width]);
 
-  componentDidMount() {
+  React.useEffect(() => {
     const { origin, pathname } = window.location;
+    setSharePrefixURL(`${origin}${pathname}`);
 
-    this.setState({
-      URL: `${origin}${pathname}`,
-    });
-  }
+    return () => isCancel.current = true;
+  }, []);
 
-  render() {
-    const {
-      isAuthed,
-      location: {
-        hash = '',
-      },
-    } = this.props;
-    const {
-      author,
-      id,
-      post,
-      uname,
-      avatar,
-      isUped,
-      ups,
-      create_at,
-      content,
-    } = this.state;
+  return (
+    <div id={`#${id}`} className={clsx('topic-reply', {
+      'hilite': hash === `#${id}`,
+      'owned': uname === topicAuthor,
+    })}>
+      <div className="reply-content">
+        <Grid container wrap="nowrap" className={clsx('reply-header', classes.header)}>
+          <Avatar aria-label="Recipe" className="reply-avatar">
+            <Link to={uname ? `/user/${uname}` : '/'}>
+              {avatar &&
+                <img
+                  src={avatar}
+                  alt={uname || '用户已注销'}
+                />
+              }
+            </Link>
+          </Avatar>
 
-    return (
-      <div className={classNames('topic-reply', {
-        'hilite': hash === `#${id}`,
-        'owned': uname === author,
-      })}>
-        <div className="reply-content">
-          <Grid container wrap="nowrap" className="reply-header">
-            <Avatar aria-label="Recipe" className="reply-avatar">
-              <Link to={uname ? `/user/${uname}` : '/'}>
-                {avatar &&
-                  <img
-                    src={avatar}
-                    alt={uname || '用户已注销'}
-                  />
-                }
-              </Link>
-            </Avatar>
-
-            <Grid container item zeroMinWidth wrap="nowrap" className="reply-attrs">
-              <Grid container wrap="nowrap" className="group">
-                <Grid container item zeroMinWidth wrap="nowrap" className="uname-text">
-                  <Grid item zeroMinWidth>
-                    <Link
-                      className="uname"
-                      to={uname ? `/user/${uname}` : '/'}
-                    >
-                      {uname ? uname : '用户已注销'}
-                    </Link>
+          <Grid container item zeroMinWidth wrap="nowrap" className="reply-attrs">
+            <Grid container wrap="nowrap" className="group">
+              <Grid container item zeroMinWidth wrap="nowrap" className="uname-text">
+                <Grid item zeroMinWidth>
+                  <Link
+                    className="uname"
+                    to={uname ? `/user/${uname}` : '/'}
+                  >
+                    {uname ? uname : '用户已注销'}
+                  </Link>
+                </Grid>
+                {uname === topicAuthor &&
+                  <Grid item className="text">
+                    [作者]
                   </Grid>
-                  {uname === author &&
-                    <Grid item className="text">
-                      [作者]
-                    </Grid>
-                  }
-                </Grid>
-                <Grid item className="time">
-                  <span>回复于</span>
-                  <Moment fromNow>{create_at}</Moment>
-                </Grid>
+                }
               </Grid>
-            </Grid>
-
-            <Grid item className="reply-actions">
-              {isAuthed &&
-                <IconButton
-                  className="action reply"
-                  onClick={this.handleReply}
-                >
-                  <ReplyIcon />
-                </IconButton>
-              }
-              <IconButton
-                className="action up"
-                onClick={this.handleUp}
-              >
-                {isUped ? (
-                  <ThumbUpIcon />
-                ) : (
-                  <ThumbUpCancelIcon />
-                )}
-              </IconButton>
-              {Boolean(ups) &&
-                <span className="num">{ups}</span>
-              }
-              <IconButton
-                className="action post"
-                id={`#${id}`}
-                onClick={this.handleShare}
-              >
-                <SortIcon />
-              </IconButton>
-              <span className="num">{post}</span>
+              <Grid item className="time">
+                <Moment fromNow>{createAt}</Moment>
+              </Grid>
             </Grid>
           </Grid>
 
-          <div className="markdown-container">
-            <MarkdownRender markdownString={content} />
-          </div>
+          <Grid item className="reply-actions">
+            <IconButton
+              className="action up"
+              onClick={handleUp}
+            >
+              {upData.isUped ? (
+                <ThumbUpIcon />
+              ) : (
+                <ThumbUpCancelIcon />
+              )}
+            </IconButton>
+            {Boolean(upData.ups) &&
+              <span className="num">{upData.ups}</span>
+            }
+            <IconButton
+              className="action more"
+              buttonRef={node => {
+                anchorEl.current = node;
+              }}
+              variant="contained"
+              onClick={handleOpenMore}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Popover
+              open={moreOpen}
+              anchorEl={anchorEl.current}
+              anchorReference="anchorEl"
+              anchorPosition={{ top: 30, left: 30 }}
+              onClose={handleCloseMore}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <List>
+                <ListItem
+                  className="action post"
+                  onClick={handleShare}
+                  button
+                >
+                  <ListItemIcon className={classes.icon}>
+                    <ShareIcon />
+                  </ListItemIcon>
+                </ListItem>
+                {isAuthed &&
+                  <ListItem
+                    className="action reply"
+                    onClick={handleReply}
+                    button
+                  >
+                    <ListItemIcon className={classes.icon}>
+                      <ReplyIcon />
+                    </ListItemIcon>
+                  </ListItem>
+                }
+              </List>
+            </Popover>
+          </Grid>
+        </Grid>
+
+        <div className="markdown-container">
+          <MarkdownRender markdownString={content} />
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
-const mapStateToProps = ({ auth }) => ({
-  ...auth,
-});
+TopicReply.propTypes = {
+  topicAuthor: PropTypes.string.isRequired,
+  item: PropTypes.object.isRequired,
+  width: PropTypes.string.isRequired,
+};
 
-const mapDispatchToProps = dispatch => ({
-  openShare: url => {
-    dispatch(openShare(url));
-  },
-  openEditor: config => {
-    dispatch(openEditor(config));
-  },
-  openNotification: message => {
-    dispatch(openNotification(message));
-  },
-});
-
-export default compose(
-  withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(TopicReply);
+export default withWidth()(TopicReply);

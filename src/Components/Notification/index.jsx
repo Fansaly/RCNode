@@ -1,20 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { closeNotification } from '../../store/actions';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import IconButton from '@material-ui/core/IconButton';
+
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from '@material-ui/icons/Close';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   success: {
     backgroundColor: '#43a047',
   },
@@ -38,7 +36,7 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-});
+}));
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -47,79 +45,70 @@ const variantIcon = {
   info: InfoIcon,
 };
 
-class Notification extends React.Component {
-  handlePreClose = () => {
-    const { open } = this.props;
-    open && this.handleClose();
-  };
+const Notification = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const {
+    open,
+    message,
+    status,
+  } = useSelector(({ notification }) => {
+    const statusType = ['success', 'warning', 'error', 'info'];
 
-  handleClose = () => {
-    this.props.closeNotification();
-  };
+    if (!statusType.includes(notification.status)) {
+      notification.status = 'info';
+    }
 
-  componentWillUnmount() {
-    this.handlePreClose();
-  }
+    return notification;
+  });
 
-  render() {
-    const { classes, message, status, open } = this.props;
-    const Icon = variantIcon[status];
-    const key = new Date().getTime();
+  const handleClose = React.useCallback(() => {
+    dispatch({ type: 'CLOSE_NOTIFICATION' });
+  }, [dispatch]);
 
-    return (
-      <Snackbar
-        key={key}
-        open={open}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        autoHideDuration={3000}
-        onClose={this.handleClose}
-      >
-        <SnackbarContent
-          className={classes[status]}
-          aria-describedby="snackbar-message-id"
-          message={
-            <span id="snackbar-message-id" className={classes.message}>
-              <Icon className={`${classes.icon} ${classes.iconVariant}`} />
-              {message}
-            </span>
-          }
-          action={
-            <IconButton
-              color="inherit"
-              className={classes.close}
-              onClick={this.handleClose}
-            >
-              <CloseIcon className={classes.icon} />
-            </IconButton>
-          }
-        />
-      </Snackbar>
-    );
-  }
-}
+  const handleExit = React.useCallback(() => {
+    open && handleClose();
+  }, [open, handleClose]);
 
-Notification.propTypes = {
-  classes: PropTypes.object.isRequired,
-  status: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,
+  React.useEffect(() => {
+    return () => handleExit();
+  }, [handleExit]);
+
+  const Icon = variantIcon[status];
+  const key = new Date().getTime();
+
+  return (
+    <Snackbar
+      key={key}
+      open={open}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+      autoHideDuration={3000}
+      onClose={handleClose}
+    >
+      <SnackbarContent
+        className={classes[status]}
+        aria-describedby="snackbar-message-id"
+        message={
+          <span id="snackbar-message-id" className={classes.message}>
+            <Icon className={`${classes.icon} ${classes.iconVariant}`} />
+            {message}
+          </span>
+        }
+        action={
+          <IconButton
+            color="inherit"
+            className={classes.close}
+            onClick={handleClose}
+          >
+            <CloseIcon className={classes.icon} />
+          </IconButton>
+        }
+      />
+    </Snackbar>
+  );
 };
 
-const mapStateToProps = ({ notification }) => ({
-  ...notification,
-});
-
-const mapDispatchToProps = dispatch => ({
-  closeNotification: () => {
-    dispatch(closeNotification());
-  },
-});
-
-export default compose(
-  withStyles(styles),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Notification);
+export default Notification;

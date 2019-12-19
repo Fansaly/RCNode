@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
+import clsx from 'clsx';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { readMessage } from '../../store/actions';
 import { post } from '../../fetch';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -27,7 +25,7 @@ import Avatar from '../../Components/Avatar';
 import Moment from '../../Components/Moment';
 import { MarkdownRender } from '../../Components/Markdown';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   unRead: {
     boxShadow: '0 1px 2px 0 rgba(245,0,87,.16),0 1px 1px 0 rgba(245,0,87,.12),0 2px 1px -1px rgba(245,0,87,.1)',
     '&:before': {
@@ -85,7 +83,7 @@ const styles = theme => ({
     transform: 'translateY(-1.5px)',
   },
   gray: {
-    color: 'rgba(0,0,0,.5)',
+    color: theme.palette.type === 'light' ? 'rgba(0,0,0,.5)' : 'rgba(130,130,130,.5)',
   },
   actions: {
     paddingLeft: 14,
@@ -106,152 +104,125 @@ const styles = theme => ({
     marginLeft: 2,
     fontSize: 14,
   },
-});
+}));
 
-class MessageCard extends React.Component {
-  constructor(props) {
-    super(props);
+const MessageCard = (props) => {
+  const [state, setState] = React.useState({ ...props.item });
+  const { accesstoken } = useSelector(({ auth }) => auth);
+  const disptach = useDispatch();
+  const isCancel = React.useRef(false);
 
-    const { item } = this.props;
+  React.useEffect(() => {
+    return () => isCancel.current = true;
+  }, []);
 
-    this.state = { ...item };
-  }
-
-  markMessage = async () => {
-    const { accesstoken } = this.props;
-    const { id } = this.state;
-
+  const markMessage = async () => {
     const params = {
-      url: `/message/mark_one/${id}`,
+      url: `/message/mark_one/${state.id}`,
       params: { accesstoken },
     };
 
     const { success } = await post(params);
 
-    if (success) {
-      this.props.readMessage();
-      this.setState({ has_read: true });
+    if (!isCancel.current && success) {
+      disptach({ type: 'READ_MESSAGE' });
+      setState(prevState => ({ ...prevState, has_read: true }));
     }
   };
 
-  handleChange = (event, expanded) => {
-    const { has_read } = this.state;
-
-    if (!has_read) {
-      this.markMessage();
+  const handleChange = (event, expanded) => {
+    if (!state.has_read) {
+      markMessage();
     }
   };
 
-  render() {
-    const { classes, hasRead } = this.props;
-    const {
-      author,
-      has_read,
-      reply,
-      topic,
-      type,
-    } = this.state;
+  const classes = useStyles();
+  const { hasRead } = props;
 
-    return (
-      <ExpansionPanel
-        className={classNames({
-          [classes.unRead]: !has_read && !hasRead,
-        })}
-        onChange={this.handleChange}
+  return (
+    <ExpansionPanel
+      className={clsx({
+        [classes.unRead]: !state.has_read && !hasRead,
+      })}
+      onChange={handleChange}
+    >
+      <ExpansionPanelSummary
+        classes={{
+          root: classes.summary,
+          content: classes.content,
+          expandIcon: clsx({
+            [classes.moreUnRead]: !state.has_read && !hasRead,
+          }),
+        }}
+        expandIcon={<ExpandMoreIcon />}
       >
-        <ExpansionPanelSummary
-          classes={{
-            root: classes.summary,
-            content: classes.content,
-            expandIcon: classNames({
-              [classes.moreUnRead]: !has_read && !hasRead,
-            }),
-          }}
-          expandIcon={<ExpandMoreIcon />}
-        >
-          <Grid container wrap="nowrap" alignItems="center">
-            <Grid item className={classes.avatar}>
-              <Avatar
-                name={author.loginname}
-                image={author.avatar_url}
-              />
-            </Grid>
+        <Grid container wrap="nowrap" alignItems="center">
+          <Grid item className={classes.avatar}>
+            <Avatar
+              name={state.author.loginname}
+              image={state.author.avatar_url}
+            />
+          </Grid>
+          <Grid container item zeroMinWidth wrap="wrap" alignItems="center">
             <Grid container item zeroMinWidth wrap="wrap" alignItems="center">
-              <Grid container item zeroMinWidth wrap="wrap" alignItems="center">
-                <Typography noWrap component="h4" className={classes.title}>
-                  {topic.title}
+              <Typography noWrap component="h4" className={classes.title}>
+                {state.topic.title}
+              </Typography>
+            </Grid>
+            <Grid container item zeroMinWidth wrap="nowrap" alignItems="center">
+              <Grid item zeroMinWidth>
+                <Typography noWrap component="span" className={clsx(classes.uname, classes.gray)}>
+                  {state.author.loginname}
                 </Typography>
               </Grid>
-              <Grid container item zeroMinWidth wrap="nowrap" alignItems="center">
-                <Grid item zeroMinWidth>
-                  <Typography noWrap component="span" className={classNames(classes.uname, classes.gray)}>
-                    {author.loginname}
-                  </Typography>
-                </Grid>
-                <Grid item className={classes.time}>
-                  <Typography noWrap component="div" className={classes.gray}>
-                    {type === 'reply' ? (
-                      <ReplyIcon className={classes.sizeReply} />
-                    ) : (
-                      <AtIcon className={classes.sizeAt} />
-                    )}
-                    <Moment fromNow>{reply.create_at}</Moment>
-                  </Typography>
-                </Grid>
+              <Grid item className={classes.time}>
+                <Typography noWrap component="div" className={classes.gray}>
+                  {state.type === 'reply' ? (
+                    <ReplyIcon className={classes.sizeReply} />
+                  ) : (
+                    <AtIcon className={classes.sizeAt} />
+                  )}
+                  <Moment fromNow>{state.reply.create_at}</Moment>
+                </Typography>
               </Grid>
             </Grid>
           </Grid>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <MarkdownRender markdownString={reply.content} />
-        </ExpansionPanelDetails>
-        <Divider />
-        <ExpansionPanelActions className={classes.actions}>
-          <Button
-            component={Link}
-            className={classes.btn}
-            to={`/user/${author.loginname}`}
-            target="_blank"
-            size="medium"
-          >
-            浏览用户
-            <NewTabIcon className={classes.icon} />
-          </Button>
-          <Button
-            component={Link}
-            className={classes.btn}
-            to={`/topic/${topic.id}#${reply.id}`}
-            target="_blank"
-            size="medium"
-            color="primary"
-          >
-            前往查看
-            <NewTabIcon className={classes.icon} />
-          </Button>
-        </ExpansionPanelActions>
-      </ExpansionPanel>
-    );
-  }
-}
-
-MessageCard.propTypes = {
-  classes: PropTypes.object.isRequired,
+        </Grid>
+      </ExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <MarkdownRender markdownString={state.reply.content} />
+      </ExpansionPanelDetails>
+      <Divider />
+      <ExpansionPanelActions className={classes.actions}>
+        <Button
+          component={Link}
+          className={classes.btn}
+          to={`/user/${state.author.loginname}`}
+          target="_blank"
+          size="medium"
+        >
+          浏览用户
+          <NewTabIcon className={classes.icon} />
+        </Button>
+        <Button
+          component={Link}
+          className={classes.btn}
+          to={`/topic/${state.topic.id}#${state.reply.id}`}
+          target="_blank"
+          size="medium"
+          color="primary"
+        >
+          前往查看
+          <NewTabIcon className={classes.icon} />
+        </Button>
+      </ExpansionPanelActions>
+    </ExpansionPanel>
+  );
 };
 
-const mapStateToProps = ({ auth }) => ({
-  ...auth,
-});
+MessageCard.propTypes = {
+  item: PropTypes.object.isRequired,
+  hasRead: PropTypes.bool.isRequired,
+};
 
-const mapDispatchToProps = dispatch => ({
-  readMessage: () => {
-    dispatch(readMessage());
-  },
-});
-
-export default compose(
-  withStyles(styles),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(MessageCard);
+export default MessageCard;

@@ -1,83 +1,70 @@
-const getNewDataCreate = props => {
-  const {
-    open,
-    action,
-    response,
-    request,
-    uid,
-    uname,
-    avatar,
-  } = props;
+import _ from 'lodash';
 
-  if (!open && response && action === 'create') {
-    const { tab, title, content } = request;
-    const { topic_id: id } = response;
-    const dtime = new Date();
-
-    return {
-      author: {
-        loginname: uname,
-        avatar_url: avatar,
-      },
-      author_id: uid,
-      id,
-      tab,
-      title,
-      content,
-      create_at: dtime,
-      last_reply_at: dtime,
-      reply_count: 0,
-      visit_count: 0,
-      good: false,
-      top: false,
-    };
-  }
+const isGoBack = ({ open, response = {} }) => {
+  return open || _.isEmpty(response);
 };
 
-const getNewDataUpdate = props => {
-  const {
-    open,
-    action,
-    request,
-    response,
-  } = props;
-
-  if (!open && response && action === 'update') {
-    const { tab, title, content } = request;
-
-    return { tab, title, content };
+const getNewDataCreate = ({ action, ...props }) => {
+  if (isGoBack(props) || action !== 'create') {
+    return null;
   }
+
+  const dtime = new Date();
+  const { uid, uname, avatar } = props;
+  const { tab, title, content } = props.request;
+  const { topic_id: id } = props.response;
+
+  return [{
+    author: {
+      loginname: uname,
+      avatar_url: avatar,
+    },
+    author_id: uid,
+    id,
+    tab,
+    title,
+    content,
+    create_at: dtime,
+    last_reply_at: dtime,
+    reply_count: 0,
+    visit_count: 0,
+    good: false,
+    top: false,
+  }];
 };
 
-const getNewDataReply = props => {
-  const {
-    open,
-    action,
-    response,
-    request,
-    uname,
-    avatar,
-    ...other
-  } = props;
-
-  if (!open && response && action === 'reply') {
-    const { content, reply_id } = request;
-    const { reply_id: id } = response;
-    const { topic_id } = other.match.params;
-
-    return {
-      author: {
-        loginname: uname,
-        avatar_url: avatar,
-      },
-      id,
-      ups: [],
-      is_uped: false,
-      create_at: new Date(),
-      content,
-      reply_id: reply_id !== topic_id ? reply_id : null,
-    };
+const getNewDataUpdate = ({ action, ...props }) => {
+  if (isGoBack(props) || action !== 'update') {
+    return null;
   }
+
+  const { tab, title, content } = props.request;
+
+  return { tab, title, content };
+};
+
+const getNewDataReply = ({ action, ...props }) => {
+  if (isGoBack(props) || action !== 'reply') {
+    return null;
+  }
+
+  const { uname, avatar } = props;
+  const { content, reply_id } = props.request;
+  const { reply_id: id } = props.response;
+  const { topic_id } = props.match.params;
+
+  return {
+    author: {
+      loginname: uname,
+      avatar_url: avatar,
+    },
+    id,
+    ups: [],
+    is_uped: false,
+    create_at: new Date(),
+    content,
+    reply_id: reply_id !== topic_id ? reply_id : null,
+  };
 };
 
 export {

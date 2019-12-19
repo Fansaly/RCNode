@@ -1,5 +1,4 @@
 import React from 'react';
-import Layout from '../../Layout';
 import Progress from '../Progress';
 
 class Test extends React.Component {
@@ -29,13 +28,11 @@ class Test extends React.Component {
 
   render() {
     return (
-      <Layout>
-        <div id="container">
-          <div className="status wrapper">
-            <Progress status={this.state.status} handle={this.handleClick}/>
-          </div>
+      <div id="container">
+        <div className="status wrapper">
+          <Progress status={this.state.status} handle={this.handleClick}/>
         </div>
-      </Layout>
+      </div>
     );
   }
 }

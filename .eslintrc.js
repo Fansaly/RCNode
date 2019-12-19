@@ -25,6 +25,7 @@ module.exports = {
     'babel',
     'react',
     'jsx-a11y',
+    'react-hooks',
   ],
   rules: {
     'indent': OFF,
@@ -56,7 +57,7 @@ module.exports = {
       'requireStringLiterals': true,
     }],
 
-    'no-console': ERROR,
+    'no-console': [ERROR, { allow: ['warn', 'error'] }],
     'no-alert': ERROR,
     'eol-last': ERROR,
     'no-empty': ERROR,
@@ -97,7 +98,7 @@ module.exports = {
     }],
 
     'react/jsx-filename-extension': [WARN, {
-      'extensions': ['.jsx'],
+      'extensions': ['.js', '.jsx'],
     }],
     'react/self-closing-comp': ERROR,
     'react/jsx-tag-spacing': [ERROR, {
@@ -114,13 +115,8 @@ module.exports = {
 
     'jsx-a11y/no-autofocus': OFF,
     'jsx-a11y/anchor-is-valid': OFF,
+
+    'react-hooks/rules-of-hooks': ERROR,
+    'react-hooks/exhaustive-deps': WARN,
   },
-  overrides: [
-    {
-      files: ['src/index.js'],
-      rules: {
-        'react/jsx-filename-extension': OFF,
-      },
-    },
-  ],
 };

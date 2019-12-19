@@ -19,7 +19,7 @@
     min-width 4em
     max-width 156px
     text-decoration none
-    @media (max-width 768px)
+    @media (max-width: 768px)
       min-width 2em
     .type
       width 100%
@@ -30,19 +30,18 @@
       &:hover
         background-color rgba(255,255,255,.03)
       ../.current ^[2..-1]
-        color #fff
         background-color rgba(255,255,255,.1)
-      @media (max-width 768px)
+      @media (max-width: 768px)
         min-width auto
         padding 3px 14px
-      @media (max-width 320px)
+      @media (max-width: 320px)
         padding 0 4px
       span
         font-size 15px
         letter-spacing .1em
         line-height 32px
         text-align center
-        @media (max-width 768px)
+        @media (max-width: 768px)
           letter-spacing 0
-        @media (max-width 360px)
+        @media (max-width: 360px)
           font-size 13px

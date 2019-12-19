@@ -6,12 +6,14 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import { ThemeProvider } from '@material-ui/styles';
-import theme from './theme';
-
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import store from './store';
 
+import ThemeProvider from './Components/Theme';
+import ScrollToTop from './Components/ScrollToTop';
+import Loadding from './Components/Loadding';
+
+import { AppFrame } from './Layout';
 import Home from './Views/Home';
 import Topic from './Views/Topic';
 import User from './Views/User';
@@ -19,7 +21,6 @@ import Signin from './Views/Signin';
 import Message from './Views/Message';
 import Settings from './Views/Settings';
 import NotFound from './Views/404';
-import Loadding from './Components/Loadding';
 
 let Test = NotFound;
 
@@ -28,7 +29,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const { isAuthed } = store.getState().auth;
+  const { isAuthed } = useSelector(({ auth }) => auth);
 
   return (
     <Route
@@ -44,12 +45,13 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-class App extends React.Component {
-  render() {
-    return (
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <BrowserRouter basename={process.env.PUBLIC_URL}>
+const App = () => {
+  return (
+    <Provider store={store}>
+      <ThemeProvider>
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
+          <AppFrame>
+            <ScrollToTop />
             <React.Suspense fallback={<Loadding />}>
               <Switch>
                 <Route exact path="/" component={Home} />
@@ -62,11 +64,11 @@ class App extends React.Component {
                 <Route path="*" component={NotFound} />
               </Switch>
             </React.Suspense>
-          </BrowserRouter>
-        </Provider>
+          </AppFrame>
+        </BrowserRouter>
       </ThemeProvider>
-    );
-  }
-}
+    </Provider>
+  );
+};
 
 export default App;

@@ -1,10 +1,25 @@
 const defaultState = {
-  time: 0,
+  autoFollow: true,
+  themeMode: 'light',
   cardPreview: false,
+  time: 0,
 };
 
-let initialState = JSON.parse(localStorage.getItem('SETTINGS'));
-initialState = Boolean(initialState) ? initialState : defaultState;
+let initialState = JSON.parse(localStorage.getItem('SETTINGS')) || {};
+
+const {
+  autoFollow = true,
+  themeMode = 'light',
+  cardPreview = false,
+  time = 0,
+} = initialState;
+
+initialState = {
+  autoFollow,
+  themeMode,
+  cardPreview,
+  time,
+};
 
 const settings = (state = initialState, { type, data }) => {
   switch (type) {
@@ -14,9 +29,7 @@ const settings = (state = initialState, { type, data }) => {
       }));
       return { ...data };
     case 'RESTORE_SETTINGS':
-      localStorage.setItem('SETTINGS', JSON.stringify({
-        ...defaultState,
-      }));
+      localStorage.removeItem('SETTINGS');
       return defaultState;
     default:
       return state;

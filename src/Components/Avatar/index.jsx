@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   avatar: {
     '& a': {
       display: 'flex',
@@ -21,46 +21,44 @@ const styles = theme => ({
       textIndent: 20,
     },
   },
-});
+}));
 
-class CustomAvatar extends React.Component {
-  render() {
-    const {
-      classes,
-      className,
-      name,
-      image,
-      url,
-    } = this.props;
+const CustomAvatar = (props) => {
+  const classes = useStyles();
+  const {
+    className,
+    name,
+    image,
+    url,
+  } = props;
 
-    return (
-      <Avatar
-        aria-label="Recipe"
-        className={classNames(
-          classes.avatar,
-          className,
-        )}
-      >
-        {url ? (
-          <Link to={name ? url : '/'}>
-            {image &&
-              <img src={image} alt={name || '用户已注销'} />
-            }
-          </Link>
-        ) : (
-          <a>
-            {image &&
-              <img src={image} alt={name || '用户已注销'} />
-            }
-          </a>
-        )}
-      </Avatar>
-    );
-  }
-}
-
-CustomAvatar.propTypes = {
-  classes: PropTypes.object.isRequired,
+  return (
+    <Avatar
+      aria-label="Recipe"
+      className={clsx(
+        classes.avatar,
+        className,
+      )}
+    >
+      {url ? (
+        <Link to={name ? url : '/'}>
+          {image &&
+            <img src={image} alt={name || '用户已注销'} />
+          }
+        </Link>
+      ) : (
+        <a>
+          {image &&
+            <img src={image} alt={name || '用户已注销'} />
+          }
+        </a>
+      )}
+    </Avatar>
+  );
 };
 
-export default withStyles(styles)(CustomAvatar);
+CustomAvatar.propTypes = {
+  className: PropTypes.string,
+};
+
+export default CustomAvatar;
