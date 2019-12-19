@@ -1,18 +1,26 @@
 {
   "files": {
-    "main.css": "/RCNode/static/css/main.44a831c8.chunk.css",
-    "main.js": "/RCNode/static/js/main.4a53855e.chunk.js",
-    "main.js.map": "/RCNode/static/js/main.4a53855e.chunk.js.map",
-    "runtime~main.js": "/RCNode/static/js/runtime~main.8cf6636a.js",
-    "runtime~main.js.map": "/RCNode/static/js/runtime~main.8cf6636a.js.map",
-    "static/css/2.5e454174.chunk.css": "/RCNode/static/css/2.5e454174.chunk.css",
-    "static/js/2.197626fb.chunk.js": "/RCNode/static/js/2.197626fb.chunk.js",
-    "static/js/2.197626fb.chunk.js.map": "/RCNode/static/js/2.197626fb.chunk.js.map",
+    "main.css": "/RCNode/static/css/main.496912ce.chunk.css",
+    "main.js": "/RCNode/static/js/main.b6c84c6d.chunk.js",
+    "main.js.map": "/RCNode/static/js/main.b6c84c6d.chunk.js.map",
+    "runtime-main.js": "/RCNode/static/js/runtime-main.13df6bc6.js",
+    "runtime-main.js.map": "/RCNode/static/js/runtime-main.13df6bc6.js.map",
+    "static/css/2.1c7ffa40.chunk.css": "/RCNode/static/css/2.1c7ffa40.chunk.css",
+    "static/js/2.7832967e.chunk.js": "/RCNode/static/js/2.7832967e.chunk.js",
+    "static/js/2.7832967e.chunk.js.map": "/RCNode/static/js/2.7832967e.chunk.js.map",
     "index.html": "/RCNode/index.html",
-    "precache-manifest.5f51a6b2f919eb47789154db0d0be8de.js": "/RCNode/precache-manifest.5f51a6b2f919eb47789154db0d0be8de.js",
+    "precache-manifest.bb41b61d28db723b9ffd022ec41b23cf.js": "/RCNode/precache-manifest.bb41b61d28db723b9ffd022ec41b23cf.js",
     "service-worker.js": "/RCNode/service-worker.js",
-    "static/css/2.5e454174.chunk.css.map": "/RCNode/static/css/2.5e454174.chunk.css.map",
-    "static/css/main.44a831c8.chunk.css.map": "/RCNode/static/css/main.44a831c8.chunk.css.map",
+    "static/css/2.1c7ffa40.chunk.css.map": "/RCNode/static/css/2.1c7ffa40.chunk.css.map",
+    "static/css/main.496912ce.chunk.css.map": "/RCNode/static/css/main.496912ce.chunk.css.map",
+    "static/js/2.7832967e.chunk.js.LICENSE": "/RCNode/static/js/2.7832967e.chunk.js.LICENSE",
     "static/media/houses_beautiful_beach_photo_wallpaper.jpg": "/RCNode/static/media/houses_beautiful_beach_photo_wallpaper.b764c878.jpg"
-  }
+  },
+  "entrypoints": [
+    "static/js/runtime-main.13df6bc6.js",
+    "static/css/2.1c7ffa40.chunk.css",
+    "static/js/2.7832967e.chunk.js",
+    "static/css/main.496912ce.chunk.css",
+    "static/js/main.b6c84c6d.chunk.js"
+  ]
 }
