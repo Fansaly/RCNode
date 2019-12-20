@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { getBingImage } from './getBingImage';
 
-axios.defaults.baseURL = 'https://cnodejs.org/api/v1';
+const cnodeAxios = axios.create({
+  baseURL: 'https://cnodejs.org/api/v1',
+  timeout: 3000,
+});
 
 /**
  * @param {string} url
@@ -12,7 +15,7 @@ const fetch = async ({ url, method = 'GET', params = {} }) => {
   params = method === 'GET' ? { params } : { data: params };
 
   try {
-    const { data } = await axios({ method, url, ...params });
+    const { data } = await cnodeAxios({ method, url, ...params });
 
     return {
       success: true,
