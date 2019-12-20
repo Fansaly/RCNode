@@ -9,8 +9,10 @@ axios.defaults.baseURL = 'https://cnodejs.org/api/v1';
  * @param {object} params
  */
 const fetch = async ({ url, method = 'GET', params = {} }) => {
+  params = method === 'GET' ? { params } : { data: params };
+
   try {
-    const { data } = await axios({ method, url, params });
+    const { data } = await axios({ method, url, ...params });
 
     return {
       success: true,
