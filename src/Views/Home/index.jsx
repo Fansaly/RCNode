@@ -92,7 +92,7 @@ const Home = () => {
   }, [editorData]);
 
   return (
-    <AppWrapper>
+    <AppWrapper title="RCNode">
       <div id="container">
         <div className="wrapper">
           <div className="topic-list-container">
