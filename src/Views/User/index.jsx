@@ -164,6 +164,7 @@ const User = (props) => {
     isCancel.current = false;
 
     setStatus('loading');
+    setProfile({ uname });
     dispatch({ type: 'RESTORE' });
     setIndex(0);
 
