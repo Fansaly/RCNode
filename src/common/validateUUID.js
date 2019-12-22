@@ -1,10 +1,9 @@
 import validate from 'uuid-validate';
 
 /**
- * repo. https://github.com/cnodejs/nodeclub
- * file: nodeclub/proxy/user.js
+ * repo: https://github.com/cnodejs/nodeclub
+ * file: proxy/user.js
  * line: 106
- * uuid.v4()
  */
 const uuidVersion = 4;
 
