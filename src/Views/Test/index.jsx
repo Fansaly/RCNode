@@ -6,6 +6,7 @@ import { MarkdownRender } from '../../Components/Markdown';
 import ImageZoom from '../../Components/ImageZoom';
 import ShareDialog from '../../Components/ShareDialog';
 
+import f0_0 from './_html.md';
 import f1_0 from './_@_single.md';
 import f1_1 from './_@_single_prev_space.md';
 import f1_2 from './_@_single_next_space.md';
@@ -14,6 +15,10 @@ import f3_0 from './_url.md';
 import f4 from './_ctx.md';
 
 const mdContent = [
+  {
+    file: '_html.md',
+    text: f0_0,
+  },
   {
     file: '_@_single.md',
     text: f1_0,

@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import markdownToHtml from './markdownToHtml';
 import 'github-markdown-css/github-markdown.css';
-import mdRender from './markdown-it';
 import './markdown-render.styl';
 
 const useStyles = makeStyles(theme => ({
@@ -83,7 +83,7 @@ const MarkdownRender = (props) => {
       className={clsx('markdown-body', className, classes.root)}
       // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{
-        __html: mdRender.render(markdownString),
+        __html: markdownToHtml(markdownString),
       }}
     />
   );
