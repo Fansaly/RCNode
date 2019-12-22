@@ -1,17 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import {
-  closeEditor,
-  openNotification,
-} from '../../store/actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { topicTypes, matchTab } from '../../common';
 import { post } from '../../fetch';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 
 import Slide from '@material-ui/core/Slide';
@@ -25,7 +20,7 @@ import { MarkdownEditor } from '../../Components/Markdown';
 import EditorHeader from './EditorHeader';
 import Preview from './Preview';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   editor: {
     '& #editor .editor-header': {
       padding: '24px 0 14px 24px',
@@ -53,100 +48,156 @@ const styles = theme => ({
   cancel: {
     marginLeft: 0,
   },
-});
+}));
 
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = React.forwardRef((props, ref) => {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-class Editor extends React.Component {
-  constructor(props) {
-    super(props);
+const initialState = {
+  /**
+   * status
+   * 1 idle
+   * 2 working
+   * 3 success
+   * 4 error
+   * -------------------------
+   * set it but never used ^_^
+   */
+  status: 'idle',
+  publishTab: null,
+  title: '',
+  content: '',
+  /**
+   * repo: https://github.com/cnodejs/nodeclub
+   * file: api/v1/topic.js
+   * line: 144
+   */
+  validation: {
+    title: {
+      max: 100,
+      min: 5,
+    },
+    content: {
+      max: null,
+      min: 3,
+    },
+  },
+  isOK: false,
+  isDiff: false,
+  preview: false,
+  fullScreen: false,
+  disabled: false,
+};
 
-    this.state = {
-      /**
-       * status
-       * 1 idle
-       * 2 working
-       * 3 success
-       * 4 error
-       */
-      status: 'idle',
-      changed: false,
-      disabled: false,
-      fullScreen: false,
-      publishTab: null,
-      preview: false,
-      tab: null,
-      isOK: false,
-      title: '',
-      content: '',
-    };
-  }
+const Editor = (props) => {
+  const { width } = props;
+  const { isAuthed, accesstoken } = useSelector(({ auth }) => auth);
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const classes = useStyles();
+  const isCancel = React.useRef();
+  const titleRef = React.useRef();
+  const contentRef = React.useRef();
 
-  titleRef = React.createRef();
-  contentRef = React.createRef();
+  const editor = useSelector(s => s.editor);
+  const { open, action, url, topic_id, reply_id } = editor;
 
-  handleFocus = () => {
-    const { action } = this.props;
+  const [eState, eDispatch] = React.useReducer((state, { type, data }) => {
+    switch (type) {
+      case 'INIT':
+        return { ...state, ...data };
+      case 'SET_PUBLISH_TAB':
+        return { ...state, publishTab: data };
+      case 'CHANGE':
+        return { ...state, ...data };
+      case 'IS_OK':
+        return { ...state, isOK: data };
+      case 'IS_DIFF':
+        return { ...state, isDiff: data };
+      case 'CLOSE_PREVIEW':
+        return { ...state, preview: false };
+      case 'OPEN_PREVIEW':
+        return { ...state, preview: true };
+      case 'TOGGLE_FULL_SCREEN':
+        return { ...state, fullScreen: !state.fullScreen };
+      case 'REQUEST':
+        return {
+          ...state,
+          status: 'working',
+          disabled: true,
+        };
+      case 'REQUEST_END':
+        return {
+          ...state,
+          status: data,
+          disabled: false,
+        };
+      default:
+        return state;
+    }
+  }, initialState);
 
+  const { publishTab, title, content, validation, isOK, preview, fullScreen, disabled } = eState;
+
+  const handleFocus = () => {
     if (['create', 'update'].includes(action)) {
-      this.titleRef.current.focus();
+      titleRef.current.focus();
     } else {
-      this.contentRef.current.focus();
+      contentRef.current.focus();
     }
   };
 
-  handlePublishTab = publishTab => {
-    this.setState({ publishTab });
+  const handlePublishTab = tab => {
+    eDispatch({ type: 'SET_PUBLISH_TAB', data: tab });
   };
 
-  handleOpenPreview = () => {
-    const { content } = this.state;
-
-    if (!Boolean(content) || content.trim().length <= 3) {
-      this.props.openNotification({
-        message: '太短了唷。',
-        status: 'info',
-      });
-    } else {
-      this.setState({
-        preview: true,
-      });
-    }
-  };
-
-  handleClosePreview = () => {
-    this.setState({
-      preview: false,
-    });
-  };
-
-  handleFullScreen = () => {
-    this.setState(state => ({
-      fullScreen: !state.fullScreen,
-    }));
-  };
-
-  handleChange = name => event => {
+  const handleChange = name => event => {
     let value = event.target.value;
 
     if (name === 'title') {
       value = value.replace(/\n/g, '');
     }
 
-    this.setState({
-      [name]: value,
-      changed: true,
-    }, () => {
-      this.check();
+    eDispatch({
+      type: 'CHANGE',
+      data: { [name]: value },
     });
   };
 
-  checkTab = () => {
-    const { publishTab } = this.state;
-    const { action } = this.props;
+  const handleOpenPreview = () => {
+    if (!Boolean(content) || content.trim().length < validation.content.min) {
+      dispatch({
+        type: 'OPEN_NOTIFICATION',
+        data: {
+          message: '太短了唷。',
+          status: 'info',
+        },
+      });
+    } else {
+      eDispatch({ type: 'OPEN_PREVIEW' });
+    }
+  };
 
+  const handleClosePreview = () => {
+    eDispatch({ type: 'CLOSE_PREVIEW' });
+  };
+
+  const handleFullScreen = () => {
+    eDispatch({ type: 'TOGGLE_FULL_SCREEN' });
+  };
+
+  const handleClose = React.useCallback((result = {}) => {
+    const { response } = result;
+
+    handleClosePreview();
+
+    if (!disabled) {
+      dispatch({ type: 'CLOSE_EDITOR', data: response ? result : {} });
+    }
+  }, [disabled, dispatch]);
+
+  const checkTab = () => {
     if (/(reply)/.test(action)) {
       return true;
     }
@@ -154,296 +205,219 @@ class Editor extends React.Component {
     const result = topicTypes.includes(publishTab);
 
     if (!result) {
-      this.props.openNotification({
-        message: '请选择一个主题分类',
-        status: 'error',
+      dispatch({
+        type: 'OPEN_NOTIFICATION',
+        data: {
+          message: '请选择一个主题分类',
+          status: 'error',
+        },
       });
     }
 
     return result;
   };
 
-  checkTitle = () => {
-    const { title } = this.state;
-    const { action } = this.props;
-
-    return (
-      /(reply)/.test(action)
-        ? true
-        : typeof title === 'string'
-          ? title.length >= 5
-          : false
-    );
-  };
-
-  checkContent = () => {
-    const { content } = this.state;
-    return (
-      typeof content === 'string'
-        ? content.length >= 3
-        : false
-    );
-  };
-
-  check = () => {
-    const isOK = this.checkTitle() && this.checkContent();
-
-    this.setState({ isOK });
-
-    return isOK;
-  };
-
-  handleSubmit = () => {
-    const { isOK } = this.state;
-
-    if (!isOK || !this.checkTab()) {
+  const handleSubmit = async () => {
+    if (!isOK || !checkTab()) {
       return;
     }
 
-    const {
-      action,
-      url,
-      reply_id,
-      topic_id,
-      accesstoken,
-    } = this.props;
-
-    const {
-      title,
-      publishTab: tab,
-      content,
-    } = this.state;
+    isCancel.current = false;
+    eDispatch({ type: 'REQUEST' });
 
     const params = {
       accesstoken,
-      tab: tab || undefined,
+      tab: publishTab || undefined,
       title,
       content,
       reply_id,
       topic_id,
     };
 
-    this.setState({
-      status: 'working',
-      disabled: true,
-    }, async () => {
-      const { success, err_msg, data } = await post({ url, params });
+    const { success, err_msg, data } = await post({ url, params });
 
-      this.setState({
-        status: success ? 'success' : 'error',
-        disabled: false,
-      }, () => {
-        success && this.handleClose({
-          action,
-          request: { ...params },
-          response: { ...data },
-        });
-      });
-
-      const message = success
-        ? action === 'create'
-          ? '发布成功 ^_^'
-          : action === 'update'
-            ? '更新成功 ^_^'
-            : action === 'reply'
-              ? '回复成功 ^_^'
-              : '无效操作'
-        : {
-          status: 'error',
-          message: err_msg
-            ? err_msg
-            : action === 'create'
-              ? '发布失败 :('
-              : action === 'update'
-                ? '更新失败 :('
-                : action === 'reply'
-                  ? '回复失败 :('
-                  : '无效操作',
-        };
-
-      this.props.openNotification(message);
-    });
-  };
-
-  handlePreClose = () => {
-    const { open } = this.props;
-    open && this.handleClose();
-  };
-
-  handleClose = (result = {}) => {
-    const { disabled } = this.state;
-    const { response } = result;
-
-    this.handleClosePreview();
-    !disabled && this.props.closeEditor(response ? result : {});
-  };
-
-  UNSAFE_componentWillMount() {
-    const tab = matchTab(this.props.location);
-
-    this.setState({
-      tab,
-    }, () => {
-      this.check();
-    });
-  }
-
-  componentWillUnmount() {
-    this.handlePreClose();
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const {
-      pathname: nextPathname,
-      search: nextSearch,
-    } = nextProps.location;
-
-    const {
-      pathname: prevPathname,
-      search: prevSearch,
-    } = this.props.location;
-
-    const { title, content } = nextProps;
-
-    if (`${nextPathname}${nextSearch}` === `${prevPathname}${prevSearch}`) {
-      this.setState({
-        title,
-        content,
-      }, () => {
-        this.check();
-      });
-    } else {
-      this.handlePreClose();
+    if (isCancel.current) {
+      return;
     }
-  }
 
-  render() {
-    const {
-      classes,
-      width,
-      open,
-      action,
-      isAuthed,
-    } = this.props;
+    eDispatch({
+      type: 'REQUEST_END',
+      data: success ? 'success' : 'error',
+    });
 
-    const {
-      disabled,
-      preview,
-      fullScreen,
-      isOK,
-      title,
-      content = '',
-     } = this.state;
+    if (success) {
+      handleClose({
+        action,
+        request: { ...params },
+        response: { ...data },
+      });
+    }
 
-    return (isAuthed &&
-      <React.Fragment>
-        <Dialog
-          className={classes.editor}
-          PaperProps={{id: 'editor'}}
-          open={open}
-          onClose={this.handleClose}
-          TransitionComponent={Transition}
-          maxWidth="sm"
-          fullWidth
-          fullScreen={!isWidthUp('sm', width) || fullScreen}
-          keepMounted={!isWidthUp('sm', width)}
-          onEntered={this.handleFocus}
-        >
-          <EditorHeader
-            disabled={disabled}
-            onPublishTab={this.handlePublishTab}
-            onPreview={this.handleOpenPreview}
-            fullScreen={fullScreen}
-            onFullScreen={this.handleFullScreen}
-          />
-          {['create', 'update'].includes(action) &&
-            <TextField
-              className={classes.title}
-              margin="normal"
-              multiline
-              rows="1"
-              rowsMax="3"
-              fullWidth
-              placeholder="标题..."
-              inputRef={this.titleRef}
-              value={title}
-              disabled={disabled}
-              onChange={this.handleChange('title')}
-            />
-          }
-          <DialogContent className={clsx('flex', classes.content)}>
-            <MarkdownEditor
-              disabled={disabled}
-              content={content}
-              inputRef={this.contentRef}
-              onUpdateContent={this.handleChange('content')}
-            />
-          </DialogContent>
-          <DialogActions className={classes.actions}>
-            <Button
-              className={clsx(classes.button, classes.cancel)}
-              onClick={this.handleClose}
-              disabled={disabled}
-              color="default"
-              size="large"
-            >
-              取消
-            </Button>
-            <Button
-              className={clsx(classes.button, classes.doit)}
-              variant="contained"
-              onClick={this.handleSubmit}
-              disabled={!isOK || disabled}
-              color="primary"
-              size="large"
-            >
-              {action === 'create' ? (
-                '发布'
-              ) : action === 'update' ? (
-                '更新'
-              ) : (
-                '回复'
-              )}
-            </Button>
-          </DialogActions>
-        </Dialog>
+    const message = success
+      ? action === 'create'
+        ? '发布成功 ^_^'
+        : action === 'update'
+          ? '更新成功 ^_^'
+          : action === 'reply'
+            ? '回复成功 ^_^'
+            : '无效操作'
+      : {
+        status: 'error',
+        message: err_msg
+          ? err_msg
+          : action === 'create'
+            ? '发布失败 :('
+            : action === 'update'
+              ? '更新失败 :('
+              : action === 'reply'
+                ? '回复失败 :('
+                : '无效操作',
+      };
 
-        <Preview
-          open={preview}
-          content={content}
-          onClose={this.handleClosePreview}
+    dispatch({ type: 'OPEN_NOTIFICATION', data: message });
+  };
+
+  React.useEffect(() => {
+    let tab = matchTab(location);
+    tab = topicTypes.includes(tab) ? tab : '';
+
+    eDispatch({ type: 'SET_PUBLISH_TAB', data: tab });
+  }, [location]);
+
+  React.useEffect(() => {
+    return () => open && handleClose();
+  }, [location, open, handleClose]);
+
+  React.useEffect(() => {
+    if (!editor.open) {
+      return;
+    }
+
+    eDispatch({
+      type: 'INIT',
+      data: {
+        ...(editor.tab ? { publishTab: editor.tab } : {}),
+        title: editor.title || '',
+        content: editor.content || '',
+      },
+    });
+  }, [editor]);
+
+  React.useEffect(() => {
+    if (!editor.open) {
+      return;
+    }
+
+    const checkTitle = () => {
+      return (
+        /(reply)/.test(editor.action)
+          ? true
+          : typeof title === 'string'
+            ? title.length >= validation.title.min && title.length <= validation.title.max
+            : false
+      );
+    };
+
+    const checkContent = () => {
+      return (
+        typeof content === 'string'
+          ? content.length >= validation.content.min
+          : false
+      );
+    };
+
+    const result = checkTitle() && checkContent();
+    eDispatch({ type: 'IS_OK', data: result });
+
+    const change = title !== editor.title || content !== editor.content;
+    eDispatch({ type: 'IS_DIFF', data: change });
+  }, [title, content, validation, editor]);
+
+  return (isAuthed &&
+    <React.Fragment>
+      <Dialog
+        className={classes.editor}
+        PaperProps={{id: 'editor'}}
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+        maxWidth="sm"
+        fullWidth
+        fullScreen={!isWidthUp('sm', width) || fullScreen}
+        keepMounted={!isWidthUp('sm', width)}
+        onEntered={handleFocus}
+      >
+        <EditorHeader
+          publishTab={publishTab}
+          onPublishTab={handlePublishTab}
+          onPreview={handleOpenPreview}
+          onFullScreen={handleFullScreen}
+          fullScreen={fullScreen}
+          disabled={disabled}
         />
-      </React.Fragment>
-    );
-  }
-}
+        {['create', 'update'].includes(action) &&
+          <TextField
+            className={classes.title}
+            margin="normal"
+            multiline
+            rows="1"
+            rowsMax="3"
+            fullWidth
+            placeholder="标题..."
+            inputRef={titleRef}
+            value={title}
+            disabled={disabled}
+            onChange={handleChange('title')}
+          />
+        }
+        <DialogContent className={clsx('flex', classes.content)}>
+          <MarkdownEditor
+            disabled={disabled}
+            content={content}
+            inputRef={contentRef}
+            onUpdateContent={handleChange('content')}
+          />
+        </DialogContent>
+        <DialogActions className={classes.actions}>
+          <Button
+            className={clsx(classes.button, classes.cancel)}
+            onClick={handleClose}
+            disabled={disabled}
+            color="default"
+            size="large"
+          >
+            取消
+          </Button>
+          <Button
+            className={clsx(classes.button, classes.doit)}
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={!isOK || disabled}
+            color="primary"
+            size="large"
+          >
+            {action === 'create' ? (
+              '发布'
+            ) : action === 'update' ? (
+              '更新'
+            ) : (
+              '回复'
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-Editor.propTypes = {
-  classes: PropTypes.object.isRequired,
-  width: PropTypes.string.isRequired,
-  action: PropTypes.oneOf(['create', 'update', 'reply']),
+      <Preview
+        open={preview}
+        content={content}
+        onClose={handleClosePreview}
+      />
+    </React.Fragment>
+  );
 };
 
-const mapStateToProps = ({ auth, editor }) => ({
-  ...auth,
-  ...editor,
-});
+Editor.propTypes = {
+  width: PropTypes.string.isRequired,
+};
 
-const mapDispatchToProps = dispatch => ({
-  closeEditor: data => {
-    dispatch(closeEditor(data));
-  },
-  openNotification: message => {
-    dispatch(openNotification(message));
-  },
-});
-
-export default compose(
-  withStyles(styles),
-  withWidth(),
-  withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(Editor);
+export default withWidth()(Editor);

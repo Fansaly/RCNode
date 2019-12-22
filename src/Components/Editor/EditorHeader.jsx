@@ -2,11 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import {
   navTabsObject as navTabs,
   topicTypes,
-  matchTab,
 } from '../../common';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -66,38 +64,33 @@ const useStyles = makeStyles(theme => ({
 
 const EditorHeader = (props) => {
   const {
-    disabled,
+    publishTab,
     onPublishTab,
     onPreview,
-    fullScreen,
     onFullScreen,
+    fullScreen,
+    disabled,
   } = props;
 
   const { isAuthed, uname, avatar } = useSelector(({ auth }) => auth);
-  const { tab, action } = useSelector(({ editor }) => editor);
-  const location = useLocation();
-  const classes = useStyles();
+  const { action } = useSelector(({ editor }) => editor);
 
   const [moreOpen, setMoreOpen] = React.useState(false);
   const [selectOpen, setSelectOpen] = React.useState(false);
-  const [publishTab, setPublishTab] = React.useState(null);
   const anchorEl = React.useRef(null);
+  const classes = useStyles();
 
-  const handlePublishTab = React.useCallback(() => {
-    onPublishTab(publishTab);
-  }, [onPublishTab, publishTab]);
-
-  const handleCloseSelect = React.useCallback(() => {
-    handlePublishTab();
+  const handleCloseSelect = () => {
     setSelectOpen(false);
-  }, [handlePublishTab]);
+  };
 
   const handleOpenSelect = () => {
     setSelectOpen(!disabled);
   };
 
   const handleChange = (event, value) => {
-    setPublishTab(value);
+    onPublishTab(value);
+    handleCloseSelect();
   };
 
   const handleCloseMore = () => {
@@ -117,26 +110,6 @@ const EditorHeader = (props) => {
     handleCloseMore();
     onFullScreen();
   };
-
-  React.useEffect(() => {
-    const getPublishTab = () => {
-      const _tab = matchTab(location);
-
-      return (
-        _tab === null
-          ? null
-          : topicTypes.includes(_tab)
-            ? _tab
-            : ''
-      );
-    };
-
-    setPublishTab(tab || getPublishTab());
-  }, [location, tab]);
-
-  React.useEffect(() => {
-    handleCloseSelect();
-  }, [handleCloseSelect]);
 
   return (isAuthed &&
     <React.Fragment>
@@ -243,11 +216,11 @@ const EditorHeader = (props) => {
             value={publishTab}
             onChange={handleChange}
           >
-            {topicTypes.map(_tab => (
+            {topicTypes.map(tab => (
               <FormControlLabel
-                key={_tab}
-                value={_tab}
-                label={navTabs[_tab].name}
+                key={tab}
+                value={tab}
+                label={navTabs[tab].name}
                 control={<Radio />}
               />
             ))}
@@ -259,11 +232,12 @@ const EditorHeader = (props) => {
 };
 
 EditorHeader.propTypes = {
-  disabled: PropTypes.bool.isRequired,
-  onPublishTab: PropTypes.func.isRequired,
+  onPublishTab: PropTypes.func,
+  publishTab: PropTypes.string,
   onPreview: PropTypes.func.isRequired,
-  fullScreen: PropTypes.bool.isRequired,
   onFullScreen: PropTypes.func.isRequired,
+  fullScreen: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool.isRequired,
 };
 
 export default EditorHeader;
