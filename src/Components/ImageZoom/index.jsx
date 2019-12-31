@@ -1,22 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import {
-  closeZoom,
-  openShare,
-} from '../../store/actions';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
 import Grid from '@material-ui/core/Grid';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import Fade from '@material-ui/core/Fade';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
+import Fade from '@material-ui/core/Fade';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import ShareIcon from '@material-ui/icons/Share';
@@ -24,7 +19,7 @@ import ZoomInIcon from '@material-ui/icons/Add';
 import ZoomOutIcon from '@material-ui/icons/Remove';
 import ZoomResetIcon from '@material-ui/icons/Search';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   fill: {
     flex: 1,
   },
@@ -130,21 +125,39 @@ const styles = theme => ({
     minWidth: 44,
     borderRadius: 0,
   },
-});
+}));
 
 const defaultState = {
-  // translate position
+  /**
+   * position
+   * ------------------
+   *  x, y => transform
+   * iX,iY => initial transform pos for drag beginning
+   * sX,sY => drag start
+   * mX,mY => drag move
+   */
   x: 0,
   y: 0,
-  // drag start position
+  iX: 0,
+  iY: 0,
   sX: 0,
   sY: 0,
-  // drag move position
   mX: 0,
   mY: 0,
+  /**
+   * scale
+   * ------------------------
+   * scale => transform scale
+   */
   scale: 1,
   scaleLevel: 1,
   scaleLevels: [ .68, 1, 1.38, 2, 3.21, 4.96 ],
+  /**
+   * spacings
+   * --------
+   * spacings => initial, between zoomRef and zoomWrapRef
+   * dragSpacings => drag, between zoomRef and zoomWrapRef
+   */
   spacings: 16,
   dragSpacings: 50,
   disabledUp: false,
@@ -152,209 +165,85 @@ const defaultState = {
   disabledReset: true,
   dragEnabled: false,
   dragActive: false,
-  // image loaded
+  isTouch: undefined,
   ready: false,
 };
 
-class ImageZoom extends React.Component {
-  state = defaultState;
+const ImageZoom = (props) => {
+  const { width } = props;
+  const { open, src } = useSelector(({ zoom }) => zoom);
+  const [state, setState] = React.useState(defaultState);
+  const dragIsActive = React.useRef();
+  const zoomWrapRef = React.useRef();
+  const zoomBoxRef = React.useRef();
+  const zoomRef = React.useRef();
+  const dispatch = useDispatch();
+  const classes = useStyles();
 
-  handleClick = event => {
+  const handleClick = event => {
     const { target } = event;
-    const { ready } = this.state;
-
-    if (!ready || target === this.wrap || target === this.box) {
-      this.handleClose();
+    if (
+      !state.ready
+      || target === zoomWrapRef.current
+      || target === zoomBoxRef.current
+    ) {
+      handleClose();
     }
   };
 
-  handleShare = () => {
-    const url = this.zoomTarget.src;
-    this.props.openShare(url);
+  const handleShare = () => {
+    const url = zoomRef.current.src;
+    dispatch({ type: 'OPEN_SHARE', data: url });
   };
 
-  handlePreClose = () => {
-    const { open } = this.props;
-    open && this.handleClose();
-  };
+  const handleClose = React.useCallback(() => {
+    dispatch({ type: 'CLOSE_ZOOM' });
+  }, [dispatch]);
 
-  handleClose = () => {
-    this.props.closeZoom();
-  };
+  React.useEffect(() => {
+    return () => open && handleClose();
+  }, [open, handleClose]);
 
-  resetState = () => {
-    this.setState({ ...defaultState });
-  };
-
-  getDragThreshold = () => {
-    const {
-      scale,
-      dragSpacings,
-      initialWidth,
-      initialHeight,
-      wrapWidth,
-      wrapHeight,
-      maxWidth,
-      maxHeight,
-    } = this.state;
-
-    const currentWidth = initialWidth * scale;
-    const currentHeight = initialHeight * scale;
-
-    const tX = currentWidth > maxWidth
-               ? Math.max(0, (currentWidth - wrapWidth) / 2 + dragSpacings)
-               : 0;
-    const tY = currentHeight > maxHeight
-               ? Math.max(0, (currentHeight - wrapHeight) / 2 + dragSpacings)
-               : 0;
-
-    return { tX, tY };
-  };
-
-  getTransform = () => {
-    let {
-      x,
-      y,
-      sX,
-      sY,
-      mX,
-      mY,
-    } = this.state;
-
-    const { tX, tY } = this.getDragThreshold();
-
-    x += mX - sX;
-    y += mY - sY;
-
-    x = Math.min(tX, Math.max(-tX, x));
-    y = Math.min(tY, Math.max(-tY, y));
-
-    return { x, y };
-  };
-
-  updateTransform = () => {
-    const { scale } = this.state;
-    const { x, y } = this.getTransform();
-    const transform = `translate(${x}px, ${y}px) scale(${scale})`;
-    this.zoomTarget.style.transform = transform;
-  };
-
-  resetTransform = () => {
-    const { x, y, scale } = defaultState;
-    const transform = `translate(${x}px, ${y}px) scale(${scale})`;
-    this.zoomTarget.style.transform = transform;
-  };
-
-  updateDragStatus = () => {
-    const {
-      scale,
-      initialWidth,
-      initialHeight,
-      maxWidth,
-      maxHeight,
-    } = this.state;
-
-    const currentWidth = initialWidth * scale;
-    const currentHeight = initialHeight * scale;
-
-    const dragEnabled = currentWidth > maxWidth || currentHeight > maxHeight;
-
-    this.setState({ dragEnabled });
-  };
-
-  getEventPosition = event => {
-    const { isTouch } = this.state;
-    const x = isTouch ? event.touches[0].pageX : event.clientX;
-    const y = isTouch ? event.touches[0].pageY : event.clientY;
-
-    return { x, y };
-  };
-
-  dragStart = event => {
-    event.preventDefault();
-
-    if (!this.state.dragEnabled) { return; }
-
-    const { x, y } = this.getEventPosition(event);
-
-    this.setState({
-      sX: x,
-      sY: y,
-      mX: x,
-      mY: y,
-      dragActive: true,
-    });
-  };
-
-  dragActive = event => {
-    event.preventDefault();
-
-    if (!this.state.dragActive) { return; }
-
-    const { x, y } = this.getEventPosition(event);
-
-    this.setState({
-      mX: x,
-      mY: y,
-    }, () => {
-      this.updateTransform();
-    });
-  };
-
-  dragEnd = event => {
-    event.preventDefault();
-
-    if (!this.state.dragActive) { return; }
-
-    const { x, y } = this.getTransform();
-
-    this.setState({
-      x,
-      y,
-      dragActive: false,
-    });
-  };
-
-  bindEvents = () => {
-    const { isTouch } = this.state;
-
-    const eStart = isTouch ? 'touchstart' : 'mousedown';
-    const eMove = isTouch ? 'touchmove' : 'mousemove';
-    const eEnd = isTouch ? 'touchend' : 'mouseup';
-    const eCancel = isTouch ? 'touchcancel' : 'mouseleave';
-
-    this.zoomTarget.addEventListener(eStart, this.dragStart);
-    this.zoomTarget.addEventListener(eMove, this.dragActive);
-    this.zoomTarget.addEventListener(eEnd, this.dragEnd);
-    this.zoomTarget.addEventListener(eCancel, this.dragEnd);
-  };
-
-  setViewport = () => {
+  const setViewport = () => {
     const viewport = document.head.querySelector('meta[name="viewport"]');
     const content = viewport.content;
     const scalable = 'user-scalable=no';
 
     viewport.content = `${content}, ${scalable}`;
 
-    this.setState({
+    setState(prevState => ({
+      ...prevState,
       viewport,
       content,
-    });
+    }));
   };
 
-  resetViewport = () => {
-    const { viewport, content } = this.state;
+  const resetViewport = () => {
+    const { viewport, content } = state;
     viewport && (viewport.content = content);
   };
 
-  initState = () => {
+  const zoomExit = () => {
+    resetViewport();
+    setState(defaultState);
+  };
+
+  const zoomInit = () => {
+    if (zoomRef.current.complete) {
+      initState();
+    } else {
+      zoomRef.current.addEventListener('load', initState);
+    }
+  };
+
+  const initState = () => {
+    const { spacings } = defaultState;
     const isTouch = 'ontouchstart' in window;
 
-    const { spacings } = defaultState;
-    const { naturalWidth, naturalHeight } = this.zoomTarget;
+    const { naturalWidth, naturalHeight } = zoomRef.current;
 
-    const wrapWidth = this.wrap.clientWidth;
-    const wrapHeight = this.wrap.clientHeight;
+    const wrapWidth = zoomWrapRef.current.clientWidth;
+    const wrapHeight = zoomWrapRef.current.clientHeight;
 
     const maxWidth = wrapWidth - 2 * spacings;
     const maxHeight = wrapHeight - 2 * spacings;
@@ -371,56 +260,145 @@ class ImageZoom extends React.Component {
 
     const initialWidth = naturalWidth * initialHeight / naturalHeight;
 
-    this.setState({
+    setState({
       ...defaultState,
-      initialWidth,
-      initialHeight,
-      naturalWidth,
-      naturalHeight,
+      ready: true,
+      isTouch,
       wrapWidth,
       wrapHeight,
       maxWidth,
       maxHeight,
-      isTouch,
-      ready: true,
-    }, () => {
-      this.setViewport();
-      this.bindEvents();
+      naturalWidth,
+      naturalHeight,
+      initialWidth,
+      initialHeight,
     });
   };
 
-  zoomInit = () => {
-    if (this.zoomTarget.complete) {
-      this.initState();
-    } else {
-      this.zoomTarget.addEventListener('load', this.initState);
+  // bind drag events, set viewport
+  React.useEffect(() => {
+    const isTouch = state.isTouch;
+
+    if (typeof isTouch !== 'boolean') {
+      return;
     }
-  };
 
-  zoomExit = () => {
-    this.resetState();
-    this.resetViewport();
-    this.resetTransform();
-  };
+    const getDragThreshold = options => {
+      const {
+        scale,
+        wrapWidth,
+        wrapHeight,
+        maxWidth,
+        maxHeight,
+        initialWidth,
+        initialHeight,
+      } = options;
+      const { dragSpacings } = defaultState;
 
-  handleZoom = action => event => {
-    let {
-      scale,
-      scaleLevel,
-      scaleLevels,
-      disabledUp,
-      disabledDown,
-      disabledReset,
-    } = this.state;
+      const currentWidth = initialWidth * scale;
+      const currentHeight = initialHeight * scale;
+
+      const tX = currentWidth > maxWidth
+                 ? Math.max(0, (currentWidth - wrapWidth) / 2 + dragSpacings)
+                 : 0;
+      const tY = currentHeight > maxHeight
+                 ? Math.max(0, (currentHeight - wrapHeight) / 2 + dragSpacings)
+                 : 0;
+
+      return { tX, tY };
+    };
+
+    const getTransformPos = options => {
+      const { iX, iY, sX, sY, mX, mY } = options;
+      const { tX, tY } = getDragThreshold(options);
+
+      let x, y;
+
+      x = iX + mX - sX;
+      y = iY + mY - sY;
+
+      x = Math.min(tX, Math.max(-tX, x));
+      y = Math.min(tY, Math.max(-tY, y));
+
+      return { x, y };
+    };
+
+    const getEventPos = event => {
+      const x = isTouch ? event.touches[0].pageX : event.clientX;
+      const y = isTouch ? event.touches[0].pageY : event.clientY;
+
+      return { x, y };
+    };
+
+    const dragStart = event => {
+      event.preventDefault();
+
+      if (!state.dragEnabled) { return; }
+
+      const { x, y } = getEventPos(event);
+
+      setState(prevState => ({
+        ...prevState,
+        sX: x,
+        sY: y,
+        dragActive: true,
+      }));
+    };
+
+    const dragMove = event => {
+      event.preventDefault();
+
+      if (!dragIsActive.current) { return; }
+
+      const { x: mX, y: mY } = getEventPos(event);
+
+      setState(prevState => {
+        const { x, y } = getTransformPos({ ...prevState, mX, mY });
+        return { ...prevState, x, y, mX, mY };
+      });
+    };
+
+    const dragEnd = event => {
+      event.preventDefault();
+
+      if (!dragIsActive.current) { return; }
+
+      setState(prevState => ({
+        ...prevState,
+        iX: prevState.x,
+        iY: prevState.y,
+        dragActive: false,
+      }));
+    };
+
+    const bindEvents = () => {
+      const eStart = isTouch ? 'touchstart' : 'mousedown';
+      const eMove = isTouch ? 'touchmove' : 'mousemove';
+      const eEnd = isTouch ? 'touchend' : 'mouseup';
+      const eCancel = isTouch ? 'touchcancel' : 'mouseleave';
+
+      zoomRef.current.addEventListener(eStart, dragStart);
+      zoomRef.current.addEventListener(eMove, dragMove);
+      zoomRef.current.addEventListener(eEnd, dragEnd);
+      zoomRef.current.addEventListener(eCancel, dragEnd);
+    };
+
+    bindEvents();
+    setViewport();
+  }, [state.isTouch, state.dragEnabled]);
+
+  React.useEffect(() => {
+    dragIsActive.current = state.dragActive;
+  }, [state.dragActive]);
+
+  const handleZoom = action => event => {
+    let { scaleLevel, scaleLevels } = state;
 
     const baseScaleLevel = 1;
     const minScaleLevel = 0;
     const maxScaleLevel = scaleLevels.length - 1;
 
     switch (action) {
-      case 'init':
-        this.zoomInit();
-        return;
       case 'up':
         scaleLevel++;
         break;
@@ -431,7 +409,6 @@ class ImageZoom extends React.Component {
         scaleLevel = baseScaleLevel;
         break;
       default:
-        this.zoomExit();
         return;
     }
 
@@ -440,163 +417,156 @@ class ImageZoom extends React.Component {
       maxScaleLevel
     );
 
-    scale = scaleLevels[scaleLevel];
-    disabledUp = scaleLevel === maxScaleLevel;
-    disabledDown = scaleLevel === minScaleLevel;
-    disabledReset = scaleLevel === baseScaleLevel;
+    const scale = scaleLevels[scaleLevel];
+    const disabledUp = scaleLevel === maxScaleLevel;
+    const disabledDown = scaleLevel === minScaleLevel;
+    const disabledReset = scaleLevel === baseScaleLevel;
 
-    this.setState(state => ({
-      ...defaultState,
+    setState(prevState => ({
+      ...prevState,
+      x: 0,
+      y: 0,
+      iX: 0,
+      iY: 0,
       scale,
       scaleLevel,
       disabledUp,
       disabledDown,
       disabledReset,
-      ready: state.ready,
-    }), () => {
-      this.updateDragStatus();
-      this.updateTransform();
-    });
+    }));
   };
 
-  componentWillUnmount() {
-    this.handlePreClose();
-  }
+  // update drag status
+  React.useEffect(() => {
+    if (!state.ready) {
+      return;
+    }
 
-  render() {
-    const {
-      classes,
-      width,
-      open,
-      src,
-    } = this.props;
+    const scale = state.scale;
+    const maxWidth = state.maxWidth;
+    const maxHeight = state.maxHeight;
+    const initialWidth = state.initialWidth;
+    const initialHeight = state.initialHeight;
 
-    const {
-      initialHeight = 'auto',
-      disabledUp,
-      disabledDown,
-      disabledReset,
+    const currentWidth = initialWidth * scale;
+    const currentHeight = initialHeight * scale;
+
+    const dragEnabled = currentWidth > maxWidth || currentHeight > maxHeight;
+
+    setState(prevState => ({
+      ...prevState,
       dragEnabled,
-      dragActive,
-      ready,
-    } = this.state;
+    }));
+  }, [
+    // observe
+    state.scale,
+    // other deps
+    state.ready,
+    state.maxWidth, state.maxHeight, state.initialWidth, state.initialHeight,
+  ]);
 
-    return (
-      <Dialog
-        open={open}
-        fullWidth
-        maxWidth={false}
-        onClose={this.handleClose}
-        onEnter={this.handleZoom('init')}
-        onExited={this.handleZoom('exit')}
-        BackdropProps={{ className: classes.backdrop }}
-        PaperProps={{ className: classes.container }}
-        keepMounted={isWidthDown('xs', width)}
-      >
-        <Grid className={classes.actions}>
-          <Grid className={classes.fill}>
-            <IconButton
-              className={classes.close}
-              onClick={this.handleClose}
-            >
-              <CloseIcon />
-            </IconButton>
-          </Grid>
+  // update transform style
+  React.useEffect(() => {
+    if (!Boolean(zoomRef.current)) {
+      return;
+    }
+
+    const transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+    zoomRef.current.style.transform = transform;
+  }, [state.x, state.y, state.scale]);
+
+  return (
+    <Dialog
+      open={open}
+      fullWidth
+      maxWidth={false}
+      onClose={handleClose}
+      onEnter={zoomInit}
+      onExited={zoomExit}
+      BackdropProps={{ className: classes.backdrop }}
+      PaperProps={{ className: classes.container }}
+      keepMounted={isWidthDown('xs', width)}
+    >
+      <Grid className={classes.actions}>
+        <Grid className={classes.fill}>
           <IconButton
-            className={classes.share}
-            onClick={this.handleShare}
-            disabled={!ready}
+            className={classes.close}
+            onClick={handleClose}
           >
-            <ShareIcon />
+            <CloseIcon />
           </IconButton>
         </Grid>
-        <DialogContent className={classes.content}>
-          <div
-            ref={ref => this.wrap = ref}
-            className={classes.wrap}
-            onClick={this.handleClick}
-            onKeyUp={() => {}}
-            role="grid"
-            tabIndex="-1"
+        <IconButton
+          className={classes.share}
+          onClick={handleShare}
+          disabled={!state.ready}
+        >
+          <ShareIcon />
+        </IconButton>
+      </Grid>
+      <DialogContent className={classes.content}>
+        <div
+          ref={zoomWrapRef}
+          className={classes.wrap}
+          onClick={handleClick}
+          onKeyUp={() => {}}
+          role="grid"
+          tabIndex="-1"
+        >
+          <Fade
+            in={!state.ready}
+            className={classes.loading}
           >
-            <Fade
-              in={!ready}
-              className={classes.loading}
-            >
-              <CircularProgress />
-            </Fade>
-            <div
-              ref={ref => this.box = ref}
-              className={clsx(classes.box, {
-                'ready': ready,
+            <CircularProgress />
+          </Fade>
+          <div
+            ref={zoomBoxRef}
+            className={clsx(classes.box, {
+              'ready': state.ready,
+            })}
+          >
+            <img
+              ref={zoomRef}
+              className={clsx(classes.target, {
+                'drag-enabled': state.dragEnabled,
+                'drag-active': state.dragActive,
               })}
-            >
-              <img
-                ref={ref => this.zoomTarget = ref}
-                className={clsx(classes.target, {
-                  'drag-enabled': dragEnabled,
-                  'drag-active': dragActive,
-                })}
-                style={{ height: initialHeight }}
-                src={src}
-                alt="zoom"
-              />
-            </div>
+              style={{ height: state.initialHeight || 'auto' }}
+              src={src}
+              alt="zoom"
+            />
           </div>
-          <Grid className={classes.zoom}>
-            <Button
-              className={classes.btn}
-              disabled={disabledDown || !ready}
-              onClick={this.handleZoom('down')}
-            >
-              <ZoomOutIcon />
-            </Button>
-            <Button
-              className={classes.btn}
-              disabled={disabledReset || !ready}
-              onClick={this.handleZoom('reset')}
-            >
-              <ZoomResetIcon />
-            </Button>
-            <Button
-              className={classes.btn}
-              disabled={disabledUp || !ready}
-              onClick={this.handleZoom('up')}
-            >
-              <ZoomInIcon />
-            </Button>
-          </Grid>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-}
-
-ImageZoom.propTypes = {
-  classes: PropTypes.object.isRequired,
-  width: PropTypes.string.isRequired,
-  open: PropTypes.bool.isRequired,
-  src: PropTypes.string,
+        </div>
+        <Grid className={classes.zoom}>
+          <Button
+            className={classes.btn}
+            disabled={state.disabledDown || !state.ready}
+            onClick={handleZoom('down')}
+          >
+            <ZoomOutIcon />
+          </Button>
+          <Button
+            className={classes.btn}
+            disabled={state.disabledReset || !state.ready}
+            onClick={handleZoom('reset')}
+          >
+            <ZoomResetIcon />
+          </Button>
+          <Button
+            className={classes.btn}
+            disabled={state.disabledUp || !state.ready}
+            onClick={handleZoom('up')}
+          >
+            <ZoomInIcon />
+          </Button>
+        </Grid>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
-const mapStateToProps = ({ zoom }) => ({
-  ...zoom,
-});
+ImageZoom.propTypes = {
+  width: PropTypes.string.isRequired,
+};
 
-const mapDispatchToProps = dispatch => ({
-  closeZoom: () => {
-    dispatch(closeZoom());
-  },
-  openShare: url => {
-    dispatch(openShare(url));
-  },
-});
-
-export default compose(
-  withStyles(styles),
-  withWidth(),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(ImageZoom);
+export default withWidth()(ImageZoom);
