@@ -71,13 +71,18 @@ const TopiCard = (props) => {
     width,
   } = props;
 
-  let targetRefs = [];
-
   const classes = useStyles();
   const history = useHistory();
   const { cardPreview } = useSelector(state => state.settings);
-
   const [expanded, setExpanded] = React.useState(cardPreview);
+
+  let targetRefs = [];
+
+  const collectTrgetRefs = ref => {
+    if (ref !== null) {
+      targetRefs = [...targetRefs, ref];
+    }
+  };
 
   const substrContent = content => {
     const len = randomNumber({ min: 200, max: 400 });
@@ -114,7 +119,7 @@ const TopiCard = (props) => {
             alignItems="center"
             justify="flex-start"
             className="topicard-header"
-            ref={ref => targetRefs = [...targetRefs, ref]}
+            ref={ref => collectTrgetRefs(ref)}
           >
             <Avatar
               className="avatar"
@@ -140,7 +145,7 @@ const TopiCard = (props) => {
                     </IconButton>
                   </Grid>
                 }
-                <Typography variant="h5" ref={ref => targetRefs = [...targetRefs, ref]}>
+                <Typography variant="h5" ref={ref => collectTrgetRefs(ref)}>
                   <Link to={`/topic/${item.id}`}>{item.title}</Link>
                 </Typography>
                 {!simple &&
@@ -161,11 +166,13 @@ const TopiCard = (props) => {
             </Grid>
           </Grid>
           <Grid container wrap="nowrap" alignItems="center" className="state-wrapper"
-            ref={ref => targetRefs = [...targetRefs, ref]}
+            ref={ref => collectTrgetRefs(ref)}
           >
-            <Grid container wrap="nowrap" alignItems="center" className={clsx('state', classes.state)}>
+            <Grid container wrap="nowrap" alignItems="center" className={clsx('state', classes.state)}
+              ref={ref => collectTrgetRefs(ref)}
+            >
               <Grid container item zeroMinWidth wrap="nowrap" alignItems="center"
-                ref={ref => targetRefs = [...targetRefs, ref]}
+                ref={ref => collectTrgetRefs(ref)}
               >
                 <Grid item zeroMinWidth className="author">
                   <Link to={`/user/${item.author.loginname}`}>

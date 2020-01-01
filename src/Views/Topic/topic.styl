@@ -112,11 +112,11 @@
           font-size 14px
           color #666
           background-color #f6f8fa
-          border-bottom 1px solid #d1d5da
+          border-bottom 1px solid #e7e8e9
           .dark&
             color #ccc
             background-color transparent
-            border-bottom-color rgba(55,55,55,.68)
+            border-bottom-color rgba(55,55,55,.3)
           .reply-avatar
             position absolute
             top 0
@@ -298,10 +298,12 @@
               bottom 0
               left 16px
               height 1px
-              background-color rgba(99,99,99,.08)
+              background-color rgba(99,99,99,.18)
               transform scaleY(.5)
+              ../../../:last-child ^[3..-1]
+                height 0
               .dark&
-                background-color rgba(55,55,55,.38)
+                background-color rgba(55,55,55,.62)
 
   @media (max-width: 420px)
     .topic-replies
