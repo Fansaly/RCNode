@@ -15,7 +15,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import TopicTypeIcon from '../../Components/TopicTypeIcon';
-import LogoSvg from '../../static/cnodejs/cnodejs.svg';
+import Logo from '../../Components/Logo';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -75,7 +75,7 @@ const DrawerNav = (props) => {
       }}
     >
       <div className={`${classes.toolbar} ${classes.logo}`}>
-        <LogoSvg />
+        <Logo reverse />
       </div>
 
       <List>

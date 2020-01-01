@@ -14,9 +14,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
 import { AppWrapper } from '../../Layout';
+import Logo from '../../Components/Logo';
 import Notification from '../../Components/Notification';
 import SigninSvg from '../../static/google_signin.svg';
-import LogoSvg from '../../static/cnodejs/cnodejs.svg';
 import './signin.styl';
 
 const useStyles = makeStyles(theme => ({
@@ -197,7 +197,7 @@ const Signin = () => {
         <div className="flex area top" />
         <div className="flex area mid">
           <div className="logo">
-            <LogoSvg />
+            <Logo color="dark" />
           </div>
 
           <Collapse in={state.isAuthed}>

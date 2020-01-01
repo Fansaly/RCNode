@@ -13,11 +13,11 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 
 import Me from '../../Components/Me';
+import Logo from '../../Components/Logo';
 import NormalNav from '../Nav/NormalNav';
 import DrawerNav from '../Nav/DrawerNav';
 
 import { animateScroll } from 'react-scroll';
-import LogoSvg from '../../static/cnodejs/cnodejs_light.svg';
 import './header.styl';
 
 const useStyles = makeStyles(theme => ({
@@ -110,7 +110,7 @@ const Header = (props) => {
           <div id="logo">
             <Hidden xsDown>
               <Link to="/">
-                <LogoSvg className="logo" />
+                <Logo className="logo" color="light" />
               </Link>
             </Hidden>
           </div>
