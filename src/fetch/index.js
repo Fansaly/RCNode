@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { getBingImage } from './getBingImage';
+export { getBingImage } from './getBingImage';
 
 const cnodeAxios = axios.create({
   baseURL: 'https://cnodejs.org/api/v1',
-  timeout: 3000,
+  timeout: 0,
 });
 
 /**
@@ -41,16 +41,11 @@ const fetch = async ({ url, method = 'GET', params = {} }) => {
   }
 };
 
-const get = async ({ url, params }) => {
+export const get = async ({ url, params }) => {
   return await fetch({ method: 'GET', url, params });
 };
 
-const post = async ({ url, params }) => {
+export const post = async ({ url, params }) => {
   return await fetch({ method: 'POST', url, params });
 };
 
-export {
-  get,
-  post,
-  getBingImage,
-};
