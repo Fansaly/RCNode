@@ -1,9 +1,9 @@
 CNode 社区第三方 WEB App，Material Design 风格。
 
-> 此项目基于：[Create React App](https://github.com/facebook/create-react-app) `v3.3.0` [React](https://github.com/facebook/react/) `v16.12.0` [Material-UI](https://github.com/mui-org/material-ui) `v4.8.0`
-
-### 分支
-`master` 分支已由 func 组件完全重构，class 组件可查看 [class](https://github.com/Fansaly/RCNode/tree/class) 分支。
+> 此项目基于：[Create React App](https://github.com/facebook/create-react-app) `v3.3.0` [React](https://github.com/facebook/react/) `v16.12.0` [Material-UI](https://github.com/mui-org/material-ui) `v4.8.0`  
+>
+> `master` 分支基于 func 组件  
+> `class` 分支基于 class 组件
 
 ### 浏览器支持
 | ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) |
