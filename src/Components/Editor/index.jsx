@@ -140,16 +140,24 @@ const Editor = (props) => {
 
   const { publishTab, title, content, validation, isOK, preview, fullScreen, disabled } = eState;
 
+  const closeEditor = React.useCallback((data = {}) => {
+    dispatch({ type: 'CLOSE_EDITOR', data });
+  }, [dispatch]);
+
+  const handleClose = () => {
+    !disabled && closeEditor();
+  };
+
+  const handlePublishTab = tab => {
+    eDispatch({ type: 'SET_PUBLISH_TAB', data: tab });
+  };
+
   const handleFocus = () => {
     if (['create', 'update'].includes(action)) {
       titleRef.current.focus();
     } else {
       contentRef.current.focus();
     }
-  };
-
-  const handlePublishTab = tab => {
-    eDispatch({ type: 'SET_PUBLISH_TAB', data: tab });
   };
 
   const handleChange = name => event => {
@@ -186,16 +194,6 @@ const Editor = (props) => {
   const handleFullScreen = () => {
     eDispatch({ type: 'TOGGLE_FULL_SCREEN' });
   };
-
-  const handleClose = React.useCallback((result = {}) => {
-    const { response } = result;
-
-    handleClosePreview();
-
-    if (!disabled) {
-      dispatch({ type: 'CLOSE_EDITOR', data: response ? result : {} });
-    }
-  }, [disabled, dispatch]);
 
   const checkTab = () => {
     if (/(reply)/.test(action)) {
@@ -246,7 +244,7 @@ const Editor = (props) => {
     });
 
     if (success) {
-      handleClose({
+      closeEditor({
         action,
         request: { ...params },
         response: { ...data },
@@ -283,10 +281,6 @@ const Editor = (props) => {
 
     eDispatch({ type: 'SET_PUBLISH_TAB', data: tab });
   }, [location]);
-
-  React.useEffect(() => {
-    return () => open && handleClose();
-  }, [location, open, handleClose]);
 
   React.useEffect(() => {
     if (!editor.open) {
@@ -332,6 +326,15 @@ const Editor = (props) => {
     const change = title !== editor.title || content !== editor.content;
     eDispatch({ type: 'IS_DIFF', data: change });
   }, [title, content, validation, editor]);
+
+  React.useEffect(() => {
+    return () => {
+      if (open) {
+        handleClosePreview();
+        closeEditor();
+      }
+    };
+  }, [open, location, closeEditor]);
 
   return (isAuthed &&
     <React.Fragment>
