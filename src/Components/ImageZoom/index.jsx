@@ -458,7 +458,7 @@ const ImageZoom = (props) => {
       dragEnabled,
     }));
   }, [
-    // observe
+    // observed deps
     state.scale,
     // other deps
     state.ready,

@@ -298,13 +298,13 @@ const Editor = (props) => {
   }, [editor]);
 
   React.useEffect(() => {
-    if (!editor.open) {
+    if (!open) {
       return;
     }
 
     const checkTitle = () => {
       return (
-        /(reply)/.test(editor.action)
+        /(reply)/.test(action)
           ? true
           : typeof title === 'string'
             ? title.length >= validation.title.min && title.length <= validation.title.max
@@ -325,7 +325,12 @@ const Editor = (props) => {
 
     const change = title !== editor.title || content !== editor.content;
     eDispatch({ type: 'IS_DIFF', data: change });
-  }, [title, content, validation, editor]);
+  }, [
+    // observed deps
+    title, content, validation,
+    // other deps
+    open, action, editor.title, editor.content,
+  ]);
 
   React.useEffect(() => {
     return () => {
