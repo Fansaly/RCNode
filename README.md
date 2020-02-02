@@ -1,6 +1,6 @@
 CNode 社区第三方 WEB App，Material Design 风格。
 
-> 此项目基于：[Create React App](https://github.com/facebook/create-react-app) `v3.3.0` [React](https://github.com/facebook/react/) `v16.12.0` [Material-UI](https://github.com/mui-org/material-ui) `v4.8.0`  
+> 此项目基于：[Create React App](https://github.com/facebook/create-react-app) `v3.3.1` [React](https://github.com/facebook/react/) `v16.12.0` [Material-UI](https://github.com/mui-org/material-ui) `v4.9.0`  
 >
 > `master` 分支基于 func 组件  
 > `class` 分支基于 class 组件
@@ -14,7 +14,7 @@ CNode 社区第三方 WEB App，Material Design 风格。
 - 基础
   - Markdown
     - CommonMark, checkbox, tabel, emoji, 等等
-    - 链接新窗口打开，替换 `cnodejs.org` => `current.domain`
+    - 链接新窗口打开，`cnodejs.org` 替换为 `current.domain`
     - 语法高亮（启用了大部分常用语法）
   - 主题
     - 查看、回复、创建、更新
