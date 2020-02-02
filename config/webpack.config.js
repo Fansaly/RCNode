@@ -258,6 +258,9 @@ module.exports = function(webpackEnv) {
                 }
               : false,
           },
+          cssProcessorPluginOptions: {
+              preset: ['default', { minifyFontValues: { removeQuotes: false } }]
+          }
         }),
       ],
       // Automatically split vendor and commons
@@ -422,10 +425,6 @@ module.exports = function(webpackEnv) {
                 inputSourceMap: shouldUseSourceMap,
               },
             },
-            {
-              test: /(\.md|\/prismjs\/.*\/prism.*\.css)$/,
-              loader: 'raw-loader',
-            },
             // "postcss" loader applies autoprefixer to our CSS.
             // "css" loader resolves paths in CSS and adds assets as dependencies.
             // "style" loader turns CSS into JS modules that inject <style> tags.
@@ -466,7 +465,7 @@ module.exports = function(webpackEnv) {
               exclude: sassModuleRegex,
               use: getStyleLoaders(
                 {
-                  importLoaders: 2,
+                  importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                 },
                 'sass-loader'
@@ -483,7 +482,7 @@ module.exports = function(webpackEnv) {
               test: sassModuleRegex,
               use: getStyleLoaders(
                 {
-                  importLoaders: 2,
+                  importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                   modules: {
                     getLocalIdent: getCSSModuleLocalIdent,
@@ -492,18 +491,13 @@ module.exports = function(webpackEnv) {
                 'sass-loader'
               ),
             },
-            // "stylus" loader transform format to our CSS.
-            // "postcss" loader applies autoprefixer to our CSS.
-            // "css" loader resolves paths in CSS and adds assets as dependencies.
-            // "style" loader turns CSS into JS modules that inject <style> tags.
-            // In production, we use a plugin to extract that CSS to a file, but
-            // in development "style" loader enables hot editing of CSS.
+            // "stylus" loader transform format to CSS
             {
               test: /\.styl$/,
               include: paths.appSrc,
               use: getStyleLoaders(
                 {
-                  importLoaders: 2,
+                  importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                 },
                 'stylus-loader',
@@ -529,6 +523,10 @@ module.exports = function(webpackEnv) {
                   }
                 }
               ]
+            },
+            {
+              test: /(\.md|\/prismjs\/.*\/prism.*\.css)$/,
+              loader: 'raw-loader',
             },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
