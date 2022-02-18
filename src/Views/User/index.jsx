@@ -401,11 +401,7 @@ const SwipeableViewsTab = React.forwardRef((props, ref) => {
     clearTimeout(timer.current);
 
     timer.current = setTimeout(() => {
-      ref
-        .current
-        .getChildContext()
-        .swipeableViews
-        .slideUpdateHeight();
+      ref.current.updateHeight();
     }, 0 * 1e3);
 
     return () => clearTimeout(timer.current);

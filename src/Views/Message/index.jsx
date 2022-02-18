@@ -147,7 +147,7 @@ const Message = () => {
   return (
     <AppWrapper title="消息">
       <div className="wrapper">
-        <Grid container alignItems="center" justify="flex-end" className={classes.spacings}>
+        <Grid container alignItems="center" justifyContent="flex-end" className={classes.spacings}>
           <Grid item className={clsx(classes.text, {
             [classes.opacity]: state.status !== 'success' || message.count === 0,
             [classes.error]: state.status === 'error',

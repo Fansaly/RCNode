@@ -117,7 +117,7 @@ const TopiCard = (props) => {
           <Grid
             container
             alignItems="center"
-            justify="flex-start"
+            justifyContent="flex-start"
             className="topicard-header"
             ref={ref => collectTrgetRefs(ref)}
           >
@@ -130,7 +130,7 @@ const TopiCard = (props) => {
             <Grid
               container
               alignItems="center"
-              justify="flex-start"
+              justifyContent="flex-start"
               className="topicard-title"
             >
               <Grid item className={clsx('title', classes.title)}>

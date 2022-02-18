@@ -141,7 +141,7 @@ const EditorHeader = (props) => {
         </div>
         <div className="editor-header-actions">
           <IconButton
-            buttonRef={node => {
+            ref={node => {
               anchorEl.current = node;
             }}
             variant="contained"

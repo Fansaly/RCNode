@@ -235,7 +235,7 @@ const TopicReply = (props) => {
             }
             <IconButton
               className="action more"
-              buttonRef={node => {
+              ref={node => {
                 anchorEl.current = node;
               }}
               variant="contained"

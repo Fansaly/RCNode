@@ -29,8 +29,8 @@ const NormalNav = () => {
   return (
     <Grid
       container
-      justify="center"
       alignItems="center"
+      justifyContent="center"
       className="type-content"
     >
       {navTabs.map(({ path, name }) => (

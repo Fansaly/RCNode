@@ -89,7 +89,7 @@ const Notice = () => {
       open={open}
       autoHideDuration={20e3}
       onClose={handleClose}
-      onExited={handleMessage}
+      TransitionProps={{ onExited: handleMessage }}
     />
   );
 };

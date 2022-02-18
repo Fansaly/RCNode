@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/styles';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { setPrismTheme, lightPrismTheme, darkPrismTheme } from '../Prism';
@@ -23,7 +23,7 @@ const ThemeProvider = (props) => {
     setPrismTheme(paletteType === 'light' ? lightPrismTheme : darkPrismTheme);
   }, [paletteType]);
 
-  const theme = React.useMemo(() => (createMuiTheme({
+  const theme = React.useMemo(() => (createTheme({
     palette: {
       ...(paletteType === 'light' ? lightThemeOptions : darkThemeOptions),
       type: paletteType,

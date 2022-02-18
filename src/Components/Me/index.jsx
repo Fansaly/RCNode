@@ -184,11 +184,11 @@ const Me = () => {
         container
         alignContent="center"
         alignItems="center"
-        justify="center"
+        justifyContent="center"
         className={isAuthed ? 'info' : 'signin'}
       >
         <IconButton
-          buttonRef={node => {
+          ref={node => {
             anchorEl.current = node;
           }}
           aria-owns={open ? 'menu-list-grow' : null}

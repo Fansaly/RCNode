@@ -353,7 +353,7 @@ const Editor = (props) => {
         fullWidth
         fullScreen={!isWidthUp('sm', width) || fullScreen}
         keepMounted={!isWidthUp('sm', width)}
-        onEntered={handleFocus}
+        TransitionProps={{ onEntered: handleFocus }}
       >
         <EditorHeader
           publishTab={publishTab}
@@ -368,8 +368,8 @@ const Editor = (props) => {
             className={classes.title}
             margin="normal"
             multiline
-            rows="1"
-            rowsMax="3"
+            minRows="1"
+            maxRows="3"
             fullWidth
             placeholder="标题..."
             inputRef={titleRef}

@@ -481,8 +481,10 @@ const ImageZoom = (props) => {
       fullWidth
       maxWidth={false}
       onClose={handleClose}
-      onEnter={zoomInit}
-      onExited={zoomExit}
+      TransitionProps={{
+        onEnter: zoomInit,
+        onExited: zoomExit,
+      }}
       BackdropProps={{ className: classes.backdrop }}
       PaperProps={{ className: classes.container }}
       keepMounted={isWidthDown('xs', width)}
