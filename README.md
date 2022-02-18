@@ -1,6 +1,6 @@
 CNode 社区第三方 WEB App，Material Design 风格。
 
-> 此项目基于：[Create React App](https://github.com/facebook/create-react-app) `v3.3.1` [React](https://github.com/facebook/react/) `v16.12.0` [Material-UI](https://github.com/mui-org/material-ui) `v4.9.0`  
+> 此项目基于：[Create React App](https://github.com/facebook/create-react-app) `v3.3.1` [React](https://github.com/facebook/react/) `v16.12.0` [Material-UI](https://github.com/mui-org/material-ui) `v4.12.3`  
 >
 > `master` 分支基于 func 组件  
 > `class` 分支基于 class 组件
