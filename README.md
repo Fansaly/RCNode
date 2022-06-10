@@ -1,34 +1,78 @@
-CNode 社区第三方 WEB App，Material Design 风格。
+# [RCNode][project-url] &middot; [![license][license-mit-img]][license-text]
 
-> 此项目基于：[Create React App](https://github.com/facebook/create-react-app) `v3.3.1` [React](https://github.com/facebook/react/) `v16.12.0` [Material-UI](https://github.com/mui-org/material-ui) `v4.12.3`  
->
-> `jsx` 分支基于 func 组件  
-> `class` 分支基于 class 组件
+[project-url]: https://fansaly.github.io/RCNode
+[license-text]: https://github.com/Fansaly/RCNode/blob/HEAD/LICENSE
+[license-mit-img]: https://img.shields.io/badge/license-MIT-blue.svg
 
-### 浏览器支持
-| ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) |
-| --- | --- | --- | --- | --- |
-| 最新版 ✓ | 最新版 ✓ | 最新版 ✓ | 最新版 ✓ | 最新版 ✓ |
+[CNode 社区][url-cnode] 第三方 WEB APP，[Material Design][url-material-design] 风格。
 
-### 特性
-- 基础
-  - Markdown
-    - CommonMark, checkbox, tabel, emoji, 等等
-    - 链接新窗口打开，`cnodejs.org` 替换为 `current.domain`
-    - 语法高亮（启用了大部分常用语法）
-  - 主题
-    - 查看、回复、创建、更新
-    - 收藏、回复点赞
-    - 图片缩放
-  - 消息
-    - 查看
-    - 标记已读（单条、全部）
-  - 支持移动设备
+[url-cnode]: https://cnodejs.org
+[url-material-design]: https://material.io/design/introduction
 
-- 特别
-  - 两种外观
-  - 主题预览
-  - 消息提醒
+## 特性/实现
+- 文章
+  - 查看、回复、创建、更新、点赞、收藏
+  - 文章图片缩放预览
+  - 列表页文章简短预览
+- 消息
+  - 查看、提醒
+  - 标记已读（单条、全部）
+- Markdown
+  - CommonMark, GFM, HTML, 等等
+  - 链接新窗口打开 [`cnodejs.org`][url-cnode] 替换为 `production.domain`
+  - 语法高亮
+- 深浅主题模式
+- 适配移动设备
 
-### 许可
-[MIT License](https://opensource.org/licenses/MIT)
+## 浏览器支持
+| ![Chrome][browser-chrome] | ![Firefox][browser-firefox] | ![Safari][browser-safari] | ![Edge][browser-edge] |
+| --- | --- | --- | --- |
+| 最新版 ✓ | 最新版 ✓ | 最新版 ✓ | 最新版 ✓ |
+
+[browser-chrome]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_48x48.png
+[browser-firefox]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/firefox/firefox_48x48.png
+[browser-safari]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari_48x48.png
+[browser-edge]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png
+
+## 项目基于
+| package | used | latest |
+| :--- | --- | --- |
+| [Vite][vite-github] | `v2.9.11` | [![npm version][vite-npm-version]][vite-npm-package] |
+| [React][react-github] | `v18.1.0` | [![npm version][react-npm-version]][react-npm-package] |
+| [React Redux][react-redux-github] | `v8.0.2` | [![npm version][react-redux-npm-version]][react-redux-npm-package] |
+| [Redux Toolkit][redux-toolkit-github] | `v1.8.2` | [![npm version][redux-toolkit-npm-version]][redux-toolkit-npm-package] |
+| [React Router][react-router-github] | `v6.3.0` | [![npm version][react-router-npm-version]][react-router-npm-package] |
+| [Material-UI][material-ui-github] | `v5.8.3` | [![npm version][material-ui-npm-version]][material-ui-npm-package] |
+| [react-markdown][react-markdown-github] | `v8.0.3` | [![npm version][react-markdown-npm-version]][react-markdown-npm-package] |
+
+[vite-github]: https://github.com/vitejs/vite
+[vite-npm-version]: https://img.shields.io/npm/v/vite.svg
+[vite-npm-package]: https://npmjs.com/package/vite
+
+[react-github]: https://github.com/facebook/react
+[react-npm-version]: https://img.shields.io/npm/v/react.svg
+[react-npm-package]: https://npmjs.com/package/react
+
+[react-redux-github]: https://github.com/reduxjs/react-redux
+[react-redux-npm-version]: https://img.shields.io/npm/v/react-redux.svg
+[react-redux-npm-package]: https://npmjs.com/package/react-redux
+
+[redux-toolkit-github]: https://github.com/reduxjs/redux-toolkit
+[redux-toolkit-npm-version]: https://img.shields.io/npm/v/@reduxjs/toolkit.svg
+[redux-toolkit-npm-package]: https://npmjs.com/package/@reduxjs/toolkit
+
+[react-router-github]: https://github.com/remix-run/react-router
+[react-router-npm-version]: https://img.shields.io/npm/v/react-router-dom.svg
+[react-router-npm-package]: https://npmjs.com/package/react-router-dom
+
+[material-ui-github]: https://github.com/mui/material-ui
+[material-ui-npm-version]: https://img.shields.io/npm/v/@mui/material.svg
+[material-ui-npm-package]: https://npmjs.com/package/@mui/material
+
+[react-markdown-github]: https://github.com/remarkjs/react-markdown
+[react-markdown-npm-version]: https://img.shields.io/npm/v/react-markdown.svg
+[react-markdown-npm-package]: https://npmjs.com/package/react-markdown
+
+### License
+
+RCNode is [MIT licensed][license-text].

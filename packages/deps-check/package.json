@@ -1,0 +1,16 @@
+{
+  "name": "deps-check",
+  "version": "1.0.0",
+  "private": false,
+  "main": "lib/index.js",
+  "type": "module",
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "semver": "^7.3.7",
+    "semver-utils": "^1.1.4",
+    "progress": "^2.0.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

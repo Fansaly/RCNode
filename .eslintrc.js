@@ -1,122 +1,90 @@
-const OFF = 0;
-const WARN = 1;
-const ERROR = 2;
-
 module.exports = {
   root: true,
   env: {
-    es6: true,
     browser: true,
+    amd: true,
     node: true,
   },
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 7,
+    ecmaVersion: 2020,
     sourceType: 'module',
     ecmaFeatures: {
-      'jsx': true,
+      jsx: true,
+    },
+    warnOnUnsupportedTypeScriptVersion: false,
+  },
+  plugins: ['react-hooks', 'simple-import-sort', 'prettier'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:prettier/recommended', // Make sure this is always the last element in the array.
+  ],
+  settings: {
+    react: {
+      version: 'detect',
+    },
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
     },
   },
-  extends: [
-    'react-app',
-    'plugin:jsx-a11y/recommended',
-  ],
-  plugins: [
-    'babel',
-    'react',
-    'jsx-a11y',
-    'react-hooks',
-  ],
   rules: {
-    'indent': OFF,
-    'curly': WARN,
-    'brace-style': [ERROR, '1tbs', {
-      'allowSingleLine': true,
-    }],
+    semi: ['error', 'always'],
+    'semi-spacing': [
+      'error',
+      {
+        before: false,
+        after: true,
+      },
+    ],
+    quotes: [
+      'error',
+      'single',
+      {
+        avoidEscape: true,
+        allowTemplateLiterals: true,
+      },
+    ],
+    // indent: ['error', 2, { offsetTernaryExpressions: true }],
 
-    'semi': [ERROR, 'always'],
-    'semi-spacing': [ERROR, {
-      'before': false,
-      'after': true,
-    }],
-    'quotes': [ERROR, 'single', {
-      'avoidEscape': true,
-      'allowTemplateLiterals': true,
-    }],
-    'jsx-quotes': [ERROR, 'prefer-double'],
-    'no-dupe-keys': ERROR,
-    'comma-dangle': [ERROR, 'always-multiline'],
-    'dot-location': [ERROR, 'property'],
-    'dot-notation': [ERROR, {
-      'allowKeywords': true,
-    }],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
 
-    'eqeqeq': [ERROR, 'allow-null'],
-    'no-eq-null': ERROR,
-    'valid-typeof': [ERROR, {
-      'requireStringLiterals': true,
-    }],
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
 
-    'no-console': [ERROR, { allow: ['warn', 'error'] }],
-    'no-alert': ERROR,
-    'eol-last': ERROR,
-    'no-empty': ERROR,
-    'no-shadow': ERROR,
-    'no-extra-boolean-cast': OFF,
-    'no-inner-declarations': ERROR,
-    'block-scoped-var': ERROR,
-    'default-case': ERROR,
-    'guard-for-in': ERROR,
-    'no-caller': ERROR,
-    'no-else-return': ERROR,
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
 
-    'comma-spacing': [ERROR, {
-      'before': false,
-      'after': true,
-    }],
-    'key-spacing': [ERROR, {
-      'beforeColon': false,
-      'afterColon': true,
-    }],
-    'no-multiple-empty-lines': [ERROR, {
-      'max': ERROR,
-    }],
-    'no-spaced-func': ERROR,
-    'keyword-spacing': [ERROR, {
-      'after': true,
-      'before': true,
-    }],
-    'space-before-blocks': ERROR,
-    'space-before-function-paren': [ERROR, {
-      'anonymous': 'never',
-      'named': 'never',
-      'asyncArrow': 'always',
-    }],
-    'space-infix-ops': ERROR,
-    'spaced-comment': [ERROR, 'always',  {
-      'markers': ['global', 'eslint'],
-    }],
+    'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
 
-    'react/jsx-filename-extension': [WARN, {
-      'extensions': ['.js', '.jsx'],
-    }],
-    'react/self-closing-comp': ERROR,
-    'react/jsx-tag-spacing': [ERROR, {
-      'closingSlash': 'never',
-      'beforeSelfClosing': 'always',
-    }],
-    'react/jsx-wrap-multilines': ERROR,
-    'react/jsx-handler-names': [ERROR, {
-      'eventHandlerPrefix': 'handle',
-      'eventHandlerPropPrefix': 'on',
-    }],
-    'react/no-danger': WARN,
-    'react/jsx-no-target-blank': OFF,
+    'jsx-a11y/accessible-emoji': 'off',
+    'jsx-a11y/anchor-is-valid': [
+      'error',
+      {
+        components: ['Link'],
+        specialLink: ['hrefLeft', 'hrefRight'],
+        aspects: ['invalidHref', 'preferButton'],
+      },
+    ],
 
-    'jsx-a11y/no-autofocus': OFF,
-    'jsx-a11y/anchor-is-valid': OFF,
-
-    'react-hooks/rules-of-hooks': ERROR,
-    'react-hooks/exhaustive-deps': WARN,
+    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
   },
+  overrides: [
+    {
+      files: ['vite.config.ts', 'packages/**/*'],
+      rules: {
+        'simple-import-sort/imports': 'off',
+        'simple-import-sort/exports': 'off',
+      },
+    },
+  ],
 };
