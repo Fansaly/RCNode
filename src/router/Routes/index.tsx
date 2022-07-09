@@ -3,6 +3,7 @@ import {
   matchRoutes,
   Navigate,
   Outlet,
+  RouteObject,
   useLocation,
   useRoutes as useRouterRoutes,
 } from 'react-router-dom';
@@ -34,7 +35,7 @@ const AuthRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 const ElementRoutes = ({ routes }: { routes: RCNode.RouteProps[] }) => {
-  return useRouterRoutes(routes);
+  return useRouterRoutes(routes as RouteObject[]);
 };
 
 const Routes = () => {
@@ -44,9 +45,9 @@ const Routes = () => {
   const [simpleRoutes, setSimpleRoutes] = React.useState<RCNode.RouteProps[]>([]);
   const [status, setStatus] = React.useState<Status>('normal');
 
-  const generateElementRoutes = (routes: RCNode.RouteProps[]) => {
+  const generateElementRoutes = (routes: RCNode.RouteProps[]): RCNode.RouteProps[] => {
     return generateRoutes(routes, (route, state) => {
-      const Component = route.element || (() => null);
+      const Component = route.element as RCNode.Component;
       const auth = route.meta?.auth || false;
 
       if (auth && !state?.marked) {
@@ -57,13 +58,13 @@ const Routes = () => {
       route.element = route.meta?.marked ? (
         <AuthRoute>
           <React.Fragment>
-            <Component />
+            {Component && <Component />}
             <Outlet />
           </React.Fragment>
         </AuthRoute>
       ) : (
         <React.Fragment>
-          <Component />
+          {Component && <Component />}
           <Outlet />
         </React.Fragment>
       );
@@ -141,7 +142,7 @@ export const useRoutes = () => {
 export const useCurrentRoute = () => {
   const { routes } = useRoutes();
   const location = useLocation();
-  const result = matchRoutes(routes, location);
+  const result = matchRoutes(routes as RouteObject[], location);
 
   if (Array.isArray(result)) {
     const index = Math.max(0, result.length - 1);

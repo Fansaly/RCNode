@@ -42,8 +42,8 @@ const Topic = () => {
     uname: signedUname,
   } = useSelector((state) => state.auth);
 
-  const [topic, setTopic] = React.useState<any>({});
-  const [replies, setReplies] = React.useState<any>([]);
+  const [topic, setTopic] = React.useState<Record<string, any>>({});
+  const [replies, setReplies] = React.useState<any[]>([]);
   const [status, setStatus] = React.useState<ProgressStatus>('loading');
   const [message, setMessage] = React.useState<null | string>(null);
   const isCancel = React.useRef<boolean>(false);
@@ -80,7 +80,7 @@ const Topic = () => {
     }
 
     if (success) {
-      setTopic((prevState: any) => ({ ...prevState, ...data }));
+      setTopic((prevState) => ({ ...prevState, ...data }));
       setEditor((prevState) => ({ ...prevState, open: false }));
     }
 
@@ -107,7 +107,7 @@ const Topic = () => {
     }
 
     if (data) {
-      setReplies((prevState: any) => [...prevState, data]);
+      setReplies((prevState) => [...prevState, data]);
       setEditor((prevState) => ({ ...prevState, open: false }));
     }
 
@@ -167,18 +167,15 @@ const Topic = () => {
     isCancel.current = false;
 
     const payload = { accesstoken, topic_id: topic_id as string };
-    let res: {
-      success: boolean;
-      message?: string;
-      err_msg?: string;
-    } = { success: false, message: '' };
+    let message = '';
+    let res: Record<string, any> = {};
 
     if (topic.is_collect) {
+      message = '取消收藏';
       res = await decollectTopic(payload);
-      res.message = '取消收藏';
     } else {
+      message = '已收藏';
       res = await collectTopic(payload);
-      res.message = '已收藏';
     }
 
     if (isCancel.current) {
@@ -186,7 +183,7 @@ const Topic = () => {
     }
 
     if (res.success) {
-      setTopic((prevState: any) => ({
+      setTopic((prevState) => ({
         ...prevState,
         is_collect: !prevState.is_collect,
       }));
@@ -195,7 +192,7 @@ const Topic = () => {
       ...prevState,
       open: true,
       status: res.success ? 'success' : 'error',
-      message: res.success ? (res.message as string) : res.err_msg || '操作失败',
+      message: res.success ? message : res.err_msg || '操作失败',
     }));
   };
 
@@ -220,7 +217,7 @@ const Topic = () => {
       }
 
       if (data) {
-        const { replies, ...rest } = data;
+        const { replies = [], ...rest } = data;
 
         setStatus('success');
         setTopic(rest);
@@ -288,7 +285,7 @@ const Topic = () => {
                     <span className="attr-tab">
                       <TagIcon />
                       <span className={topic.tab}>
-                        {navTabs[topic.tab as RCNode.CNodeTab].name}
+                        {navTabs[topic.tab as RCNode.CNodeTab]?.name || null}
                       </span>
                     </span>
                   )}
@@ -302,7 +299,7 @@ const Topic = () => {
 
             {Boolean(replies.length) && (
               <div className="topic-replies">
-                {replies.map((item: any, index: number) => (
+                {replies.map((item, index) => (
                   <TopicReply
                     key={item.id}
                     post={index + 1}

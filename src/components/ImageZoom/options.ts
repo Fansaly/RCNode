@@ -53,8 +53,8 @@ export type State = typeof defaultState & {
   initialWidth?: number;
   initialHeight?: number;
 
-  viewport?: any;
-  content?: any;
+  viewport?: HTMLMetaElement;
+  content?: string;
 };
 
 export type Action = 'up' | 'down' | 'reset';

@@ -70,16 +70,16 @@ const TopicCard = ({ className, simple = false, item }: Props) => {
   const { cardPreview } = useSelector((state) => state.settings);
   const [expanded, setExpanded] = React.useState<boolean>(cardPreview);
 
-  const targetRefs: any[] = [];
+  const targetRefs: HTMLElement[] = [];
 
-  const collectTrgetRefs = (ref: any) => {
+  const collectTrgetRefs = (ref: null | HTMLElement) => {
     if (ref !== null) {
       targetRefs.push(ref);
     }
   };
 
-  const handleClick = (event: React.MouseEvent) => {
-    if (targetRefs.includes(event.target)) {
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (targetRefs.includes(event.target as HTMLDivElement)) {
       navigate(`/topic/${item.id}`);
     }
   };

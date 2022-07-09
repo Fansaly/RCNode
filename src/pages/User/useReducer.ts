@@ -1,21 +1,6 @@
 import React from 'react';
 
-export type Key = 'topics' | 'replies' | 'collections';
-
-export type Data = {
-  readonly name?: string;
-  show?: boolean;
-  data?: any[];
-};
-type State = {
-  [key in Key]?: Data;
-};
-type Action = {
-  readonly type: string;
-  payload?: Data;
-};
-
-export const initialState: State = {
+const initialState = {
   topics: {
     name: '最近创建',
     show: true,
@@ -32,7 +17,23 @@ export const initialState: State = {
     data: [],
   },
 };
-export const keys: string[] = Object.keys(initialState);
+
+export const keys = Object.keys(initialState) as Key[];
+
+type Key = keyof typeof initialState;
+
+type Data = {
+  readonly name?: string;
+  show?: boolean;
+  data?: any[];
+};
+type State = {
+  [key in Key]?: Data;
+};
+type Action = {
+  readonly type: string;
+  payload?: Data;
+};
 
 export const useReducer = () => {
   return React.useReducer<React.Reducer<State, Action>>((state, { type, payload }) => {

@@ -101,7 +101,10 @@ const Header = ({
     }
   };
 
-  const handleChangeTopicTab = (_: any, value: string) => {
+  const handleChangeTopicTab = (
+    _: React.ChangeEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     onSetTopicTab(value as RCNode.CNodeTopicTab);
     handleCloseTopicTab();
   };

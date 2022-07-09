@@ -7,7 +7,7 @@ import {
   prism as light,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-const languageAlias: { [key: string]: string } = {
+const languageAlias: Record<string, string> = {
   h: 'c',
   rb: 'ruby',
   py: 'python',

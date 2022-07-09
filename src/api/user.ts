@@ -9,7 +9,7 @@ export const signin = async ({
   signal?: AbortSignal;
   accesstoken: string;
 }) => {
-  return fetch<any, User>({
+  return fetch<User>({
     signal,
     method: 'POST',
     url: '/accesstoken',
@@ -26,7 +26,7 @@ export const fetchUserInfo = async ({
   loginname: string;
   mdrender?: boolean;
 }) => {
-  return fetch<UserInfo>({
+  return fetch<{ data: UserInfo }>({
     signal,
     method: 'GET',
     url: `/user/${loginname}`,
@@ -43,7 +43,7 @@ export const fetchUserCollectTopics = async ({
   loginname: string;
   mdrender?: boolean;
 }) => {
-  return fetch<Topic[]>({
+  return fetch<{ data: Topic[] }>({
     signal,
     method: 'GET',
     url: `/topic_collect/${loginname}`,

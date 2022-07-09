@@ -13,7 +13,7 @@ export const fetchTopicList = async ({
   limit: number;
   mdrender?: boolean;
 }) => {
-  return fetch<Topic[]>({
+  return fetch<{ data: Topic[] }>({
     signal,
     method: 'GET',
     url: '/topics',
@@ -31,7 +31,7 @@ export const fetchTopicDetails = async ({
   mdrender?: boolean;
   accesstoken?: string;
 }) => {
-  return fetch<Topic>({
+  return fetch<{ data: Topic }>({
     signal,
     method: 'GET',
     url: `/topic/${topic_id}`,
@@ -49,7 +49,7 @@ export const createTopic = async ({
   title: string;
   content: string;
 }) => {
-  const { topic_id, ...res } = await fetch<any, { topic_id: string }>({
+  const { topic_id, ...res } = await fetch<{ topic_id: string }>({
     signal,
     method: 'POST',
     url: '/topics',
@@ -95,7 +95,7 @@ export const updateTopic = async ({
   content: string;
   topic_id: string;
 }) => {
-  return await fetch<any, { topic_id: string }>({
+  return await fetch<{ topic_id: string }>({
     signal,
     method: 'POST',
     url: '/topics/update',
@@ -146,7 +146,7 @@ export const replyTopic = async ({
   reply_id: string;
   content: string;
 }) => {
-  const { reply_id, ...res } = await fetch<any, { reply_id: string }>({
+  const { reply_id, ...res } = await fetch<{ reply_id: string }>({
     signal,
     method: 'POST',
     url: `/topic/${topic_id}/replies`,
@@ -185,7 +185,7 @@ export const upTopic = async ({
   accesstoken: string;
   reply_id: string;
 }) => {
-  return await fetch<any, { action: 'down' | 'up' }>({
+  return await fetch<{ action: 'down' | 'up' }>({
     signal,
     method: 'POST',
     url: `/reply/${reply_id}/ups`,

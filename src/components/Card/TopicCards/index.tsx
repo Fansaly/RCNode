@@ -17,9 +17,7 @@ const useStyles = makeStyles(() => ({
 
 interface Props {
   className?: string;
-  classes?: {
-    [key: string]: string;
-  };
+  classes?: Record<string, string>;
   simple?: boolean;
   items: any[];
 }

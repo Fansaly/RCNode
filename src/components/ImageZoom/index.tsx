@@ -168,9 +168,12 @@ const ImageZoom = ({ open, url, onClose }: Props) => {
   };
 
   const setViewport = () => {
-    const viewport = document.head.querySelector(
-      'meta[name="viewport"]',
-    ) as HTMLMetaElement;
+    const viewport = document.head.querySelector('meta[name="viewport"]');
+
+    if (!(viewport instanceof HTMLMetaElement)) {
+      return;
+    }
+
     const content = viewport.content;
     const scalable = 'user-scalable=no';
 
@@ -189,7 +192,7 @@ const ImageZoom = ({ open, url, onClose }: Props) => {
 
   const resetViewport = () => {
     const { viewport, content } = state;
-    if (viewport) {
+    if (viewport && content) {
       viewport.content = content;
     }
   };

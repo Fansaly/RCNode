@@ -35,17 +35,15 @@ export const request = createInstance({
   headers,
 });
 
-export const fetch = async <D = any, T = Record<string, any>>(
+interface ResponseData {
+  success: boolean;
+  err_msg?: string;
+  data?: any;
+}
+
+export const fetch = async <T = Record<string, never>>(
   options: AxiosRequestConfig,
-): Promise<
-  {
-    [K in keyof T]?: T[K];
-  } & {
-    success: boolean;
-    err_msg?: string;
-    data?: D;
-  }
-> => {
+): Promise<Partial<T> & Omit<ResponseData, keyof T>> => {
   try {
     const { data } = await request(options);
     return { ...data, success: true };
@@ -55,7 +53,7 @@ export const fetch = async <D = any, T = Record<string, any>>(
     }
 
     if (!error.response) {
-      return Object.assign({ success: false, err_msg: 'Fatal Error' });
+      return Object.assign({ success: false, err_msg: 'FATAL ERROR' });
     }
 
     const { config, status, data } = error.response;

@@ -23,7 +23,7 @@ import { useBreakpoints } from '@/hooks';
 import { AppFrame } from '@/layout';
 import { dayjs, fetchBingImage } from '@/utils';
 
-import { Key, keys as tabKeys, useReducer } from './useReducer';
+import { keys as tabKeys, useReducer } from './useReducer';
 
 const useStyles = makeStyles((theme) => ({
   cover: {
@@ -80,7 +80,7 @@ const User = () => {
   const [state, dispatch] = useReducer();
 
   const bingImgRef = React.useRef<null | HTMLImageElement>(null);
-  const [bingImage, setBingImage] = React.useState<{ [key: string]: any }>({
+  const [bingImage, setBingImage] = React.useState<Record<string, any>>({
     complete: false,
   });
 
@@ -89,7 +89,7 @@ const User = () => {
   const [index, setIndex] = React.useState<number>(0);
   const [status, setStatus] = React.useState<ProgressStatus>('loading');
   const [message, setMessage] = React.useState<null | string>(null);
-  const [profile, setProfile] = React.useState<{ [key: string]: any }>({ uname });
+  const [profile, setProfile] = React.useState<Record<string, any>>({ uname });
   const isCancel = React.useRef<boolean>(false);
 
   const handleChange = (
@@ -298,12 +298,12 @@ const User = () => {
           >
             {tabKeys.map((key) => (
               <Tab
-                key={state[key as Key]?.name}
+                key={state[key]?.name}
                 classes={{
                   root: classes.tab,
                   selected: classes.selected,
                 }}
-                label={state[key as Key]?.name}
+                label={state[key]?.name}
                 disabled={status !== 'success'}
               />
             ))}
@@ -336,8 +336,8 @@ const User = () => {
             <div className={`r-${key}`} key={key}>
               <SwipeableViewsTab
                 swipeableActions={swipeableActions}
-                show={state[key as Key]?.show}
-                data={state[key as Key]?.data}
+                show={state[key]?.show}
+                data={state[key]?.data}
               />
             </div>
           ))}

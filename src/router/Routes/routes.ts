@@ -2,7 +2,7 @@ import React from 'react';
 
 import NotFound from '@/pages/404';
 
-let Test = NotFound;
+let Test: RCNode.Component = NotFound;
 
 if (import.meta.env.DEV) {
   Test = React.lazy(() => import('@/pages/Test'));

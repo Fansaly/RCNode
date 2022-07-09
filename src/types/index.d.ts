@@ -1,6 +1,8 @@
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
 
+import { CNodeTab as Tab, TopicTab } from '@/router';
+
 declare global {
   namespace RCNode {
     interface AuthState {
@@ -11,22 +13,19 @@ declare global {
       uid?: string;
     }
 
-    interface Meta {
-      [key: string]: any;
-    }
+    type Meta = Record<string, any>;
 
-    interface RouteProps extends RouteObject {
+    type Component =
+      | React.LazyExoticComponent<React.ComponentType>
+      | React.ElementType<any>;
+    type RouteElement = Component | React.ReactNode;
+    interface RouteProps extends Omit<RouteObject, 'children' | 'element'> {
       children?: RouteProps[];
-      element?: any;
+      element?: RouteElement;
       meta?: Meta;
     }
 
-    type HTMLAttributes =
-      | undefined
-      | null
-      | {
-          [key: string]: null | string;
-        };
+    type HTMLAttributes = undefined | null | Record<string, null | string>;
     interface NormalProps {
       title?: string;
       htmlAttributes?: HTMLAttributes;
@@ -39,13 +38,8 @@ declare global {
       meta?: Meta;
     }
 
-    type CNodeTopicTab = 'share' | 'ask' | 'job' | 'dev';
-    type CNodeTab = 'all' | 'good' | CNodeTopicTab;
-    interface CNodePathProps {
-      name: string;
-      path: string;
-      isTopicTab?: boolean;
-    }
+    type CNodeTab = Tab;
+    type CNodeTopicTab = TopicTab;
 
     interface EditorData {
       title?: string;

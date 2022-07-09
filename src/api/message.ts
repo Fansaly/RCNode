@@ -9,7 +9,7 @@ export const fetchUnreadMessageCount = async ({
   signal?: AbortSignal;
   accesstoken: string;
 }) => {
-  return fetch<number>({
+  return fetch<{ data: number }>({
     signal,
     method: 'GET',
     url: '/message/count',
@@ -25,7 +25,9 @@ export const fetchMessages = async ({
   accesstoken: string;
   mdrender?: boolean;
 }) => {
-  return fetch<{ has_read_messages: Message[]; hasnot_read_messages: Message[] }>({
+  return fetch<{
+    data: { has_read_messages: Message[]; hasnot_read_messages: Message[] };
+  }>({
     signal,
     method: 'GET',
     url: '/messages',
@@ -40,7 +42,7 @@ export const markAllMessage = async ({
   signal?: AbortSignal;
   accesstoken: string;
 }) => {
-  return fetch<any, { marked_msgs: Array<{ id: string }> }>({
+  return fetch<{ marked_msgs: Array<{ id: string }> }>({
     signal,
     method: 'POST',
     url: '/message/mark_all',
@@ -57,7 +59,7 @@ export const markSingleMessage = async ({
   accesstoken: string;
   msg_id: string;
 }) => {
-  return fetch<any, { marked_msg_id: string }>({
+  return fetch<{ marked_msg_id: string }>({
     signal,
     method: 'POST',
     url: `/message/mark_one/${msg_id}`,

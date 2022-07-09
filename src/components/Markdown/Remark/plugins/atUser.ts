@@ -35,12 +35,8 @@ interface TreeProps {
     [key: string]: any;
   };
   position?: {
-    start: {
-      [key: string]: any;
-    };
-    end: {
-      [key: string]: any;
-    };
+    start: Record<string, any>;
+    end: Record<string, any>;
   };
 }
 
