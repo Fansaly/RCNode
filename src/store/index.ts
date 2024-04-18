@@ -13,7 +13,7 @@ if (import.meta.env.DEV) {
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: [...middlewares],
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(...middlewares),
 });
 
 export default store;

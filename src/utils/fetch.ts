@@ -1,14 +1,18 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+  RawAxiosRequestHeaders,
+} from 'axios';
 
 import { AXIOS_CONFIG } from '@/config';
 
 const configurator = (config: AxiosRequestConfig) => {
   const { headers } = config;
-  return { ...config, headers };
+  return { ...config, headers } as InternalAxiosRequestConfig;
 };
 
 const createInstance = (config: AxiosRequestConfig) => {
-  const instance: AxiosInstance = axios.create(config);
+  const instance = axios.create(config);
 
   instance.interceptors.request.use(
     (config) => configurator(config),
@@ -25,7 +29,7 @@ const createInstance = (config: AxiosRequestConfig) => {
 
 const timeout = AXIOS_CONFIG.timeout;
 const baseURL = AXIOS_CONFIG.baseURL;
-const headers = {
+const headers: RawAxiosRequestHeaders = {
   'Content-Type': 'application/json;charset=UTF-8',
 };
 

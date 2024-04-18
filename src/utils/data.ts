@@ -9,8 +9,8 @@ export const pick = (data: any, fields?: string | string[]) => {
   fields = Array.isArray(fields)
     ? fields
     : typeof fields === 'string'
-    ? stringToArray(fields)
-    : [];
+      ? stringToArray(fields)
+      : [];
 
   if (!data || typeof data !== 'object' || fields.length === 0) {
     return {};
@@ -31,8 +31,8 @@ export const omit = (data: any, fields?: string | string[]) => {
   fields = Array.isArray(fields)
     ? fields
     : typeof fields === 'string'
-    ? stringToArray(fields)
-    : [];
+      ? stringToArray(fields)
+      : [];
 
   if (!data || typeof data !== 'object' || fields.length === 0) {
     return data || {};

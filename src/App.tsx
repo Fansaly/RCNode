@@ -5,6 +5,7 @@ import { StyledEngineProvider } from '@mui/material/styles';
 import { Provider } from 'react-redux';
 
 import ThemeProvider from './components/Theme';
+import UpdatePrompt from './pwa/UpdatePrompt';
 import Router from './router';
 import store from './store';
 
@@ -15,6 +16,7 @@ const App = () => {
         <ThemeProvider>
           <CssBaseline />
           <Router />
+          <UpdatePrompt />
         </ThemeProvider>
       </StyledEngineProvider>
     </Provider>

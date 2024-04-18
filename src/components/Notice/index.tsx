@@ -3,11 +3,11 @@ import Snackbar from '@mui/material/Snackbar';
 import React from 'react';
 
 interface Message {
-  id?: string | number;
-  text?: string;
+  id: number;
+  text: string;
 }
 
-let messages: null | Message[] = null;
+let messages: Message[] = [];
 
 const sleep = (delay = 0) => {
   return new Promise((resolve) => {
@@ -22,7 +22,7 @@ const getLastSeenId = () => {
 
 const Notice = () => {
   const [open, setOpen] = React.useState(false);
-  const [message, setMessage] = React.useState<Message>({});
+  const [message, setMessage] = React.useState<null | Message>(null);
 
   const handleSeeMessage = () => {
     if (!messages) {
@@ -40,7 +40,7 @@ const Notice = () => {
 
   const handleClose = () => {
     setOpen(false);
-    localStorage.setItem('LastSeenId', message.id as string);
+    localStorage.setItem('LastSeenId', message?.id as unknown as string);
   };
 
   React.useEffect(() => {
@@ -79,7 +79,7 @@ const Notice = () => {
     };
   }, []);
 
-  return (
+  return !message ? null : (
     <Snackbar
       key={message.id}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}

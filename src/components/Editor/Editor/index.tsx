@@ -252,8 +252,8 @@ const Editor = ({ draggable, ...props }: RCNode.Editor & { draggable?: boolean }
       return /(reply)/.test(action)
         ? true
         : typeof title === 'string'
-        ? title.length >= validation.title.min && title.length <= validation.title.max
-        : false;
+          ? title.length >= validation.title.min && title.length <= validation.title.max
+          : false;
     };
 
     const checkContent = () => {

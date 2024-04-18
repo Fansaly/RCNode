@@ -35,15 +35,15 @@
 [browser-edge]: https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge_48x48.png
 
 ## 项目基于
-| package | used | latest |
-| :--- | --- | --- |
-| [Vite][vite-github] | `v2.9.14` | [![npm version][vite-npm-version]][vite-npm-package] |
-| [React][react-github] | `v18.2.0` | [![npm version][react-npm-version]][react-npm-package] |
-| [React Redux][react-redux-github] | `v8.0.2` | [![npm version][react-redux-npm-version]][react-redux-npm-package] |
-| [Redux Toolkit][redux-toolkit-github] | `v1.8.3` | [![npm version][redux-toolkit-npm-version]][redux-toolkit-npm-package] |
-| [React Router][react-router-github] | `v6.3.0` | [![npm version][react-router-npm-version]][react-router-npm-package] |
-| [Material-UI][material-ui-github] | `v5.8.7` | [![npm version][material-ui-npm-version]][material-ui-npm-package] |
-| [react-markdown][react-markdown-github] | `v8.0.3` | [![npm version][react-markdown-npm-version]][react-markdown-npm-package] |
+| package                                 | used       | latest |
+| :---                                    | ---        | --- |
+| [Vite][vite-github]                     | `v5.2.9`   | [![npm version][vite-npm-version]][vite-npm-package] |
+| [React][react-github]                   | `v18.2.0`  | [![npm version][react-npm-version]][react-npm-package] |
+| [React Redux][react-redux-github]       | `v9.1.1`   | [![npm version][react-redux-npm-version]][react-redux-npm-package] |
+| [Redux Toolkit][redux-toolkit-github]   | `v2.2.3`   | [![npm version][redux-toolkit-npm-version]][redux-toolkit-npm-package] |
+| [React Router][react-router-github]     | `v6.22.3`  | [![npm version][react-router-npm-version]][react-router-npm-package] |
+| [Material-UI][material-ui-github]       | `v5.15.15` | [![npm version][material-ui-npm-version]][material-ui-npm-package] |
+| [react-markdown][react-markdown-github] | `v9.0.1`   | [![npm version][react-markdown-npm-version]][react-markdown-npm-package] |
 
 [vite-github]: https://github.com/vitejs/vite
 [vite-npm-version]: https://img.shields.io/npm/v/vite.svg

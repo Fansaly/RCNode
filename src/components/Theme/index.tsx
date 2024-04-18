@@ -16,6 +16,13 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const settings = useSelector((state) => state.settings);
   const mode = settings.autoFollow ? systemColorMode : settings.theme;
 
+  React.useEffect(() => {
+    const element = document?.querySelector(':root');
+    if (element) {
+      element.setAttribute('color-scheme', mode);
+    }
+  }, [mode]);
+
   const theme = React.useMemo(() => {
     const theme = mode === 'light' ? lightTheme : darkTheme;
     return createTheme({ ...theme, palette: { ...theme.palette, mode } });

@@ -1,3 +1,6 @@
+import Typography from '@mui/material/Typography';
+import makeStyles from '@mui/styles/makeStyles';
+import { ErrorBoundary } from 'react-error-boundary';
 import ReactMarkdown from 'react-markdown';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeRaw from 'rehype-raw';
@@ -7,32 +10,40 @@ import remarkGfm from 'remark-gfm';
 
 import { useSelector } from '@/store';
 
-import CopyWrapper from './CopyWrapper';
 import Link from './Link';
 import { atUser } from './plugins';
 import SyntaxHighlighter from './SyntaxHighlighter';
+
+const useStyles = makeStyles((theme) => ({
+  'code-error': {
+    color: theme.palette.secondary.main,
+  },
+}));
 
 const rehypePlugins = [rehypeVideo, rehypeAutolinkHeadings, atUser];
 
 const Remark = ({ markdownSource }: { markdownSource: string }) => {
   const { renderHTML } = useSelector((state) => state.settings);
+  const classes = useStyles();
 
   return (
-    <ReactMarkdown
-      // eslint-disable-next-line react/no-children-prop
-      children={markdownSource}
-      remarkPlugins={[remarkGfm, remarkGemoji]}
-      rehypePlugins={renderHTML ? [rehypeRaw, ...rehypePlugins] : rehypePlugins}
-      remarkRehypeOptions={{ allowDangerousHtml: true }}
-      components={{
-        a: (props: any) => <Link {...props} />,
-        code: (props: any) => (
-          <CopyWrapper {...props}>
-            <SyntaxHighlighter {...props} />
-          </CopyWrapper>
-        ),
-      }}
-    />
+    <ErrorBoundary
+      FallbackComponent={({ error }) => (
+        <Typography className={classes['code-error']}>{error.message}</Typography>
+      )}
+    >
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkGemoji]}
+        rehypePlugins={renderHTML ? [rehypeRaw, ...rehypePlugins] : rehypePlugins}
+        remarkRehypeOptions={{ allowDangerousHtml: true }}
+        components={{
+          a: (props: any) => <Link {...props} />,
+          code: (props: any) => <SyntaxHighlighter {...props} />,
+        }}
+      >
+        {markdownSource}
+      </ReactMarkdown>
+    </ErrorBoundary>
   );
 };
 

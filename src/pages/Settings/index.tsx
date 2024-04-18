@@ -35,10 +35,8 @@ const Settings = () => {
   const dispatch = useDispatch();
   const isWidthDownSm = useBreakpoints('down', 'sm');
 
-  const {
-    auth: { isAuthed },
-    settings,
-  } = useSelector((state) => state);
+  const isAuthed = useSelector((state) => state.auth.isAuthed);
+  const settings = useSelector((state) => state.settings);
 
   const handleToggleTheme = () => {
     const mode = theme.palette.mode === 'light' ? 'dark' : 'light';

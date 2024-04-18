@@ -3,7 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 
-import { ReactComponent as MdOutletIcon } from '@/assets/ionicons_md_outlet.svg';
+import MdOutletIcon from '@/assets/ionicons_md_outlet.svg?react';
 import { AppFrame } from '@/layout';
 
 const useStyles = makeStyles((theme) => ({

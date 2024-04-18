@@ -11,7 +11,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { signin } from '@/api';
-import { ReactComponent as SigninSvg } from '@/assets/google_signin.svg';
+import SigninSvg from '@/assets/google_signin.svg?react';
 import Logo from '@/components/Logo';
 import Notification from '@/components/Notification';
 import { AppFrame } from '@/layout';

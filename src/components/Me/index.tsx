@@ -19,7 +19,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { fetchUnreadMessageCount } from '@/api';
-import { ReactComponent as AvatarSvg } from '@/assets/avatar.svg';
+import AvatarSvg from '@/assets/avatar.svg?react';
 import { useDispatch, useSelector } from '@/store';
 
 const useStyles = makeStyles(() => ({

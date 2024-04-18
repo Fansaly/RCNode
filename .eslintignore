@@ -1,2 +1,5 @@
-**/dist/**
 **/node_modules/**
+**/dev-dist/**
+**/dist/**
+**/*-sw.js
+**/workbox-*.js

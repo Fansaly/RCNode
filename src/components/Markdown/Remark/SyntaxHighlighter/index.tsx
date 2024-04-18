@@ -7,6 +7,8 @@ import {
   prism as light,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+import CopyWrapper from './CopyWrapper';
+
 const languageAlias: Record<string, string> = {
   h: 'c',
   rb: 'ruby',
@@ -22,7 +24,7 @@ const languageAlias: Record<string, string> = {
 };
 
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-const SyntaxHighlighter = ({ node, inline, className, children, ...props }: any) => {
+const SyntaxHighlighter = ({ children, className, node, ...props }: any) => {
   const theme = useTheme();
   const match = /language-(\w+)/.exec(className || '');
 
@@ -31,16 +33,18 @@ const SyntaxHighlighter = ({ node, inline, className, children, ...props }: any)
     language = languageAlias[match[1]] || match[1];
   }
 
-  return !inline && language ? (
-    <Highlighter
-      className={className}
-      style={theme.palette.mode === 'light' ? light : dark}
-      // eslint-disable-next-line react/no-children-prop
-      children={String(children).replace(/\n$/, '')}
-      language={language}
-      wrapLines
-      {...props}
-    />
+  return language ? (
+    <CopyWrapper content={children}>
+      <Highlighter
+        className={className}
+        style={theme.palette.mode === 'light' ? light : dark}
+        // eslint-disable-next-line react/no-children-prop
+        children={String(children).replace(/\n$/, '')}
+        language={language}
+        wrapLines
+        {...props}
+      />
+    </CopyWrapper>
   ) : (
     <code className={className} {...props}>
       {children}

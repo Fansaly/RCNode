@@ -5,7 +5,7 @@ import Tooltip from '@mui/material/Tooltip';
 import makeStyles from '@mui/styles/makeStyles';
 import copy from 'clipboard-copy';
 import clsx from 'clsx';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -28,18 +28,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-const CopyWrapper = ({ node, inline, className, children, ...props }: any) => {
+interface Props extends PropsWithChildren {
+  content: string;
+}
+
+const CopyWrapper = ({ children, content }: Props) => {
   const classes = useStyles();
   const [copied, setCopied] = React.useState<boolean>(false);
 
-  const handleCopy = async (children: any) => {
+  const handleCopy = async () => {
     if (copied) {
       return;
     }
 
     try {
-      const code = String(children.props.children).replace(/\s$/, '');
+      const code = String(content).replace(/\s$/, '');
       if (code) {
         await copy(code);
         setCopied(true);
@@ -51,17 +54,16 @@ const CopyWrapper = ({ node, inline, className, children, ...props }: any) => {
     }
   };
 
-  return inline ? (
-    children
-  ) : (
+  return (
     <div className={classes.root}>
       <div className={clsx('box', classes.box)}>
         <Tooltip disableFocusListener placement="left" title={copied ? 'Copied' : 'Copy'}>
-          <IconButton disableFocusRipple={true} onClick={() => handleCopy(children)}>
+          <IconButton disableFocusRipple={true} onClick={() => handleCopy()}>
             {copied ? <AssignmentTurnedInIcon /> : <AssignmentIcon />}
           </IconButton>
         </Tooltip>
       </div>
+
       {children}
     </div>
   );

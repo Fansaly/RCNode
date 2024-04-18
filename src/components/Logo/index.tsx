@@ -2,7 +2,7 @@ import { useTheme } from '@mui/material/styles';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
 
-import { ReactComponent as CNodeLogo } from '@/assets/cnodejs/cnodejs.svg';
+import CNodeLogo from '@/assets/cnodejs/cnodejs.svg?react';
 
 let pathsID = '& ';
 pathsID += ['#cell-c', '#cell-n', '#cell-d', '#cell-e'].join(',& ');
@@ -29,8 +29,8 @@ const Logo = ({ className, reverse, color }: Props) => {
   const isLight = color
     ? color === 'light'
     : reverse
-    ? theme.palette.mode !== 'light'
-    : theme.palette.mode === 'light';
+      ? theme.palette.mode !== 'light'
+      : theme.palette.mode === 'light';
 
   const style =
     isLight && (theme.palette.mode === 'light' ? classes.light : classes.lightVariant);

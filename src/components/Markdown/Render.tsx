@@ -1,8 +1,8 @@
 import { useTheme } from '@mui/material/styles';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import githubMarkdownDark from 'github-markdown-css/github-markdown-dark.css';
-import githubMarkdownLight from 'github-markdown-css/github-markdown-light.css';
+import githubMarkdownDark from 'github-markdown-css/github-markdown-dark.css?inline';
+import githubMarkdownLight from 'github-markdown-css/github-markdown-light.css?inline';
 import React from 'react';
 
 import ImageZoom from '@/components/ImageZoom';
@@ -110,8 +110,9 @@ const Render = ({ className, markdownSource }: Props) => {
 
   React.useEffect(() => {
     const styleElement = document.querySelector('#github-markdown');
-    const styleContent =
-      theme.palette.mode === 'light' ? githubMarkdownLight : githubMarkdownDark;
+    const styleContent = (
+      theme.palette.mode === 'light' ? githubMarkdownLight : githubMarkdownDark
+    ) as string;
     if (styleElement) {
       styleElement.textContent = styleContent;
     }
