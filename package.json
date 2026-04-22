@@ -68,7 +68,7 @@
     "rehype-video": "^2.0.2",
     "remark-gemoji": "^8.0.0",
     "remark-gfm": "^4.0.0",
-    "uuid": "^9.0.1"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.4",
